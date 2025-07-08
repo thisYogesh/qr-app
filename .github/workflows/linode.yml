@@ -23,6 +23,16 @@ jobs:
           port: 22
 
           script: |
+            echo "===== /etc/resolv.conf ====="
+            cat /etc/resolv.conf
+          
+            echo "===== DNS test ====="
+            dig github.com || ping -c 1 github.com || echo "DNS still broken"
+          
+            echo "===== Current user ====="
+            whoami
+          
+            echo "===== Git test ====="
             cd /var/www/qr.manyog.in
             git pull origin main
             sudo systemctl reload nginx # or reload nginx
