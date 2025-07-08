@@ -1,0 +1,28 @@
+name: Deploy to Linode
+
+on:
+  push:
+    branches:
+      - main  # or 'production' or any branch you use for deploy
+
+jobs:
+  deploy:
+    name: Deploy to Linode via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.LINODE_HOST }}
+          username: ${{ secrets.LINODE_USER }}
+          key: ${{ secrets.LINODE_SSH_KEY }}
+          port: 22
+
+          script: |
+            cd /var/www/qr.manyog.in
+            git pull origin main
+            sudo systemctl reload nginx # or reload nginx
