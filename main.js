@@ -3,7 +3,7 @@ const app = {
   $slideContainer: null,
   $contentBlocks: [],
   $backButtons: [],
-  canShare: navigator.canShare(),
+  canShare: !!navigator.share,
   // $triggerContainer: null,
 
   init() {
@@ -66,20 +66,20 @@ const app = {
   },
 
   methods: {
-    shareLocation() {
-      const { canShare } = this;
-      alert(`share ${canShare}`);
-
-      /**
-       * await navigator.share({
-            title: 'Awesome Page',
-            text: 'Check out this awesome page!',
-            url: window.location.href,
-          });
-       */
-
-      if (!canShare) return;
-    },
+    // async shareLocation() {
+    //   const { canShare } = this;
+    //   if (canShare) {
+    //     return await navigator
+    //       .share({
+    //         title: "Manyog",
+    //         text: "Manyog — Hardware & Sanitaryware",
+    //         url: "https://g.co/kgs/yc2gBs5",
+    //       })
+    //       .catch((err) => console.log(err));
+    //   }
+    //   // copy to clipboard
+    //   navigator.clipboard.writeText("https://g.co/kgs/yc2gBs5");
+    // },
   },
 };
 
