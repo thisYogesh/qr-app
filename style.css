@@ -1,3 +1,7 @@
+body {
+  min-height: 100svh;
+}
+
 [data-slide-container] {
   height: var(--dynamic-height, var(--root-height, unset));
 }

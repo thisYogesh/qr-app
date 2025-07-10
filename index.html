@@ -6,7 +6,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
     />
-    <title>QR App</title>
+    <title>Manyog – QR App</title>
+
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -19,7 +20,7 @@
     <link href="./style.css" rel="stylesheet" />
   </head>
   <body
-    class="min-h-screen bg-gray-100 flex flex-col justify-between gap-8"
+    class="bg-gray-100 flex flex-col justify-between gap-8"
     style="font-family: 'Roboto', sans-serif"
   >
     <svg
@@ -31,7 +32,7 @@
         <path
           d="M4 12H20M4 12L8 8M4 12L8 16"
           stroke="currentColor"
-          stroke-width="1.5"
+          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
         ></path>
@@ -99,11 +100,11 @@
 
     <main class="flex items-center justify-center px-4">
       <div
-        class="flex items-center justify-center rounded-lg shadow-md overflow-hidden"
+        class="flex items-center justify-center bg-white border border-gray-300 rounded-lg shadow-md overflow-hidden"
       >
         <div
           data-slide-container
-          class="flex bg-white items-start w-96 w-max-[90%] duration-300 transform transition-all"
+          class="flex bg-white items-center w-96 w-max-[90%] duration-300 transform transition-all"
         >
           <ul
             data-trigger-container
@@ -133,7 +134,7 @@
                 >
                   <use href="#icon-location" />
                 </svg>
-                Go to location
+                Store location
               </a>
             </li>
             <li>
@@ -152,12 +153,12 @@
           <div id="content" class="relative w-full flex-shrink-0">
             <div
               id="contact-us"
-              class="flex flex-col gap-4 p-8 hidden absolute w-full content-block bg-white"
+              class="flex flex-col gap-4 p-8 hidden w-full content-block bg-white"
             >
               <div class="flex items-center">
                 <button
                   data-back
-                  class="flex items-center border border-black rounded-lg px-2 py-1"
+                  class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
                 >
                   <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
                     <use href="#back-arrow" />
@@ -197,38 +198,23 @@
               </div>
             </div>
             <div
-              id="share-location"
-              class="hidden p-8 absolute w-full content-block bg-white"
-            >
-              <button data-back>
-                <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
-                  <use href="#back-arrow" />
-                </svg>
-              </button>
-              contact content contact content contact content contact content
-              contact content contact content contact content contact content
-              contact content contact content contact content contact content
-              contact content contact content contact content contact content
-              contact content contact content
-            </div>
-            <div
               id="shop"
-              class="hidden flex flex-col gap-4 p-8 absolute w-full content-block bg-white"
+              class="hidden flex flex-col gap-4 p-8 w-full content-block bg-white"
             >
               <div class="flex items-center">
                 <button
                   data-back
-                  class="flex items-center border border-black rounded-lg px-2 py-1"
+                  class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
                 >
                   <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
                     <use href="#back-arrow" />
                   </svg>
                 </button>
 
-                <span class="ml-2"> Shop </span>
+                <span class="ml-2"> Shop online </span>
               </div>
 
-              Comming Soon....!
+              Coming Soon....!
             </div>
           </div>
         </div>

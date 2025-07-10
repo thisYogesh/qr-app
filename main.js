@@ -38,7 +38,7 @@ const app = {
       return;
     }
 
-    this.slideTo(trigger);
+    if (trigger) this.slideTo(trigger);
   },
 
   slideTo(contentId) {
