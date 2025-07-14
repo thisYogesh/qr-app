@@ -5,3 +5,11 @@ body {
 [data-slide-container] {
   height: var(--dynamic-height, var(--root-height, unset));
 }
+
+.bg {
+  background-image: url("./tools-bg.jpg");
+  background-size: 200px;
+  opacity: 0.05;
+  z-index: -1;
+  pointer-events: none;
+}
