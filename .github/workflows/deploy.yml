@@ -31,16 +31,16 @@ jobs:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ vars.DEPLOY_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ vars.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ vars.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
       # check ssh 
       - name: Inspect private key
         run: |
           set -eo pipefail
-          head -3 ~/.ssh/id_rsa || true
-          ssh-keygen -yf ~/.ssh/id_rsa || true   # exits 1 if the key can’t be parsed
+          head -3 ~/.ssh/id_ed25519 || true
+          ssh-keygen -yf ~/.ssh/id_ed25519 || true   # exits 1 if the key can’t be parsed
 
       # 5 Sync dist/ to Linode
       - name: Deploy via rsync
