@@ -1,3 +1,5 @@
+import Handlebars from "handlebars";
+
 const app = {
   URL: new URL(location.href),
   storeConfig: null,
@@ -10,8 +12,7 @@ const app = {
   templates: {
     list_phone_numbers: Handlebars.registerPartial(
       "list_phone_numbers",
-      `
-        <div class="flex flex-col gap-2">
+      `<div class="flex flex-col gap-2">
           {{#each data.contact_numbers}}
             <a
               class="flex items-center gap-1 text-blue-900 font-bold"

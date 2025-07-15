@@ -7,7 +7,7 @@ body {
 }
 
 .bg {
-  background-image: url("./tools-bg.jpg");
+  background-image: url("../public/tools-bg.jpg");
   background-size: 200px;
   opacity: 0.05;
   z-index: -1;
