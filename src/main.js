@@ -1,4 +1,7 @@
+// import { DotLottie } from "@lottiefiles/dotlottie-web";
 import Handlebars from "handlebars";
+
+// import lt from "../lottie/wranch-tightning.lottie";
 
 const app = {
   URL: new URL(location.href),
@@ -206,5 +209,13 @@ const app = {
     // },
   },
 };
+
+// new DotLottie({
+//   autoplay: true,
+//   loop: true,
+//   canvas: document.querySelector("#dotlottie-canvas"),
+//   src: lt, // or .json file
+//   speed: 0.8,
+// });
 
 window.addEventListener("DOMContentLoaded", () => app.install());
