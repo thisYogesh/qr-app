@@ -1,50 +1,56 @@
-name: Build & Deploy to Linode
+name: Build & Deploy to Linode
 
 on:
   push:
-    branches: [main]          # adjust if you deploy from a different branch
+    branches: [main]        # adjust if you deploy from a different branch
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    # ────────────────────────────────────────────────────────────────
+    # 0️⃣  Make repo/environment variables available as env vars
+    #     (Set these under Settings → Actions → Variables)
+    # ────────────────────────────────────────────────────────────────
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+
     steps:
-      # 1 Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v4
+    # 1. Check out code
+    - uses: actions/checkout@v4   # v4 is current in 2025 :contentReference[oaicite:0]{index=0}
 
-      # 2 Set up Node (use the same major version you develop with)
-      - name: Use Node 18 LTS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
+    # 2. Set up Node and dependency cache
+    - uses: actions/setup-node@v4   # v4 is current in 2025 :contentReference[oaicite:1]{index=1}
+      with:
+        node-version: 18           # lock to the major version you develop with
+        cache: npm
 
-      # 3 Install & build
-      - name: Install dependencies
-        run: npm install
+    # 3. Install & build
+    - name: Install dependencies
+      run: npm ci
 
-      - name: Build project
-        run: npm run build
+    - name: Build Vite project
+      run: npm run build            # emits production bundle in dist/
 
-      # 4 Prepare SSH key for rsync
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ vars.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ vars.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+    # 4. Prepare SSH key (private key stored as multiline Secret: DEPLOY_SSH_KEY)
+    - name: Prepare SSH key
+      run: |
+        mkdir -p ~/.ssh
+        printf '%s\n' "${{ vars.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+        # Quick sanity check—fails the job early if key is unreadable
+        ssh-keygen -yf ~/.ssh/id_ed25519 >/dev/null
 
-      # check ssh 
-      - name: Inspect private key
-        run: |
-          set -eo pipefail
-          head -3 ~/.ssh/id_ed25519 || true
-          ssh-keygen -yf ~/.ssh/id_ed25519 || true   # exits 1 if the key can’t be parsed
+    # 5. Smoke‑test the SSH connection (helps pinpoint auth issues before rsync)
+    - name: Test SSH connection
+      run: ssh -i ~/.ssh/id_ed25519 -oStrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" 'echo SSH auth OK'
 
-      # 5 Sync dist/ to Linode
-      - name: Deploy via rsync
-        run: |
-          rsync -avz --delete \
-            dist/ \
-            "${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }}:${{ vars.DEPLOY_PATH }}/"
+    # 6. Deploy with explicit identity file
+    - name: Deploy dist/ to Linode via rsync
+      run: |
+        rsync -avz --delete \
+          -e "ssh -i ~/.ssh/id_ed25519 -oStrictHostKeyChecking=no" \
+          dist/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
