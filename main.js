@@ -111,7 +111,9 @@ const app = {
       .then((data) => data);
 
     const storeId = this.URL.searchParams.get("store_id");
-    const storeConfig = items.find((config) => config.store_id === storeId);
+    const storeConfig = storeId?.trim()
+      ? items.find((config) => config.store_id === storeId)
+      : items[0];
 
     this.storeConfig = storeConfig;
 
