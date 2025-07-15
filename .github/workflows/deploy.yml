@@ -1,4 +1,4 @@
-name: Build & Deploy to Linode
+name: Build & Deploy via Password SSH
 
 on:
   push:
@@ -14,11 +14,9 @@ jobs:
       DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
@@ -29,20 +27,17 @@ jobs:
       - name: Build Vite project
         run: npm run build
 
-      - name: Decode SSH private key from base64
-        run: |
-          mkdir -p ~/.ssh
-          printf '%s' "${{ vars.DEPLOY_KEY_B64 }}" | base64 -d > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-          ssh-keygen -yf ~/.ssh/id_ed25519 >/dev/null
+      # - name: Install sshpass
+      #   run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Test SSH connection
+      - name: Test SSH connection using password
         run: |
-          ssh -i ~/.ssh/id_ed25519 -oStrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" 'echo SSH works'
+          sshpass -p "${{ vars.DEPLOY_SSH_PASSWORD }}" \
+            ssh -o StrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" echo "SSH with password works"
 
-      - name: Deploy via rsync
+      - name: Deploy via rsync using password
         run: |
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/id_ed25519 -oStrictHostKeyChecking=no" \
-            dist/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+          sshpass -p "${{ vars.DEPLOY_SSH_PASSWORD }}" \
+            rsync -avz --delete \
+              -e "ssh -o StrictHostKeyChecking=no" \
+              dist/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
