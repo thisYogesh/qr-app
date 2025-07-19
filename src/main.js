@@ -1,7 +1,6 @@
-// import { DotLottie } from "@lottiefiles/dotlottie-web";
 import Handlebars from "handlebars";
-
-// import lt from "../lottie/wranch-tightning.lottie";
+import { DotLottie } from "@lottiefiles/dotlottie-web";
+import lt from "../lottie/wranch-tightning.lottie";
 
 const app = {
   URL: new URL(location.href),
@@ -128,9 +127,16 @@ const app = {
     const appContent = this.templates.render(storeConfig);
 
     fr.querySelector("div").innerHTML = appContent;
-    $app.replaceWith(fr.querySelector("[data-slide-container]"));
 
-    this.init();
+    // inject html into [data-app]
+    setTimeout(() => {
+      const $main = document.querySelector("#main");
+      $main.classList.add("rounded-lg");
+      $main.classList.remove("rounded-full");
+
+      $app.replaceWith(fr.querySelector("[data-slide-container]"));
+      this.init();
+    }, 1000);
   },
 
   init() {
@@ -210,12 +216,12 @@ const app = {
   },
 };
 
-// new DotLottie({
-//   autoplay: true,
-//   loop: true,
-//   canvas: document.querySelector("#dotlottie-canvas"),
-//   src: lt, // or .json file
-//   speed: 0.8,
-// });
+new DotLottie({
+  autoplay: true,
+  loop: true,
+  canvas: document.querySelector("#dotlottie-canvas"),
+  src: lt, // or .json file
+  speed: 0.8,
+});
 
 window.addEventListener("DOMContentLoaded", () => app.install());
