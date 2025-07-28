@@ -55,7 +55,7 @@ const app = {
                   data-trigger="{{template}}"
                 {{/if}}
 
-                class="w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer
+                class="w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105
                 {{#if data.yellow_button}}
                   text-blue-900 bg-yellow-400
                 {{else}}
