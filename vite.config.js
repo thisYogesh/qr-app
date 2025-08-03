@@ -1,4 +1,5 @@
 // import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
 
 const injectBuildHash = () => ({
   name: "build-hash",
@@ -13,7 +14,15 @@ const injectBuildHash = () => ({
   },
 });
 
-export default {
-  assetsInclude: ["**/*.lottie"],
+export default defineConfig({
   plugins: [injectBuildHash()],
-};
+  assetsInclude: ["**/*.lottie"],
+  build: {
+    rollupOptions: {
+      input: {
+        main: "index.html",
+        admin: "admin.html",
+      },
+    },
+  },
+});
