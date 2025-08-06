@@ -18,7 +18,7 @@ const app = {
           {{#each data.contact_numbers}}
             <a
               class="flex items-center gap-1 text-blue-900 font-bold"
-              href="tel:{{this}}"
+              href="https://wa.me/{{this}}"
             >
               <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{../data.icon}}}</span>
               {{this}}
@@ -72,6 +72,10 @@ const app = {
               </a>
             </li>
           {{/each}}
+
+          <li class="text-sm mt-8 font-bold text-blue-900 text-center">
+            <a>GST No. {{ GST }}</a>
+          </li>
         </ul>
 
         <div
@@ -119,6 +123,13 @@ const app = {
       : items[0];
 
     this.storeConfig = storeConfig;
+
+    // verify store status
+    if (storeConfig.status === 0) {
+      const $status = document.querySelector("[data-status='0']");
+      $status.classList.remove("hidden");
+      return;
+    }
 
     const fr = document.createDocumentFragment();
     fr.append(document.createElement("div"));
