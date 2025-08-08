@@ -111,8 +111,9 @@ const app = {
   },
 
   async install() {
+    const buildHash = "<build-hash>".replace("<build-hash>", "") || Date.now();
     const { items } = await fetch(
-      "https://manyog.s3.ap-south-1.amazonaws.com/qr-app-data.json"
+      `https://manyog.s3.ap-south-1.amazonaws.com/qr-app-data.json?hash=${buildHash}`
     )
       .then((resp) => resp.json())
       .then((data) => data);
