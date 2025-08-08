@@ -40,7 +40,7 @@ const app = {
             </a>
           {{/each}}
           <div class="flex text-sm items-start gap-1 text-blue-900 font-medium">
-            <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{data.store_icon}}}</span>
+            <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">{{{data.store_icon}}}</span>
             <p>
               {{data.address}}
             </p>
