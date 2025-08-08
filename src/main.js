@@ -58,13 +58,13 @@ const app = {
       }
     ),
     render: Handlebars.compile(`
-      <div data-main class="flex w-11/12 md:w-96 flex-col items-center justify-center">
+      <div data-main class="flex w-full md:w-96 flex-col items-center justify-center">
         <div class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
           <div
             data-slide-container
-            class="flex bg-white items-center duration-300 transform transition-all flex-grow"
+            class="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
           >
-            <ul data-trigger-container class="p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
+            <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
               {{#each actions}}
                 <li>
                   <a
@@ -107,7 +107,7 @@ const app = {
                 {{#if template}}
                   <div
                     id="template-{{@index}}"
-                    class="flex flex-col gap-4 p-8 hidden w-full content-block bg-white"
+                    class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
                   >
                     <div class="flex items-center">
                       <button
