@@ -15,3 +15,13 @@ body {
   z-index: -1;
   pointer-events: none;
 }
+
+#dotlottie-canvas {
+  --trans-position: 3.5px;
+  background-image: url("../public/gear.png");
+  background-position: calc(50% + calc(var(--trans-position) * -1))
+    calc(50% + 0px);
+  background-repeat: no-repeat;
+  transform: translateX(var(--trans-position));
+  background-size: 60%;
+}

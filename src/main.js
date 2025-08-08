@@ -1,6 +1,6 @@
 import Handlebars from "handlebars";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
-import lt from "../lottie/wranch-tightning.lottie";
+import WranchTightningJson from "../lottie/wranch-tightning.json";
 
 const app = {
   URL: new URL(location.href),
@@ -26,6 +26,28 @@ const app = {
           {{/each}}
         </div>`
     ),
+    address_with_phone_numbers: Handlebars.registerPartial(
+      "address_with_phone_numbers",
+      `<div>
+        <div class="flex flex-col gap-2">
+          {{#each data.contact_numbers}}
+            <a
+              class="flex text-sm items-center gap-1 text-blue-900 font-medium"
+              href="https://wa.me/{{this}}"
+            >
+              <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{../data.icon}}}</span>
+              <span class="underline">{{this}}</span>
+            </a>
+          {{/each}}
+          <div class="flex text-sm items-start gap-1 text-blue-900 font-medium">
+            <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{data.store_icon}}}</span>
+            <p>
+              {{data.address}}
+            </p>
+          </div>
+        </div>
+      </div>`
+    ),
     simple_text: Handlebars.registerPartial("simple_text", `{{data.content}}`),
     dynamic_template: Handlebars.registerHelper(
       "dynamic_template",
@@ -36,85 +58,89 @@ const app = {
       }
     ),
     render: Handlebars.compile(`
-      <div
-        data-slide-container
-        class="flex bg-white items-center w-96 w-max-[90%] duration-300 transform transition-all"
-      >
-        <ul data-trigger-container class="p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
-          {{#each actions}}
-            <li>
-              <a
-                {{#if template}}
-                  data-trigger="#template-{{@index}}"
-                {{/if}}
+      <div data-main class="flex w-11/12 md:w-96 flex-col items-center justify-center">
+        <div class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
+          <div
+            data-slide-container
+            class="flex bg-white items-center duration-300 transform transition-all flex-grow"
+          >
+            <ul data-trigger-container class="p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
+              {{#each actions}}
+                <li>
+                  <a
+                    {{#if template}}
+                      data-trigger="#template-{{@index}}"
+                    {{/if}}
 
-                {{#if data.href}}
-                  href="{{data.href}}"
-                  target="_blank"
-                {{else}}
-                  data-trigger="{{template}}"
-                {{/if}}
+                    {{#if data.href}}
+                      href="{{data.href}}"
+                      target="_blank"
+                    {{else}}
+                      data-trigger="{{template}}"
+                    {{/if}}
 
-                class="w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105
-                {{#if data.yellow_button}}
-                  text-blue-900 bg-yellow-400
-                {{else}}
-                  text-white bg-blue-900
-                {{/if}}
-                "
-              >
-                {{#if data.icon}}
-                  <span class="flex h-5 w-5">
-                  {{{ data.icon }}}
-                  </span>
-                {{/if}}
-                {{ data.title }}
-              </a>
-            </li>
-          {{/each}}
-
-          <li class="text-sm mt-8 font-bold text-blue-900 text-center">
-            <a>GST No. {{ GST }}</a>
-          </li>
-        </ul>
-
-        <div
-          data-content-container
-          id="content"
-          class="relative w-full flex-shrink-0"
-        >
-          {{#each actions}}
-            {{#if template}}
-              <div
-                id="template-{{@index}}"
-                class="flex flex-col gap-4 p-8 hidden w-full content-block bg-white"
-              >
-                <div class="flex items-center">
-                  <button
-                    data-back
-                    class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
+                    class="w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105
+                    {{#if data.yellow_button}}
+                      text-blue-900 bg-yellow-400
+                    {{else}}
+                      text-white bg-blue-900
+                    {{/if}}
+                    "
                   >
-                    <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
-                      <use href="#back-arrow" />
-                    </svg>
-                  </button>
+                    {{#if data.icon}}
+                      <span class="flex h-5 w-5">
+                      {{{ data.icon }}}
+                      </span>
+                    {{/if}}
+                    {{ data.title }}
+                  </a>
+                </li>
+              {{/each}}
+            </ul>
 
-                  <span class="ml-2"> {{data.title}} </span>
-                </div>
-                {{> (dynamic_template)}}
-              </div>
-            {{/if}}
-          {{/each}}
+            <div
+              data-content-container
+              id="content"
+              class="relative w-full flex-shrink-0"
+            >
+              {{#each actions}}
+                {{#if template}}
+                  <div
+                    id="template-{{@index}}"
+                    class="flex flex-col gap-4 p-8 hidden w-full content-block bg-white"
+                  >
+                    <div class="flex items-center">
+                      <button
+                        data-back
+                        class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
+                      >
+                        <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
+                          <use href="#back-arrow" />
+                        </svg>
+                      </button>
+
+                      <span class="ml-2"> {{data.title}} </span>
+                    </div>
+                    {{> (dynamic_template)}}
+                  </div>
+                {{/if}}
+              {{/each}}
+            </div>
+          </div>  
         </div>
-      </div>  
+
+        {{#if GST}}
+          <div class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+            <a>GST – {{ GST }}</a>
+          </div>
+        {{/if}}
+      </div>
     `),
   },
 
   async install() {
     const buildHash = "<build-hash>".replace("<build-hash>", "") || Date.now();
-    const { items } = await fetch(
-      `https://manyog.s3.ap-south-1.amazonaws.com/qr-app-data.json?hash=${buildHash}`
-    )
+    const { items } = await fetch(`/qr-app-data.json?hash=${buildHash}`)
       .then((resp) => resp.json())
       .then((data) => data);
 
@@ -142,11 +168,7 @@ const app = {
 
     // inject html into [data-app]
     setTimeout(() => {
-      const $main = document.querySelector("#main");
-      $main.classList.add("rounded-lg");
-      $main.classList.remove("rounded-full");
-
-      $app.replaceWith(fr.querySelector("[data-slide-container]"));
+      $app.replaceWith(fr.querySelector("[data-main]"));
       this.init();
     }, 1000);
   },
@@ -232,7 +254,7 @@ new DotLottie({
   autoplay: true,
   loop: true,
   canvas: document.querySelector("#dotlottie-canvas"),
-  src: lt, // or .json file
+  data: WranchTightningJson,
   speed: 0.8,
 });
 
