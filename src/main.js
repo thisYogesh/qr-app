@@ -39,6 +39,13 @@ const app = {
               <span class="underline">{{this}}</span>
             </a>
           {{/each}}
+            <a
+              class="flex text-sm items-center gap-1 text-blue-900 font-medium"
+              href="mailto:{{data.email}}"
+            >
+              <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{data.email_icon}}}</span>
+              <span class="underline">{{data.email}}</span>
+            </a>
           <div class="flex text-sm items-start gap-1 text-blue-900 font-medium">
             <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">{{{data.store_icon}}}</span>
             <p>
