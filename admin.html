@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <link href="src/admin.css" rel="stylesheet" />
+    <link href="src/style.css" rel="stylesheet" />
   </head>
   <body>
     <svg class="hidden" xmlns="http://www.w3.org/2000/svg">
@@ -39,7 +40,7 @@
           <div class="flex flex-col gap-1.5">
             <div class="flex gap-1 text-sm items-center">
               <svg class="w-4 h-4" viewBox="0 0 16 16">
-                <use href="#box"></use>
+                <use href="./svg-sprites.svg#box"></use>
               </svg>
               Logo
             </div>
@@ -61,9 +62,15 @@
         </div>
       </aside>
       <div class="flex bg-gray-100 justify-center p-4">
-        <div class="flex w-96 bg-white rounded-lg">Builder</div>
+        <div
+          class="relative flex min-w-96 bg-white rounded-lg border overflow-hidden"
+        >
+          <render-app />
+        </div>
       </div>
       <div>Config</div>
     </div>
+
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

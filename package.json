@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "prettier": "^1.19.1",
+    "prettier-plugin-html-template-literals": "^1.0.5",
     "vite": "^7.0.4"
   },
   "dependencies": {

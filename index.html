@@ -19,85 +19,8 @@
     <link rel="icon" href="favicon.png" />
     <link href="src/style.css" rel="stylesheet" />
   </head>
-  <body
-    class="bg-gray-100 flex flex-col justify-between gap-8"
-    style="font-family: 'Roboto', sans-serif"
-  >
-    <svg
-      class="hidden"
-      xmlns="http://www.w3.org/2000/svg"
-      style="display: none"
-    >
-      <symbol id="back-arrow" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M4 12H20M4 12L8 8M4 12L8 16"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></path>
-      </symbol>
-      <symbol
-        id="icon-apps"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <rect x="3" y="3" width="7" height="7" rx="2" />
-        <rect x="14" y="3" width="7" height="7" rx="2" />
-        <rect x="14" y="14" width="7" height="7" rx="2" />
-        <rect x="3" y="14" width="7" height="7" rx="2" />
-      </symbol>
-    </svg>
-
-    <div class="bg fixed inset-0"></div>
-
-    <header class="flex justify-center items-center pt-8">
-      <!-- Logo Placeholder -->
-      <img src="/logo.svg" alt="Logo" class="w-44" />
-    </header>
-
-    <main class="flex flex-col items-center justify-center px-4">
-      <div
-        data-app
-        id="main"
-        class="flex items-center justify-center bg-white border border-gray-300 rounded-full transition-border shadow-md overflow-hidden"
-      >
-        <div class="p-2">
-          <canvas
-            id="dotlottie-canvas"
-            class="transform rotate-45 w-40 h-40"
-          ></canvas>
-        </div>
-      </div>
-      <p
-        data-status="0"
-        class="hidden flex items-center justify-center gap-1 mt-2"
-      >
-        <svg
-          class="w-6 h-6 text-yellow-500"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M13.995 1.827a1.745 1.745 0 0 0-2.969 0l-9.8 17.742a1.603 1.603 0 0 0 0 1.656 1.678 1.678 0 0 0 1.48.775H22.28a1.68 1.68 0 0 0 1.484-.775 1.608 1.608 0 0 0 .003-1.656zM12 8h1v7h-1zm.5 10.5a1 1 0 1 1 1-1 1.002 1.002 0 0 1-1 1z"
-            fill="currentColor"
-          />
-          <path fill="none" d="M0 0h24v24H0z" />
-        </svg>
-        <span class="text-blue-900"> We are opening soon!! </span>
-      </p>
-    </main>
-
-    <footer>
-      <p class="text-center text-gray-600 pb-4">
-        &copy; 2025 Manyog. All rights reserved.
-      </p>
-    </footer>
-
+  <body class="h-screen" style="font-family: 'Roboto', sans-serif">
+    <render-app />
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

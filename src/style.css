@@ -9,9 +9,9 @@ body {
 }
 
 .bg {
-  background-image: url("../public/tools-bg.jpg");
+  background-image: var(--bg-image);
   background-size: 200px;
-  opacity: 0.05;
+  opacity: var(--bg-opacity, 1);
   z-index: -1;
   pointer-events: none;
 }
