@@ -2,6 +2,121 @@ import Handlebars from "handlebars";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
 
+export const _if = (condition, content, _else = null) => {
+  const exec = content => (typeof content == "function" ? content() : content);
+
+  return condition ? exec(content) : exec(_else);
+};
+
+const MODE = {
+  NORMAL: 1,
+  CUSTOMISER: 2
+};
+
+const getImageData = image => {
+  const { src, svg_markup } = image;
+  return src ? src : svg_markup?.value;
+};
+
+Handlebars.registerHelper({
+  _isEqualTo: function(v1, v2) {
+    return v1 === v2;
+  }
+});
+
+Handlebars.registerHelper({
+  anchor: function(ctx) {
+    const { type, text, href } = ctx;
+    if (type !== "anchor") return;
+
+    return `<a href="${href}">${text}</a>`;
+  },
+
+  image: function(ctx) {
+    const { type, src, svg_markup, size = {} } = ctx;
+    if (type !== "image") return;
+
+    const svgMarkup = svg_markup?.value;
+    const { height, width } = size;
+    const template = Handlebars.compile(`
+      {{#if src}}
+        <img src="{{src}}" height="{{height}}" width="{{width}}"/>
+      {{else}}
+        <span>{{{svg_markup}}}</span>
+      {{/if}}
+    `);
+
+    return template({ src, svg_markup: svgMarkup, height, width });
+  },
+  app_bg: function(ctx) {
+    const template = Handlebars.compile(
+      `<div class="bg absolute inset-0" style="--bg-image: url({{image.src}}); --bg-opacity: {{opacity.value}}; --bg-size: {{bg_size.height}} {{bg_size.width}}"></div>`
+    );
+
+    return template(ctx);
+  },
+  app_button: function(ctx, index) {
+    const { data, template } = ctx;
+    const { background_color = {}, icon, label, href } = data.button;
+    const { value: bg_color } = background_color;
+
+    const temp = Handlebars.compile(`
+    <a
+      {{#if template}}
+        data-trigger="#template-{{index}}"
+      {{/if}}
+
+      {{#if href}}
+        href="{{href}}"
+        target="_blank"
+      {{else}}
+        data-trigger="{{template}}"
+      {{/if}}
+
+      style="
+        {{#if bg_color}}--bg-color: {{bg_color}};{{else}}--bg-color: #000080;{{/if}}
+        {{#if text_color}}--text-color: {{text_color}};{{else}}--text-color: white;{{/if}}
+      "
+
+      class="app-button w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105"
+    >
+      {{#if icon}}
+        <span class="flex h-5 w-5">
+          {{#image icon}}{{/image}}
+        </span>
+      {{/if}}
+      {{ label }}
+    </a>`);
+
+    return temp({ template, icon, label, bg_color, href, index });
+  },
+
+  icon_with_content: function(ctx) {
+    const { icon, content } = ctx;
+
+    const template = Handlebars.compile(`
+      <div class="flex text-sm items-start gap-1 text-blue-900 font-medium">
+        <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">
+          {{#image icon}}{{/image}}
+        </span>
+
+        {{#if (_isEqualTo content.type 'anchor')}}
+          {{#anchor content}}{{/anchor}}
+        {{else}}
+          <p>{{content}}</p>
+        {{/if}}
+      </div>`);
+
+    return template({ icon, content });
+  },
+
+  dynamic_template: function(ctx) {
+    const { index, root } = ctx.data;
+    const { template } = root.actions[index];
+    return template;
+  }
+});
+
 const app = {
   URL: new URL(location.href),
   storeConfig: null,
@@ -10,28 +125,6 @@ const app = {
   $slideContainer: null,
   $contentBlocks: [],
   $backButtons: [],
-
-  helpers: {
-    asset: Handlebars.registerHelper("asset", function(ctx) {
-      const { type, url, height, width } = ctx;
-      if (type !== "asset") return;
-
-      return new Handlebars.SafeString(
-        `<img src="${url}" height="${height}" width="${width}"/>`
-      );
-    }),
-    app_bg: Handlebars.registerHelper("app_bg", function(ctx) {
-      const { url, opacity } = ctx;
-      return `<div class="bg absolute inset-0" style="--bg-image: url(${url}); --bg-opacity: ${opacity}"></div>`;
-    }),
-    dynamic_template: Handlebars.registerHelper("dynamic_template", function(
-      context
-    ) {
-      const { index, root } = context.data;
-      const { template } = root.actions[index];
-      return template;
-    })
-  },
 
   templates: {
     list_phone_numbers: Handlebars.registerPartial(
@@ -48,47 +141,28 @@ const app = {
           {{/each}}
         </div>`
     ),
-    address_with_phone_numbers: Handlebars.registerPartial(
-      "address_with_phone_numbers",
+    contact_us: Handlebars.registerPartial(
+      "contact_us",
       `<div>
         <div class="flex flex-col gap-2">
-          {{#each data.contact_numbers}}
-            <a
-              class="flex text-sm items-center gap-1 text-blue-900 font-medium"
-              href="https://wa.me/{{this}}"
-            >
-              <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{../data.icon}}}</span>
-              <span class="underline">{{this}}</span>
-            </a>
+          {{#each data.items}}
+            {{#icon_with_content this}}{{/icon_with_content}}
           {{/each}}
-            <a
-              class="flex text-sm items-center gap-1 text-blue-900 font-medium"
-              href="mailto:{{data.email}}"
-            >
-              <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{data.email_icon}}}</span>
-              <span class="underline">{{data.email}}</span>
-            </a>
-          <div class="flex text-sm items-start gap-1 text-blue-900 font-medium">
-            <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">{{{data.store_icon}}}</span>
-            <p>
-              {{data.address}}
-            </p>
-          </div>
         </div>
       </div>`
     ),
     simple_text: Handlebars.registerPartial("simple_text", `{{data.content}}`),
 
     render: Handlebars.compile(`
-    <div data-app class="flex flex-col justify-between h-full gap-8 z-10">
+    <div data-app class="flex flex-col w-full justify-between h-full gap-8 z-10">
       {{#app_bg backrgound}}{{/app_bg}}
 
       <header class="flex justify-center items-center pt-8">
-        {{#asset logo}}{{/asset}}
+        {{#image logo}}{{/image}}
       </header>
       <main class="flex flex-col items-center justify-center px-4">
         {{#if status}}
-          <div data-main class="flex w-full md:w-96 flex-col items-center justify-center">
+          <div data-main class="flex w-full flex-col items-center justify-center">
             <div class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
               <div
                 data-slide-container
@@ -97,33 +171,7 @@ const app = {
                 <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
                   {{#each actions}}
                     <li>
-                      <a
-                        {{#if template}}
-                          data-trigger="#template-{{@index}}"
-                        {{/if}}
-
-                        {{#if data.href}}
-                          href="{{data.href}}"
-                          target="_blank"
-                        {{else}}
-                          data-trigger="{{template}}"
-                        {{/if}}
-
-                        class="w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105
-                        {{#if data.yellow_button}}
-                          text-blue-900 bg-yellow-400
-                        {{else}}
-                          text-white bg-blue-900
-                        {{/if}}
-                        "
-                      >
-                        {{#if data.icon}}
-                          <span class="flex h-5 w-5">
-                          {{{ data.icon }}}
-                          </span>
-                        {{/if}}
-                        {{ data.title }}
-                      </a>
+                      {{#app_button this @index}}{{/app_button}}
                     </li>
                   {{/each}}
                 </ul>
@@ -166,23 +214,31 @@ const app = {
             {{/if}}
           </div>
         {{else}}
-          <p
-            data-status="0"
-            class="flex items-center justify-center gap-1 mt-2"
-          >
-            <svg
-              class="w-6 h-6 text-yellow-500"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          <div>
+            <div class="p-2">
+              <canvas
+                id="dotlottie-canvas"
+                class="transform rotate-45 w-40 h-40"
+              ></canvas>
+            </div>  
+            <p
+              data-status="0"
+              class="flex items-center justify-center gap-1 mt-2"
             >
-              <path
-                d="M13.995 1.827a1.745 1.745 0 0 0-2.969 0l-9.8 17.742a1.603 1.603 0 0 0 0 1.656 1.678 1.678 0 0 0 1.48.775H22.28a1.68 1.68 0 0 0 1.484-.775 1.608 1.608 0 0 0 .003-1.656zM12 8h1v7h-1zm.5 10.5a1 1 0 1 1 1-1 1.002 1.002 0 0 1-1 1z"
-                fill="currentColor"
-              />
-              <path fill="none" d="M0 0h24v24H0z" />
-            </svg>
-            <span class="text-blue-900"> We are opening soon!! </span>
-          </p>
+              <svg
+                class="w-6 h-6 text-yellow-500"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.995 1.827a1.745 1.745 0 0 0-2.969 0l-9.8 17.742a1.603 1.603 0 0 0 0 1.656 1.678 1.678 0 0 0 1.48.775H22.28a1.68 1.68 0 0 0 1.484-.775 1.608 1.608 0 0 0 .003-1.656zM12 8h1v7h-1zm.5 10.5a1 1 0 1 1 1-1 1.002 1.002 0 0 1-1 1z"
+                  fill="currentColor"
+                />
+                <path fill="none" d="M0 0h24v24H0z" />
+              </svg>
+              <span class="text-blue-900"> We are opening soon!! </span>
+            </p>
+          </div>
         {{/if}}
       </main>
 
@@ -227,6 +283,9 @@ const app = {
   },
 
   init() {
+    const { storeConfig } = this;
+    if (storeConfig.status === 0) return this.enableWranchAnimation();
+
     const [$slideContainer, $containerEl] = document.querySelectorAll(
       "#content, [data-slide-container]"
     );
@@ -250,6 +309,16 @@ const app = {
     $backButtons.forEach($el =>
       $el.addEventListener("click", () => this.goBack())
     );
+  },
+
+  enableWranchAnimation() {
+    new DotLottie({
+      autoplay: true,
+      loop: true,
+      canvas: document.querySelector("#dotlottie-canvas"),
+      data: WranchTightningJson,
+      speed: 0.8
+    });
   },
 
   onContentBlockSelect($blockButton) {
@@ -304,13 +373,5 @@ const app = {
     // },
   }
 };
-
-new DotLottie({
-  autoplay: true,
-  loop: true,
-  canvas: document.querySelector("#dotlottie-canvas"),
-  data: WranchTightningJson,
-  speed: 0.8
-});
 
 window.addEventListener("DOMContentLoaded", () => app.install());
