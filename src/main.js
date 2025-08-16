@@ -13,11 +13,6 @@ const MODE = {
   CUSTOMISER: 2
 };
 
-const getImageData = image => {
-  const { src, svg_markup } = image;
-  return src ? src : svg_markup?.value;
-};
-
 Handlebars.registerHelper({
   _isEqualTo: function(v1, v2) {
     return v1 === v2;
@@ -40,7 +35,7 @@ Handlebars.registerHelper({
     const { height, width } = size;
     const template = Handlebars.compile(`
       {{#if src}}
-        <img src="{{src}}" height="{{height}}" width="{{width}}"/>
+        <img data-customize src="{{src}}" height="{{height}}" width="{{width}}"/>
       {{else}}
         <span>{{{svg_markup}}}</span>
       {{/if}}
@@ -50,7 +45,7 @@ Handlebars.registerHelper({
   },
   app_bg: function(ctx) {
     const template = Handlebars.compile(
-      `<div class="bg absolute inset-0" style="--bg-image: url({{image.src}}); --bg-opacity: {{opacity.value}}; --bg-size: {{bg_size.height}} {{bg_size.width}}"></div>`
+      `<div data-customize class="bg absolute inset-0" style="--bg-image: url({{image.src}}); --bg-opacity: {{opacity.value}}; --bg-size: {{bg_size.height}} {{bg_size.width}}"></div>`
     );
 
     return template(ctx);
@@ -143,13 +138,11 @@ const app = {
     ),
     contact_us: Handlebars.registerPartial(
       "contact_us",
-      `<div>
-        <div class="flex flex-col gap-2">
+      `<div class="flex flex-col gap-2">
           {{#each data.items}}
             {{#icon_with_content this}}{{/icon_with_content}}
           {{/each}}
-        </div>
-      </div>`
+        </div>`
     ),
     simple_text: Handlebars.registerPartial("simple_text", `{{data.content}}`),
 
@@ -280,6 +273,10 @@ const app = {
     // inject html into <render-app/>
     $app.replaceWith(fr.querySelector("[data-app]"));
     this.init();
+
+    // emit event to know markup had injeected into html
+    const buildEvent = new Event("@build");
+    window.dispatchEvent(buildEvent);
   },
 
   init() {
