@@ -35,7 +35,7 @@ Handlebars.registerHelper({
     const { height, width } = size;
     const template = Handlebars.compile(`
       {{#if src}}
-        <img data-customize src="{{src}}" height="{{height}}" width="{{width}}"/>
+        <img src="{{src}}" height="{{height}}" width="{{width}}"/>
       {{else}}
         <span>{{{svg_markup}}}</span>
       {{/if}}
@@ -45,7 +45,7 @@ Handlebars.registerHelper({
   },
   app_bg: function(ctx) {
     const template = Handlebars.compile(
-      `<div data-customize class="bg absolute inset-0" style="--bg-image: url({{image.src}}); --bg-opacity: {{opacity.value}}; --bg-size: {{bg_size.height}} {{bg_size.width}}"></div>`
+      `<div class="bg absolute inset-0" style="--bg-image: url({{image.src}}); --bg-opacity: {{opacity.value}}; --bg-size: {{bg_size.height}} {{bg_size.width}}"></div>`
     );
 
     return template(ctx);
@@ -96,7 +96,9 @@ Handlebars.registerHelper({
         </span>
 
         {{#if (_isEqualTo content.type 'anchor')}}
-          {{#anchor content}}{{/anchor}}
+          <span class="underline">
+            {{#anchor content}}{{/anchor}}
+          </span>
         {{else}}
           <p>{{content}}</p>
         {{/if}}
@@ -151,7 +153,9 @@ const app = {
       {{#app_bg backrgound}}{{/app_bg}}
 
       <header class="flex justify-center items-center pt-8">
-        {{#image logo}}{{/image}}
+        <div data-customize="logo">
+          {{#image logo}}{{/image}}
+        </div>
       </header>
       <main class="flex flex-col items-center justify-center px-4">
         {{#if status}}
@@ -163,7 +167,7 @@ const app = {
               >
                 <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
                   {{#each actions}}
-                    <li>
+                    <li data-customize="actions[{{@index}}].data">
                       {{#app_button this @index}}{{/app_button}}
                     </li>
                   {{/each}}
@@ -201,7 +205,7 @@ const app = {
             </div>
 
             {{#if GST}}
-              <div class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+              <div data-customize class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
                 <a>GST – {{ GST }}</a>
               </div>
             {{/if}}
@@ -235,8 +239,8 @@ const app = {
         {{/if}}
       </main>
 
-      <footer>
-        <p class="text-center text-gray-600 pb-4">
+      <footer class="pb-4">
+        <p data-customize class="text-center text-gray-600">
           &copy; 2025 Manyog. All rights reserved.
         </p>
       </footer>
@@ -276,6 +280,7 @@ const app = {
 
     // emit event to know markup had injeected into html
     const buildEvent = new Event("@build");
+    buildEvent.storeConfig = storeConfig;
     window.dispatchEvent(buildEvent);
   },
 
