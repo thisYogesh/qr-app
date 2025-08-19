@@ -75,6 +75,17 @@ const Customiser = {
             .join("")}
         </div>
       </div>`;
+    } else if (value.type === "link-button") {
+      return `<div class="border p-2">
+        <label>${title}</label>
+        <input type="text" value="${value.label}"/>
+
+        <div>
+          ${getFields(value)
+            .map(field => this.makeField(field))
+            .join("")}
+        </div>
+      </div>`;
     } else if (value.type === "color") {
       return `<div class="border p-2">
         <label>${title}</label>
@@ -86,8 +97,22 @@ const Customiser = {
             .join("")}
         </div>
       </div>`;
+    } else if (value.type === "size") {
+      return `<div class="border p-2">
+        <label>${title}</label>
+        <div class="flex gap-1">
+          <input type="text" value="${value.height}"/>
+          <input type="text" value="${value.width}"/>
+        </div>
+
+        <div>
+          ${getFields(value)
+            .map(field => this.makeField(field))
+            .join("")}
+        </div>
+      </div>`;
     } else if (isString)
-      return `<div class="border p-2"><label>${title}</label> <input type="text"/></div>`;
+      return `<div class="border p-2"><label>${title}</label> <input type="text" value="${value}"/></div>`;
 
     return "";
   }

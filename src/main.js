@@ -205,8 +205,8 @@ const app = {
             </div>
 
             {{#if GST}}
-              <div data-customize class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
-                <a>GST – {{ GST }}</a>
+              <div data-customize="GST" class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+                <a>GST – {{ GST.value }}</a>
               </div>
             {{/if}}
           </div>
@@ -240,8 +240,8 @@ const app = {
       </main>
 
       <footer class="pb-4">
-        <p data-customize class="text-center text-gray-600">
-          &copy; 2025 Manyog. All rights reserved.
+        <p data-customize="Copywrite" class="text-center text-gray-600">
+          {{Copywrite.value}}
         </p>
       </footer>
     </div>

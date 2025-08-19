@@ -49,7 +49,6 @@
         {
           "template": "contact_us",
           "data": {
-            "title": "Contact Us",
             "button": {
               "type": "button",
               "label": "Contact Us",
@@ -126,12 +125,14 @@
           }
         },
         {
-          "content_type": "redirect",
           "data": {
-            "title": "Go to Store Location",
             "button": {
               "type": "link-button",
               "label": "Go to Store Location",
+              "background_color": {
+                "type": "color",
+                "value": "#000080"
+              },
               "icon": {
                 "type": "image",
                 "src": "",
@@ -147,7 +148,6 @@
         {
           "template": "simple_text",
           "data": {
-            "title": "Buy Online",
             "button": {
               "type": "button",
               "label": "Buy Online",
@@ -167,8 +167,8 @@
           }
         }
       ],
-      "GST": "27ALGPJ0695K1ZR",
-      "Copywrite": "© 2025 Manyog. All rights reserved."
+      "GST": { "value": "27ALGPJ0695K1ZR" },
+      "Copywrite": { "value": "© 2025 Manyog. All rights reserved." }
     }
   ]
 }
