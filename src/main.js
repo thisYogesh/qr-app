@@ -31,7 +31,6 @@ Handlebars.registerHelper({
     const { type, src, svg_markup, size = {} } = ctx;
     if (type !== "image") return;
 
-    const svgMarkup = svg_markup?.value;
     const { height, width } = size;
     const template = Handlebars.compile(`
       {{#if src}}
@@ -41,7 +40,7 @@ Handlebars.registerHelper({
       {{/if}}
     `);
 
-    return template({ src, svg_markup: svgMarkup, height, width });
+    return template({ src, svg_markup, height, width });
   },
   app_bg: function(ctx) {
     const template = Handlebars.compile(

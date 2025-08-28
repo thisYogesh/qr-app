@@ -11,15 +11,89 @@ Handlebars.registerHelper({
     const { value } = fieldObj.field;
     const { type } = value;
     return type;
+  },
+
+  media_control: function(obj) {
+    return Handlebars.compile(`
+      <div class="media-control">
+        <div class="media-control__preview bg-gray-100 border border-gray-200 flex rounded justify-center">
+          {{#if this.src}}
+            <img src="{{this.src}}" class="w-32 h-32 object-contain image-bg"/>
+          {{else if this.svg_markup}}
+            <div class="media-control__svg w-32 h-32 image-bg">
+              {{{this.svg_markup}}}
+            </div>
+          {{else}}
+            No Image Provided
+          {{/if}}
+        </div>
+      </div>
+    `)(obj);
   }
 });
 
 Handlebars.registerPartial({
-  image: ``,
+  size: `
+  <div data-field="size" class="field size border p-2">
+    <label>{{this.field.title}}</label>
+    <input type="text" value="{{this.field.value.width}}"/>
+    <input type="text" value="{{this.field.value.height}}"/>
+
+    <div class="sub-field">
+      {{#each this.fields}}
+        {{> (dynamic_field this) }}
+      {{/each}}
+    </div>
+  </div>`,
+  "link-button": `
+  <div data-field="link-button" class="field link-button border p-2">
+    <label>{{this.field.title}}</label>
+
+    <input type="text" value="{{this.field.value.label}}"/>
+    <input type="text" value="{{this.field.value.href}}"/>
+
+    <div class="sub-field">
+      {{#each this.fields}}
+        {{> (dynamic_field this) }}
+      {{/each}}
+    </div>
+  </div>
+  `,
+  image: `
+  <div data-field="image" class="field image border p-2">
+    <label>{{this.field.title}}</label>
+    {{#media_control this.field.value}}{{/media_control}}
+
+    <div class="sub-field">
+      {{#each this.fields}}
+        {{> (dynamic_field this) }}
+      {{/each}}
+    </div>
+  </div>
+  `,
+
+  color: `
+  <div data-field="color" class="field color border p-2">
+    <label>{{this.field.title}}</label>
+    <input type="color" value="{{this.field.value.value}}"/>
+
+    <div class="sub-field">
+      {{#each this.fields}}
+        {{> (dynamic_field this) }}
+      {{/each}}
+    </div>
+  </div>
+  `,
   button: `
-  <div class="main border p-2">
-    <label>{{title}}</label>
-    <input type="text" value="{{value.label}}"/>
+  <div data-field="button" class="field button border p-2">
+    <label>{{this.field.title}}</label>
+    <input type="text" value="{{this.field.value.label}}"/>
+
+    <div class="sub-field">
+      {{#each this.fields}}
+        {{> (dynamic_field this) }}
+      {{/each}}
+    </div>
   </div>`
 });
 
@@ -85,7 +159,7 @@ const Customiser = {
   },
 
   extractFields(field) {
-    const { title, value } = field;
+    const { value } = field;
     const fields = {
       field,
       fields: getFields(value).map(field => this.extractFields(field))
@@ -104,7 +178,7 @@ const Customiser = {
         {{/if}}
       </div>`);
 
-    console.log(this.extractFields(field));
+    const fieldMap = this.extractFields(field);
 
     // if (value.type === "button") {
     //   return `<div class="border p-2">
@@ -156,7 +230,7 @@ const Customiser = {
     // } else if (isString)
     //   return `<div class="border p-2"><label>${title}</label> <input type="text" value="${value}"/></div>`;
 
-    return template({ field, fields: getFields(value) });
+    return template(fieldMap);
   }
 };
 
