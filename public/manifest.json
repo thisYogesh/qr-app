@@ -40,6 +40,13 @@
         }
       },
 
+      "action_background": {
+        "background_color": {
+          "type": "color",
+          "value": "#000080"
+        }
+      },
+
       "actions": [
         {
           "template": "contact_us",
@@ -141,8 +148,14 @@
           }
         }
       ],
-      "GST": { "value": "27ALGPJ0695K1ZR" },
-      "Copywrite": { "value": "© 2025 Manyog. All rights reserved." }
+      "GST": {
+        "type": "value",
+        "value": "27ALGPJ0695K1ZR"
+      },
+      "Copywrite": {
+        "type": "value",
+        "value": "© 2025 Manyog. All rights reserved."
+      }
     }
   ]
 }

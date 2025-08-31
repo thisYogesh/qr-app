@@ -1,4 +1,4 @@
-import Handlebars from "handlebars";
+import Handlebars from "./handlebars";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
 
@@ -9,15 +9,9 @@ export const _if = (condition, content, _else = null) => {
 };
 
 const MODE = {
-  NORMAL: 1,
-  CUSTOMISER: 2
+  NORMAL: "1",
+  CUSTOMIZER: "2"
 };
-
-Handlebars.registerHelper({
-  _isEqualTo: function(v1, v2) {
-    return v1 === v2;
-  }
-});
 
 Handlebars.registerHelper({
   anchor: function(ctx) {
@@ -148,7 +142,7 @@ const app = {
     simple_text: Handlebars.registerPartial("simple_text", `{{data.content}}`),
 
     render: Handlebars.compile(`
-    <div data-app class="flex flex-col w-full justify-between h-full gap-8 z-10">
+    <div data-app data-customize="default" class="flex flex-col w-full justify-between h-full gap-8 z-10">
       {{#app_bg backrgound}}{{/app_bg}}
 
       <header class="flex justify-center items-center pt-8">
@@ -159,7 +153,7 @@ const app = {
       <main class="flex flex-col items-center justify-center px-4">
         {{#if status}}
           <div data-main class="flex w-full flex-col items-center justify-center">
-            <div class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
+            <div data-customize="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
               <div
                 data-slide-container
                 class="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
@@ -193,7 +187,7 @@ const app = {
                             </svg>
                           </button>
 
-                          <span class="ml-2"> {{data.title}} </span>
+                          <span class="ml-2"> {{data.button.label}} </span>
                         </div>
                         {{> (dynamic_template)}}
                       </div>
@@ -269,6 +263,8 @@ const app = {
     fr.append(document.createElement("div"));
 
     const $app = document.querySelector("render-app");
+    this.mode = $app.dataset.mode;
+
     const appContent = templates.render(storeConfig);
 
     fr.querySelector("div").innerHTML = appContent;
@@ -297,7 +293,9 @@ const app = {
     ));
 
     $contentBlocks.forEach($el =>
-      $el.addEventListener("click", () => this.onContentBlockSelect($el))
+      $el.addEventListener("click", () =>
+        this.eventListener(() => this.onContentBlockSelect($el))
+      )
     );
 
     const { height } = $slideContainer.getBoundingClientRect();
@@ -308,8 +306,15 @@ const app = {
     ));
 
     $backButtons.forEach($el =>
-      $el.addEventListener("click", () => this.goBack())
+      $el.addEventListener("click", () =>
+        this.eventListener(() => this.goBack())
+      )
     );
+  },
+
+  eventListener(callback) {
+    if (this.mode === MODE.CUSTOMIZER) return;
+    callback();
   },
 
   enableWranchAnimation() {
@@ -355,23 +360,6 @@ const app = {
     const { $slideContainer } = this;
     $slideContainer.style.removeProperty("--dynamic-height");
     $slideContainer.classList.remove("-translate-x-full");
-  },
-
-  methods: {
-    // async shareLocation() {
-    //   const { canShare } = this;
-    //   if (canShare) {
-    //     return await navigator
-    //       .share({
-    //         title: "Manyog",
-    //         text: "Manyog — Hardware & Sanitaryware",
-    //         url: "https://g.co/kgs/yc2gBs5",
-    //       })
-    //       .catch((err) => console.log(err));
-    //   }
-    //   // copy to clipboard
-    //   navigator.clipboard.writeText("https://g.co/kgs/yc2gBs5");
-    // },
   }
 };
 

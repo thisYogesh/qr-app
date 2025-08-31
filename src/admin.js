@@ -1,4 +1,6 @@
-import Handlebars from "handlebars";
+import Handlebars from "./handlebars";
+
+let counter = 0;
 const getEval = path => new Function("obj", `return obj.${path}`);
 
 const getFields = value =>
@@ -29,76 +31,91 @@ Handlebars.registerHelper({
         </div>
       </div>
     `)(obj);
+  },
+
+  input_control: function(label, type, value) {
+    const id = `input-${counter++}`;
+    return Handlebars.compile(`
+      <div class="input flex flex-col gap-0.5">
+        {{#if label}}
+          <label for="${id}" class="input__label capitalize text-gray-700 font-semibold text-xs">{{ label }}</label>
+        {{/if}}
+        <input id="${id}" class="text-sm h-8" type="{{this.type}}" value="{{this.value}}"/>
+      </div>
+    `)({ label, type, value });
+  },
+
+  setting_block: function(title, util) {
+    const innerContent = util.fn(this);
+
+    return Handlebars.compile(`
+      <div data-field class="setting-block flex flex-col gap-2 border p-2 rounded">
+        <div class="main-settings">
+          <span class="capitalize text-sm">{{this.field.title}}</span>
+          ${innerContent}
+        </div>
+
+        {{#if this.fields.length}}
+          <div class="sub-settings flex flex-col gap-2">
+            {{#each this.fields}}
+              {{> (dynamic_field this) }}
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+      </div>
+    `)(this);
   }
 });
 
 Handlebars.registerPartial({
   size: `
-  <div data-field="size" class="field size border p-2">
-    <label>{{this.field.title}}</label>
-    <input type="text" value="{{this.field.value.width}}"/>
-    <input type="text" value="{{this.field.value.height}}"/>
-
-    <div class="sub-field">
-      {{#each this.fields}}
-        {{> (dynamic_field this) }}
-      {{/each}}
+  {{#setting_block this.field.title}}
+    <div class="flex gap-2">
+      {{#input_control 'width' 'text' this.field.value.width}}{{/input_control}}
+      {{#input_control 'height' 'text' this.field.value.height}}{{/input_control}}
     </div>
-  </div>`,
-  "link-button": `
-  <div data-field="link-button" class="field link-button border p-2">
-    <label>{{this.field.title}}</label>
-
-    <input type="text" value="{{this.field.value.label}}"/>
-    <input type="text" value="{{this.field.value.href}}"/>
-
-    <div class="sub-field">
-      {{#each this.fields}}
-        {{> (dynamic_field this) }}
-      {{/each}}
-    </div>
-  </div>
+  {{/setting_block}}
   `,
-  image: `
-  <div data-field="image" class="field image border p-2">
-    <label>{{this.field.title}}</label>
-    {{#media_control this.field.value}}{{/media_control}}
 
-    <div class="sub-field">
-      {{#each this.fields}}
-        {{> (dynamic_field this) }}
-      {{/each}}
+  "link-button": `
+  {{#setting_block this.field.title}}
+    <div class="flex flex-col gap-2">
+      {{#input_control 'Title' 'text' this.field.value.label}}{{/input_control}}
+      {{#input_control 'Hyperlink' 'text' this.field.value.href}}{{/input_control}}
     </div>
-  </div>
+  {{/setting_block}}
+  `,
+
+  image: `
+  {{#setting_block this.field.title}}
+    {{#media_control this.field.value}}{{/media_control}}
+  {{/setting_block}}
   `,
 
   color: `
-  <div data-field="color" class="field color border p-2">
-    <label>{{this.field.title}}</label>
-    <input type="color" value="{{this.field.value.value}}"/>
-
-    <div class="sub-field">
-      {{#each this.fields}}
-        {{> (dynamic_field this) }}
-      {{/each}}
-    </div>
-  </div>
+  {{#setting_block this.field.title}}
+    {{#input_control '' 'color' this.field.value.value}}{{/input_control}}
+  {{/setting_block}}
   `,
   button: `
-  <div data-field="button" class="field button border p-2">
-    <label>{{this.field.title}}</label>
-    <input type="text" value="{{this.field.value.label}}"/>
-
-    <div class="sub-field">
-      {{#each this.fields}}
-        {{> (dynamic_field this) }}
-      {{/each}}
-    </div>
-  </div>`
+  {{#setting_block this.field.title}}
+    {{#input_control 'Title' 'text' this.field.value.label}}{{/input_control}}
+  {{/setting_block}}
+  `,
+  value: `
+  {{#setting_block this.field.title}}
+    {{#input_control '' 'text' this.field.value.value}}{{/input_control}}
+  {{/setting_block}}
+  `
 });
 
-const Customiser = {
-  init(e) {
+class AppCustomizer {
+  constructor() {
+    this.init();
+  }
+
+  init(storeConfig) {
     const $customisers = document.querySelectorAll("[data-customize]");
     const $triggers = [];
 
@@ -106,16 +123,23 @@ const Customiser = {
       const $trigger = document.createElement("span");
 
       $trigger.dataset.customizeTrigger = true;
-      $trigger.classList.add("hidden");
+      $trigger.classList.add("hidden", "pointer-events-none");
 
       $el.$trigger = $trigger;
       document.body.append($trigger);
 
       $triggers.push($trigger);
 
-      $el.addEventListener("mouseenter", e => {
-        const { $trigger } = e.target;
-        const { height, width, left, top } = e.target.getBoundingClientRect();
+      $el.addEventListener("mouseover", e => {
+        e.stopPropagation();
+
+        const { $trigger } = e.currentTarget;
+        const {
+          height,
+          width,
+          left,
+          top
+        } = e.currentTarget.getBoundingClientRect();
 
         $trigger.style.setProperty("height", height + "px");
         $trigger.style.setProperty("width", width + "px");
@@ -130,15 +154,19 @@ const Customiser = {
           .forEach($el => $el.classList.add("hidden"));
       });
 
+      $trigger.addEventListener("mouseleave", e => {
+        e.target.classList.add("hidden");
+      });
+
       $trigger.addEventListener("click", () => {
         const { customize } = $el.dataset;
         this.showConfig(customize);
       });
     });
 
-    this.storeConfig = e.storeConfig;
+    this.storeConfig = storeConfig;
     this.$fieldViewer = document.querySelector("[data-config]");
-  },
+  }
 
   showConfig(path) {
     const { storeConfig } = this;
@@ -156,7 +184,7 @@ const Customiser = {
     }
 
     this.$fieldViewer.innerHTML = fields.join("");
-  },
+  }
 
   extractFields(field) {
     const { value } = field;
@@ -165,14 +193,14 @@ const Customiser = {
       fields: getFields(value).map(field => this.extractFields(field))
     };
     return fields;
-  },
+  }
 
   makeField(field) {
     const { title, value } = field;
     const isString = typeof value === "string";
 
     const template = Handlebars.compile(`
-      <div class="root border p-2">
+      <div class="root p-2">
         {{#if this.field}}
           {{> (dynamic_field this) }}
         {{/if}}
@@ -180,58 +208,9 @@ const Customiser = {
 
     const fieldMap = this.extractFields(field);
 
-    // if (value.type === "button") {
-    //   return `<div class="border p-2">
-    //     <label>${title}</label>
-    //     <input type="text" value="${value.label}"/>
-
-    //     <div>
-    //       ${getFields(value)
-    //         .map(field => this.makeField(field))
-    //         .join("")}
-    //     </div>
-    //   </div>`;
-    // } else if (value.type === "link-button") {
-    //   return `<div class="border p-2">
-    //     <label>${title}</label>
-    //     <input type="text" value="${value.label}"/>
-
-    //     <div>
-    //       ${getFields(value)
-    //         .map(field => this.makeField(field))
-    //         .join("")}
-    //     </div>
-    //   </div>`;
-    // } else if (value.type === "color") {
-    //   return `<div class="border p-2">
-    //     <label>${title}</label>
-    //     <input type="color" value="${value.value}"/>
-
-    //     <div>
-    //       ${getFields(value)
-    //         .map(field => this.makeField(field))
-    //         .join("")}
-    //     </div>
-    //   </div>`;
-    // } else if (value.type === "size") {
-    //   return `<div class="border p-2">
-    //     <label>${title}</label>
-    //     <div class="flex gap-1">
-    //       <input type="text" value="${value.height}"/>
-    //       <input type="text" value="${value.width}"/>
-    //     </div>
-
-    //     <div>
-    //       ${getFields(value)
-    //         .map(field => this.makeField(field))
-    //         .join("")}
-    //     </div>
-    //   </div>`;
-    // } else if (isString)
-    //   return `<div class="border p-2"><label>${title}</label> <input type="text" value="${value}"/></div>`;
-
     return template(fieldMap);
   }
-};
+}
 
-window.addEventListener("@build", e => Customiser.init(e));
+const Customizer = new AppCustomizer();
+window.addEventListener("@build", e => Customizer.init(e.storeConfig));
