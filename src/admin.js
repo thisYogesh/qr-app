@@ -1,7 +1,10 @@
 import Handlebars from "./handlebars";
 
 let counter = 0;
-const getEval = path => new Function("obj", `return obj.${path}`);
+const getEval = path => {
+  const paths = path.split(",").map(path => `obj.${path}`);
+  return new Function("obj", `return [${paths}]`);
+};
 
 const getFields = value =>
   [...Object.entries(value)]
@@ -107,17 +110,31 @@ Handlebars.registerPartial({
   {{#setting_block this.field.title}}
     {{#input_control '' 'text' this.field.value.value}}{{/input_control}}
   {{/setting_block}}
+  `,
+  opacity: `
+  {{#setting_block this.field.title}}
+    <input type="range" min="0" max="1" step="0.1" value="{{this.field.value.value}}"/>
+  {{/setting_block}}
   `
 });
 
 class AppCustomizer {
   constructor() {
-    this.init();
+    this.selectedCustomize = null;
+    this.highlightedCustomize = "backrgound";
   }
 
   init(storeConfig) {
     const $customisers = document.querySelectorAll("[data-customize]");
+    this.$app = document.querySelector("[data-app]");
+    this.$fieldViewer = document.querySelector("[data-config]");
+
+    this.storeConfig = storeConfig;
     const $triggers = [];
+
+    this.$app.addEventListener("click", () => {
+      this.showConfigHandler();
+    });
 
     $customisers.forEach($el => {
       const $trigger = document.createElement("span");
@@ -133,7 +150,7 @@ class AppCustomizer {
       $el.addEventListener("mouseover", e => {
         e.stopPropagation();
 
-        const { $trigger } = e.currentTarget;
+        const { $trigger, dataset } = e.currentTarget;
         const {
           height,
           width,
@@ -152,25 +169,22 @@ class AppCustomizer {
         [...$triggers]
           .filter($el => $el !== $trigger)
           .forEach($el => $el.classList.add("hidden"));
-      });
 
-      $trigger.addEventListener("mouseleave", e => {
-        e.target.classList.add("hidden");
-      });
-
-      $trigger.addEventListener("click", () => {
-        const { customize } = $el.dataset;
-        this.showConfig(customize);
+        const { customize } = dataset;
+        this.highlightedCustomize = customize;
       });
     });
+  }
 
-    this.storeConfig = storeConfig;
-    this.$fieldViewer = document.querySelector("[data-config]");
+  showConfigHandler() {
+    const { highlightedCustomize } = this;
+    const selectedCustomize = (this.selectedCustomize = highlightedCustomize);
+    this.showConfig(selectedCustomize);
   }
 
   showConfig(path) {
     const { storeConfig } = this;
-    const data = getEval(path)(storeConfig);
+    const [data] = getEval(path)(storeConfig);
     const fields = [];
 
     if (data.type) {
