@@ -1,4 +1,5 @@
 import Handlebars from "./handlebars";
+import { randomId } from "./utils";
 
 let counter = 0;
 const getEval = path => {
@@ -21,7 +22,7 @@ Handlebars.registerHelper({
   media_control: function(obj) {
     return Handlebars.compile(`
       <div class="media-control">
-        <div class="media-control__preview bg-gray-100 border border-gray-200 flex rounded justify-center">
+        <div class="media-control__preview bg-gray-100 border border-dashed border-gray-200 flex rounded justify-center">
           {{#if this.src}}
             <img src="{{this.src}}" class="w-32 h-32 object-contain image-bg"/>
           {{else if this.svg_markup}}
@@ -54,7 +55,7 @@ Handlebars.registerHelper({
     return Handlebars.compile(`
       <div data-field class="setting-block flex flex-col gap-2 border p-2 rounded">
         <div class="main-settings">
-          <span class="capitalize text-sm">{{this.field.title}}</span>
+          <span class="capitalize text-sm">${title}</span>
           ${innerContent}
         </div>
 
@@ -113,18 +114,19 @@ Handlebars.registerPartial({
   `,
   opacity: `
   {{#setting_block this.field.title}}
-    <input type="range" min="0" max="1" step="0.1" value="{{this.field.value.value}}"/>
+    <input type="range" min="0" max="1" step="0.01" value="{{this.field.value.value}}"/>
   {{/setting_block}}
   `
 });
 
 class AppCustomizer {
   constructor() {
-    this.selectedCustomize = null;
-    this.highlightedCustomize = "backrgound";
+    this.selectedCustomizeId = null;
+    this.highlightedCustomizeId = null;
+    this.settingsMap = {};
   }
 
-  init(storeConfig) {
+  init({ storeConfig, eventMap }) {
     const $customisers = document.querySelectorAll("[data-customize]");
     this.$app = document.querySelector("[data-app]");
     this.$fieldViewer = document.querySelector("[data-config]");
@@ -137,12 +139,17 @@ class AppCustomizer {
     });
 
     $customisers.forEach($el => {
+      const id = randomId();
       const $trigger = document.createElement("span");
 
-      $trigger.dataset.customizeTrigger = true;
+      this.settingsMap[id] = $el.dataset.customize;
+
+      $trigger.dataset.hcId = id;
       $trigger.classList.add("hidden", "pointer-events-none");
 
       $el.$trigger = $trigger;
+      $el.dataset.customizeId = id;
+
       document.body.append($trigger);
 
       $triggers.push($trigger);
@@ -168,18 +175,33 @@ class AppCustomizer {
 
         [...$triggers]
           .filter($el => $el !== $trigger)
+          .filter($el => $el.dataset.hcId !== this.selectedCustomizeId)
           .forEach($el => $el.classList.add("hidden"));
 
-        const { customize } = dataset;
-        this.highlightedCustomize = customize;
+        const { customizeId } = dataset;
+        this.highlightedCustomizeId = customizeId;
       });
     });
   }
 
   showConfigHandler() {
-    const { highlightedCustomize } = this;
-    const selectedCustomize = (this.selectedCustomize = highlightedCustomize);
-    this.showConfig(selectedCustomize);
+    const { highlightedCustomizeId, settingsMap } = this;
+    const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);
+
+    const $prevSelectedHighlighter = document.querySelector(
+      "[data-hc-id].--selected"
+    );
+    if ($prevSelectedHighlighter) {
+      $prevSelectedHighlighter.classList.remove("--selected");
+      $prevSelectedHighlighter.classList.add("hidden");
+    }
+
+    const $selectedHighlighter = document.querySelector(
+      `[data-hc-id="${selectedCustomizeId}"]`
+    );
+    $selectedHighlighter.classList.add("--selected");
+
+    this.showConfig(settingsMap[selectedCustomizeId]);
   }
 
   showConfig(path) {
@@ -227,4 +249,5 @@ class AppCustomizer {
 }
 
 const Customizer = new AppCustomizer();
-window.addEventListener("@build", e => Customizer.init(e.storeConfig));
+window.Customizer = Customizer;
+window.addEventListener("@render-done", e => Customizer.init(e));

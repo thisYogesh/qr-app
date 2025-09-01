@@ -1,12 +1,7 @@
 import Handlebars from "./handlebars";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
-
-export const _if = (condition, content, _else = null) => {
-  const exec = content => (typeof content == "function" ? content() : content);
-
-  return condition ? exec(content) : exec(_else);
-};
+import { randomId } from "./utils";
 
 const MODE = {
   NORMAL: "1",
@@ -115,6 +110,8 @@ const app = {
   $slideContainer: null,
   $contentBlocks: [],
   $backButtons: [],
+
+  eventMap: {},
 
   templates: {
     list_phone_numbers: Handlebars.registerPartial(
@@ -274,8 +271,9 @@ const app = {
     this.init();
 
     // emit event to know markup had injeected into html
-    const buildEvent = new Event("@build");
+    const buildEvent = new Event("@render-done");
     buildEvent.storeConfig = storeConfig;
+    buildEvent.eventMap = this.eventMap;
     window.dispatchEvent(buildEvent);
   },
 
@@ -293,9 +291,7 @@ const app = {
     ));
 
     $contentBlocks.forEach($el =>
-      $el.addEventListener("click", () =>
-        this.eventListener(() => this.onContentBlockSelect($el))
-      )
+      this.eventListener($el, "click", () => this.onContentBlockSelect($el))
     );
 
     const { height } = $slideContainer.getBoundingClientRect();
@@ -306,15 +302,21 @@ const app = {
     ));
 
     $backButtons.forEach($el =>
-      $el.addEventListener("click", () =>
-        this.eventListener(() => this.goBack())
-      )
+      this.eventListener($el, "click", () => this.goBack())
     );
   },
 
-  eventListener(callback) {
-    if (this.mode === MODE.CUSTOMIZER) return;
-    callback();
+  eventListener($el, event, callback) {
+    if (this.mode === MODE.CUSTOMIZER) {
+      const id = randomId();
+      this.eventMap[id] = { $el, events: { [event]: callback } };
+
+      $el.dataset.event = true;
+      $el.closest("[data-customize]").dataset.eventId = id;
+      return;
+    }
+
+    $el.addEventListener(event, callback);
   },
 
   enableWranchAnimation() {
@@ -363,4 +365,5 @@ const app = {
   }
 };
 
+window.app = app;
 window.addEventListener("DOMContentLoaded", () => app.install());

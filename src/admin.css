@@ -6,18 +6,22 @@
   max-width: 400px;
 }
 
-[data-customize-trigger] {
+[data-hc-id] {
   position: absolute;
   z-index: 100;
 }
 
-[data-customize-trigger]::after {
+[data-hc-id]::after {
   content: "";
   position: absolute;
   inset: 0;
   border: 2px solid red;
   margin: 0;
   border-radius: 6px;
+}
+
+[data-hc-id].--selected::after {
+  border-color: green;
 }
 
 input[type="text"] {
