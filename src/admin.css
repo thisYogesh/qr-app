@@ -15,13 +15,13 @@
   content: "";
   position: absolute;
   inset: 0;
-  border: 2px solid red;
+  border: 2px solid #458fff;
   margin: 0;
   border-radius: 6px;
 }
 
 [data-hc-id].--selected::after {
-  border-color: green;
+  border-color: #10b981;
 }
 
 input[type="text"] {

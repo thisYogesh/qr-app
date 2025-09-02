@@ -230,8 +230,8 @@ const app = {
       </main>
 
       <footer class="pb-4">
-        <p data-customize="Copywrite" class="text-center text-gray-600">
-          {{Copywrite.value}}
+        <p data-customize="Copyright" class="text-center text-gray-600">
+          {{Copyright.value}}
         </p>
       </footer>
     </div>

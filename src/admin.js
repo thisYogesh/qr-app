@@ -121,6 +121,7 @@ Handlebars.registerPartial({
 
 class AppCustomizer {
   constructor() {
+    this.$triggers = [];
     this.selectedCustomizeId = null;
     this.highlightedCustomizeId = null;
     this.settingsMap = {};
@@ -128,13 +129,12 @@ class AppCustomizer {
 
   init({ storeConfig, eventMap }) {
     const $customisers = document.querySelectorAll("[data-customize]");
-    this.$app = document.querySelector("[data-app]");
+    const $app = (this.$app = document.querySelector("[data-app]"));
     this.$fieldViewer = document.querySelector("[data-config]");
 
     this.storeConfig = storeConfig;
-    const $triggers = [];
 
-    this.$app.addEventListener("click", () => {
+    $app.addEventListener("click", () => {
       this.showConfigHandler();
     });
 
@@ -146,42 +146,48 @@ class AppCustomizer {
 
       $trigger.dataset.hcId = id;
       $trigger.classList.add("hidden", "pointer-events-none");
+      this.$triggers.push($trigger);
 
       $el.$trigger = $trigger;
       $el.dataset.customizeId = id;
 
       document.body.append($trigger);
-
-      $triggers.push($trigger);
-
-      $el.addEventListener("mouseover", e => {
-        e.stopPropagation();
-
-        const { $trigger, dataset } = e.currentTarget;
-        const {
-          height,
-          width,
-          left,
-          top
-        } = e.currentTarget.getBoundingClientRect();
-
-        $trigger.style.setProperty("height", height + "px");
-        $trigger.style.setProperty("width", width + "px");
-
-        $trigger.style.setProperty("left", left + "px");
-        $trigger.style.setProperty("top", top + "px");
-
-        $trigger.classList.remove("hidden");
-
-        [...$triggers]
-          .filter($el => $el !== $trigger)
-          .filter($el => $el.dataset.hcId !== this.selectedCustomizeId)
-          .forEach($el => $el.classList.add("hidden"));
-
-        const { customizeId } = dataset;
-        this.highlightedCustomizeId = customizeId;
-      });
+      $el.addEventListener("mouseover", e => this.onSettingBlockHover(e));
     });
+
+    // Prevent default behavior of all <a></a> elements
+    const $anchors = $app.querySelectorAll("a");
+    $anchors.forEach($anchor =>
+      $anchor.addEventListener("click", e => e.preventDefault())
+    );
+  }
+
+  onSettingBlockHover(e) {
+    e.stopPropagation();
+
+    const { $trigger, dataset } = e.currentTarget;
+    const {
+      height,
+      width,
+      left,
+      top
+    } = e.currentTarget.getBoundingClientRect();
+
+    $trigger.style.setProperty("height", height + "px");
+    $trigger.style.setProperty("width", width + "px");
+
+    $trigger.style.setProperty("left", left + "px");
+    $trigger.style.setProperty("top", top + "px");
+
+    $trigger.classList.remove("hidden");
+
+    [...this.$triggers]
+      .filter($el => $el !== $trigger)
+      .filter($el => $el.dataset.hcId !== this.selectedCustomizeId)
+      .forEach($el => $el.classList.add("hidden"));
+
+    const { customizeId } = dataset;
+    this.highlightedCustomizeId = customizeId;
   }
 
   showConfigHandler() {
