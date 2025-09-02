@@ -21,8 +21,8 @@ Handlebars.registerHelper({
 
   media_control: function(obj) {
     return Handlebars.compile(`
-      <div class="media-control">
-        <div class="media-control__preview bg-gray-100 border border-dashed border-gray-200 flex rounded justify-center">
+      <div class="media-control flex flex-col gap-1">
+        <div class="media-control__preview bg-gray-100 border border-dashed border-gray-300 flex rounded justify-center">
           {{#if this.src}}
             <img src="{{this.src}}" class="w-32 h-32 object-contain image-bg"/>
           {{else if this.svg_markup}}
@@ -33,6 +33,8 @@ Handlebars.registerHelper({
             No Image Provided
           {{/if}}
         </div>
+
+        <button class="button">Upload Image</button>
       </div>
     `)(obj);
   },
