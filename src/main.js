@@ -25,7 +25,7 @@ Handlebars.registerHelper({
       {{#if src}}
         <img src="{{src}}" height="{{height}}" width="{{width}}"/>
       {{else}}
-        <span>{{{svg_markup}}}</span>
+        <span class="flex svg">{{{svg_markup}}}</span>
       {{/if}}
     `);
 
@@ -139,7 +139,7 @@ const app = {
     simple_text: Handlebars.registerPartial("simple_text", `{{data.content}}`),
 
     render: Handlebars.compile(`
-    <div data-app data-customize="backrgound" class="flex flex-col w-full justify-between h-full gap-8 z-10">
+    <div data-app data-customize="backrgound, favicon" class="flex flex-col w-full justify-between h-full gap-8 z-10">
       {{#app_bg backrgound}}{{/app_bg}}
 
       <header class="flex justify-center items-center pt-8">

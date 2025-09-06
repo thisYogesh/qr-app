@@ -4,11 +4,6 @@ body {
   min-height: 100svh;
 }
 
-svg {
-  width: 100%;
-  height: 100%;
-}
-
 [data-main] {
   max-width: 384px;
 }
@@ -38,4 +33,9 @@ svg {
 .app-button {
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+
+.svg > svg {
+  width: 100%;
+  height: 100%;
 }

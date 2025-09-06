@@ -3,13 +3,16 @@ import { randomId } from "./utils";
 
 let counter = 0;
 const getEval = path => {
-  const paths = path.split(",").map(path => `obj.${path}`);
+  const paths = path
+    .split(",")
+    .map(path => path.trim())
+    .map(path => `{_path: '${path}', ...obj.${path}}`);
   return new Function("obj", `return [${paths}]`);
 };
 
 const getFields = value =>
   [...Object.entries(value)]
-    .filter(([_, value]) => value.type)
+    .filter(([_, value]) => typeof value.type === "string")
     .map(([title, value]) => ({ title, value }));
 
 Handlebars.registerHelper({
@@ -35,18 +38,16 @@ Handlebars.registerHelper({
         </div>
 
         <div class="flex gap-1">
-          <button class="button self-start basis-0">
+          <button class="flex items-center justify-between button basis-0 grow shrink-0">
             Upload Image
             <span class="sep w-[2px]"></span>
-
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
               <path
       d="M19 9L14 14.1599C13.7429 14.4323 13.4329 14.6493 13.089 14.7976C12.7451 14.9459 12.3745 15.0225 12 15.0225C11.6255 15.0225 11.2549 14.9459 10.9109 14.7976C10.567 14.6493 10.2571 14.4323 10 14.1599L5 9"
       stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
-          <button class="button self-start basis-0">From URL</button>
-          <button class="button self-start basis-0">Paste SVG</button>
+          <button class="button basis-0 grow shrink-0">Paste SVG</button>
         </div>
       </div>
     `)(obj);
@@ -68,7 +69,7 @@ Handlebars.registerHelper({
     const innerContent = util.fn(this);
 
     return Handlebars.compile(`
-      <div data-field class="setting-block flex flex-col gap-2 border p-2 rounded">
+      <div data-field class="setting-block flex flex-col gap-2 border border-gray-300 p-2 rounded">
         <div class="main-settings">
           <span class="capitalize text-sm">${title}</span>
           ${innerContent}
@@ -153,18 +154,26 @@ class AppCustomizer {
       this.showConfigHandler();
     });
 
+    const handleMultiAssignDatasetValue = ($el, prop, value) => {
+      const exValue = [$el.dataset[prop]].filter(val => val);
+      $el.dataset[prop] = exValue.concat(value).join(",");
+    };
     $customisers.forEach($el => {
-      const id = randomId();
       const $trigger = document.createElement("span");
 
-      this.settingsMap[id] = $el.dataset.customize;
+      $el.dataset.customize.split(",").forEach(block => {
+        const id = randomId();
 
-      $trigger.dataset.hcId = id;
-      $trigger.classList.add("hidden", "pointer-events-none");
-      this.$triggers.push($trigger);
+        this.settingsMap[id] = block;
 
-      $el.$trigger = $trigger;
-      $el.dataset.customizeId = id;
+        $trigger.classList.add("hidden", "pointer-events-none");
+        this.$triggers.push($trigger);
+
+        $el.$trigger = $trigger;
+
+        handleMultiAssignDatasetValue($trigger, "hcId", id);
+        handleMultiAssignDatasetValue($el, "customizeId", id);
+      });
 
       document.body.append($trigger);
       $el.addEventListener("mouseover", e => this.onSettingBlockHover(e));
@@ -205,8 +214,15 @@ class AppCustomizer {
     this.highlightedCustomizeId = customizeId;
   }
 
+  getSettingKeys(customizeIds) {
+    const { settingsMap } = this;
+    const keys = customizeIds.split(",").map(id => settingsMap[id]);
+
+    return keys.join(",");
+  }
+
   showConfigHandler() {
-    const { highlightedCustomizeId, settingsMap } = this;
+    const { highlightedCustomizeId } = this;
     const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);
 
     const $prevSelectedHighlighter = document.querySelector(
@@ -222,23 +238,25 @@ class AppCustomizer {
     );
     $selectedHighlighter.classList.add("--selected");
 
-    this.showConfig(settingsMap[selectedCustomizeId]);
+    const settingKeys = this.getSettingKeys(selectedCustomizeId);
+    this.showConfig(settingKeys);
   }
 
   showConfig(path) {
     const { storeConfig } = this;
-    const [data] = getEval(path)(storeConfig);
+    const settings = getEval(path)(storeConfig);
     const fields = [];
 
-    if (data.type) {
-      fields.push(this.makeField({ title: path, value: data }));
-    } else {
-      fields.push(
-        ...getFields(data).map(({ title, value }) =>
-          this.makeField({ title, value })
-        )
-      );
-    }
+    settings.forEach(setting => {
+      if (setting.type) {
+        fields.push(this.makeField({ title: setting._path, value: setting }));
+      } else
+        fields.push(
+          ...getFields(setting).map(({ title, value }) =>
+            this.makeField({ title, value })
+          )
+        );
+    });
 
     this.$fieldViewer.innerHTML = fields.join("");
   }
@@ -254,8 +272,6 @@ class AppCustomizer {
 
   makeField(field) {
     const { title, value } = field;
-    const isString = typeof value === "string";
-
     const template = Handlebars.compile(`
       <div class="root p-2">
         {{#if this.field}}
@@ -263,7 +279,7 @@ class AppCustomizer {
         {{/if}}
       </div>`);
 
-    const fieldMap = this.extractFields(field);
+    const fieldMap = this.extractFields({ title, value });
 
     return template(fieldMap);
   }

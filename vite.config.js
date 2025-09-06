@@ -21,6 +21,9 @@ const injectBuildHash = () => ({
 export default defineConfig({
   plugins: [tailwindcss(), injectBuildHash()],
   assetsInclude: ["**/*.lottie"],
+  server: {
+    port: 5000
+  },
   build: {
     rollupOptions: {
       input: {

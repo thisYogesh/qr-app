@@ -4,20 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manyog – Admin</title>
-    <link
+    <!-- <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
-    />
-    <link href="src/admin.css" rel="stylesheet" />
+    /> -->
     <link href="src/style.css" rel="stylesheet" />
+    <link href="src/admin.css" rel="stylesheet" />
   </head>
   <body>
     <div class="main-admin-layout grid h-screen">
       <aside class="flex flex-col">
-        <div class="flex flex-col p-4 font-bold border-b border-grey-100">
+        <div class="flex flex-col p-4 font-bold border-b border-b-gray-100">
           QR App <span class="text-sm font-medium">(https://qr.manyog.in)</span>
         </div>
-        <div class="funtional-block p-4 border-b border-grey-100">
+        <div class="funtional-block p-4 border-b border-b-gray-100">
           <div class="font-medium mb-1">Settings</div>
 
           <div class="flex flex-col gap-1.5">
@@ -52,12 +52,16 @@
       </aside>
       <div class="flex bg-gray-100 justify-center p-4">
         <div
-          class="app-builder relative flex bg-white rounded-lg border flex-grow overflow-hidden"
+          class="app-builder relative flex bg-white rounded-lg border border-gray-200 flex-grow overflow-hidden"
         >
           <render-app data-mode="2" />
         </div>
       </div>
-      <div data-config>Config</div>
+      <div data-config>
+        <p class="text-sm text-gray-600 text-center p-5">
+          Please select a block to continue...
+        </p>
+      </div>
     </div>
 
     <script type="module" src="/src/main.js"></script>
