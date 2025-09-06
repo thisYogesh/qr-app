@@ -1,5 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
+// import handlebars from "vite-plugin-handlebars";
+import includeSvg from "./plugins/include-svg";
 
 const injectBuildHash = () => ({
   name: "build-hash",
@@ -19,7 +21,7 @@ const injectBuildHash = () => ({
 });
 
 export default defineConfig({
-  plugins: [tailwindcss(), injectBuildHash()],
+  plugins: [tailwindcss(), injectBuildHash(), includeSvg()],
   assetsInclude: ["**/*.lottie"],
   server: {
     port: 5000

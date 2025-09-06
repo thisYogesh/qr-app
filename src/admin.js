@@ -1,5 +1,6 @@
 import Handlebars from "./handlebars";
-import { randomId } from "./utils";
+import { handleMultiAssignDatasetValue } from "../helpers";
+import { randomId } from "../utils";
 
 let counter = 0;
 const getEval = path => {
@@ -148,32 +149,32 @@ class AppCustomizer {
     const $app = (this.$app = document.querySelector("[data-app]"));
     this.$fieldViewer = document.querySelector("[data-config]");
 
+    this.eventMap = eventMap;
     this.storeConfig = storeConfig;
 
     $app.addEventListener("click", () => {
       this.showConfigHandler();
     });
 
-    const handleMultiAssignDatasetValue = ($el, prop, value) => {
-      const exValue = [$el.dataset[prop]].filter(val => val);
-      $el.dataset[prop] = exValue.concat(value).join(",");
-    };
     $customisers.forEach($el => {
       const $trigger = document.createElement("span");
 
-      $el.dataset.customize.split(",").forEach(block => {
-        const id = randomId();
+      $el.dataset.customize
+        .split(",")
+        .map(key => key.trim())
+        .forEach(block => {
+          const id = randomId();
 
-        this.settingsMap[id] = block;
+          this.settingsMap[id] = block;
 
-        $trigger.classList.add("hidden", "pointer-events-none");
-        this.$triggers.push($trigger);
+          $trigger.classList.add("hidden", "pointer-events-none");
+          this.$triggers.push($trigger);
 
-        $el.$trigger = $trigger;
+          $el.$trigger = $trigger;
 
-        handleMultiAssignDatasetValue($trigger, "hcId", id);
-        handleMultiAssignDatasetValue($el, "customizeId", id);
-      });
+          handleMultiAssignDatasetValue($trigger, "hcId", id);
+          handleMultiAssignDatasetValue($el, "customizeId", id);
+        });
 
       document.body.append($trigger);
       $el.addEventListener("mouseover", e => this.onSettingBlockHover(e));
@@ -216,7 +217,7 @@ class AppCustomizer {
 
   getSettingKeys(customizeIds) {
     const { settingsMap } = this;
-    const keys = customizeIds.split(",").map(id => settingsMap[id]);
+    const keys = customizeIds.split(",").map(id => settingsMap[id]?.trim());
 
     return keys.join(",");
   }

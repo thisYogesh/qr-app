@@ -1,7 +1,8 @@
 import Handlebars from "./handlebars";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
-import { randomId } from "./utils";
+import { randomId } from "../utils";
+import { handleMultiAssignDatasetValue } from "../helpers";
 
 const MODE = {
   NORMAL: "1",
@@ -311,8 +312,11 @@ const app = {
       const id = randomId();
       this.eventMap[id] = { $el, events: { [event]: callback } };
 
-      $el.dataset.event = true;
-      $el.closest("[data-customize]").dataset.eventId = id;
+      handleMultiAssignDatasetValue(
+        $el.closest("[data-customize]"),
+        "eventId",
+        id
+      );
       return;
     }
 

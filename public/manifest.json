@@ -16,7 +16,7 @@
       },
       "favicon": {
         "type": "image",
-        "src": "https://manyog.s3.ap-south-1.amazonaws.com/assets/favicon.png",
+        "src": "https://manyog.s3.ap-south-1.amazonaws.com/icon.svg",
         "svg_markup": "",
         "size": {
           "type": "size",
