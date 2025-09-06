@@ -278,6 +278,10 @@ class AppCustomizer {
         {{#if this.field}}
           {{> (dynamic_field this) }}
         {{/if}}
+
+        <span class="svg flex w-4 h-4">
+          <include-svg src="/svg/lightning.svg" />
+        </span>
       </div>`);
 
     const fieldMap = this.extractFields({ title, value });
