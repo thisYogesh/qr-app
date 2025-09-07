@@ -136,6 +136,11 @@ Handlebars.registerPartial({
   `
 });
 
+const getSettingKeys = (customizeIds, settingsMap) => {
+  const keys = customizeIds.split(",").map(id => settingsMap[id]?.trim());
+  return keys.join(",");
+};
+
 class AppCustomizer {
   constructor() {
     this.$triggers = [];
@@ -144,10 +149,54 @@ class AppCustomizer {
     this.settingsMap = {};
   }
 
+  get $customisers() {
+    const { _$customisers } = this;
+    const $customisers =
+      _$customisers ||
+      (this._$customisers = [
+        ...document.querySelectorAll(
+          "[data-customize]:not([data-customize=events])"
+        )
+      ]);
+    return $customisers;
+  }
+
+  get currentAppliedEvents() {
+    const { selectedCustomizeId, $customisers, eventMap } = this;
+
+    const $customizerEl = $customisers.find(
+      $el => $el.dataset.customizeId === selectedCustomizeId
+    );
+    const { eventId = "" } = $customizerEl.dataset;
+    const events = eventId
+      .split(",")
+      .filter(id => id)
+      .map(id => {
+        const { events } = eventMap?.[id];
+        return {
+          eventId: id,
+          events: Object.keys(events)
+        };
+      });
+
+    return events.filter(e => e);
+  }
+
+  get currentBlockSettings() {
+    const { storeConfig, selectedCustomizeId, settingsMap } = this;
+    const keys = getSettingKeys(selectedCustomizeId, settingsMap);
+    const settings = getEval(keys)(storeConfig);
+
+    return settings;
+  }
+
   init({ storeConfig, eventMap }) {
-    const $customisers = document.querySelectorAll("[data-customize]");
     const $app = (this.$app = document.querySelector("[data-app]"));
-    this.$fieldViewer = document.querySelector("[data-config]");
+    const $settingsViewer = (this.$settingsViewer = document.querySelector(
+      "[data-settings-viewer]"
+    ));
+    this.$settings = $settingsViewer.querySelector("[data-settings]");
+    this.$blockEvents = $settingsViewer.querySelector("[data-block-events]");
 
     this.eventMap = eventMap;
     this.storeConfig = storeConfig;
@@ -156,7 +205,7 @@ class AppCustomizer {
       this.showConfigHandler();
     });
 
-    $customisers.forEach($el => {
+    this.$customisers.forEach($el => {
       const $trigger = document.createElement("span");
 
       $el.dataset.customize
@@ -164,7 +213,6 @@ class AppCustomizer {
         .map(key => key.trim())
         .forEach(block => {
           const id = randomId();
-
           this.settingsMap[id] = block;
 
           $trigger.classList.add("hidden", "pointer-events-none");
@@ -198,13 +246,12 @@ class AppCustomizer {
       top
     } = e.currentTarget.getBoundingClientRect();
 
-    $trigger.style.setProperty("height", height + "px");
-    $trigger.style.setProperty("width", width + "px");
-
-    $trigger.style.setProperty("left", left + "px");
-    $trigger.style.setProperty("top", top + "px");
-
-    $trigger.classList.remove("hidden");
+    const { style, classList } = $trigger;
+    style.setProperty("height", height + "px");
+    style.setProperty("width", width + "px");
+    style.setProperty("left", left + "px");
+    style.setProperty("top", top + "px");
+    classList.remove("hidden");
 
     [...this.$triggers]
       .filter($el => $el !== $trigger)
@@ -215,7 +262,7 @@ class AppCustomizer {
     this.highlightedCustomizeId = customizeId;
   }
 
-  getSettingKeys(customizeIds) {
+  getSettingMeta(customizeIds) {
     const { settingsMap } = this;
     const keys = customizeIds.split(",").map(id => settingsMap[id]?.trim());
 
@@ -239,13 +286,45 @@ class AppCustomizer {
     );
     $selectedHighlighter.classList.add("--selected");
 
-    const settingKeys = this.getSettingKeys(selectedCustomizeId);
-    this.showConfig(settingKeys);
+    this.showConfig();
   }
 
-  showConfig(path) {
-    const { storeConfig } = this;
-    const settings = getEval(path)(storeConfig);
+  showConfig() {
+    const settingsHTML = this.buildSettingsHTML();
+    const eventsHTML = this.buildEventsHTML();
+
+    this.$settings.innerHTML = settingsHTML;
+    this.$blockEvents.innerHTML = eventsHTML;
+
+    this.applySettingsEvents();
+  }
+
+  buildEventsHTML() {
+    const { currentAppliedEvents } = this;
+    const template = Handlebars.compile(`
+      <div class="flex p-2">
+        {{#each appliedEvents}}
+          <div class="flex gap-1 items-center">
+            {{#each events}}
+              <div data-event-id="{{../eventId}}" data-event-name="{{this}}" class="cursor-pointer flex items-center rounded-sm pr-1.5 border border-gray-300">
+                <span class="flex svg w-4 h-4 text-amber-400">
+                  <include-svg src="/svg/lightning.svg" />
+                </span>
+                <span class="text-gray-600">
+                  {{ this }}
+                </span>
+              </div>
+            {{/each}}
+            </div>
+        {{/each}}
+      </div>
+    `);
+
+    return template({ appliedEvents: currentAppliedEvents });
+  }
+
+  buildSettingsHTML() {
+    const { currentBlockSettings: settings } = this;
     const fields = [];
 
     settings.forEach(setting => {
@@ -259,16 +338,19 @@ class AppCustomizer {
         );
     });
 
-    this.$fieldViewer.innerHTML = fields.join("");
+    return fields.join("");
   }
 
-  extractFields(field) {
-    const { value } = field;
-    const fields = {
-      field,
-      fields: getFields(value).map(field => this.extractFields(field))
-    };
-    return fields;
+  applySettingsEvents() {
+    const $eventTriggers = this.$blockEvents.querySelectorAll(
+      "[data-event-id]"
+    );
+    $eventTriggers.forEach($el =>
+      $el.addEventListener("click", () => {
+        const { eventId, eventName } = $el.dataset;
+        this.eventMap[eventId].events[eventName]();
+      })
+    );
   }
 
   makeField(field) {
@@ -278,15 +360,20 @@ class AppCustomizer {
         {{#if this.field}}
           {{> (dynamic_field this) }}
         {{/if}}
-
-        <span class="svg flex w-4 h-4">
-          <include-svg src="/svg/lightning.svg" />
-        </span>
       </div>`);
 
     const fieldMap = this.extractFields({ title, value });
 
     return template(fieldMap);
+  }
+
+  extractFields(field) {
+    const { value } = field;
+    const fields = {
+      field,
+      fields: getFields(value).map(field => this.extractFields(field))
+    };
+    return fields;
   }
 }
 

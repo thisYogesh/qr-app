@@ -39,6 +39,7 @@ Handlebars.registerHelper({
 
     return template(ctx);
   },
+
   app_button: function(ctx, index) {
     const { data, template } = ctx;
     const { background_color = {}, icon, label, href } = data.button;
@@ -75,11 +76,15 @@ Handlebars.registerHelper({
     return temp({ template, icon, label, bg_color, href, index });
   },
 
-  icon_with_content: function(ctx) {
+  icon_with_content: function(ctx, options) {
     const { icon, content } = ctx;
+    const [index, parentIndex] = [
+      options.data.index,
+      options.data._parent.index
+    ];
 
     const template = Handlebars.compile(`
-      <div class="flex text-sm items-start gap-1 text-blue-900 font-medium">
+      <div data-customize="actions[{{parentIndex}}].data[{{index}}]" class="flex text-sm items-start gap-1 text-blue-900 font-medium">
         <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">
           {{#image icon}}{{/image}}
         </span>
@@ -93,7 +98,7 @@ Handlebars.registerHelper({
         {{/if}}
       </div>`);
 
-    return template({ icon, content });
+    return template({ icon, content, index, parentIndex });
   },
 
   dynamic_template: function(ctx) {
@@ -172,6 +177,7 @@ const app = {
                   {{#each actions}}
                     {{#if template}}
                       <div
+                        data-customize="events"
                         id="template-{{@index}}"
                         class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
                       >

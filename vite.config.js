@@ -25,6 +25,7 @@ export default defineConfig({
   assetsInclude: ["**/*.lottie"],
   server: {
     port: 5000
+    // strictPort: true
   },
   build: {
     rollupOptions: {
