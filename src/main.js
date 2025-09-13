@@ -84,7 +84,7 @@ Handlebars.registerHelper({
     ];
 
     const template = Handlebars.compile(`
-      <div data-customize="actions[{{parentIndex}}].data[{{index}}]" class="flex text-sm items-start gap-1 text-blue-900 font-medium">
+      <div data-customize-trigger="actions[{{parentIndex}}].data.items[{{index}}]" class="flex text-sm items-start gap-1 text-blue-900 font-medium">
         <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">
           {{#image icon}}{{/image}}
         </span>
@@ -94,7 +94,7 @@ Handlebars.registerHelper({
             {{#anchor content}}{{/anchor}}
           </span>
         {{else}}
-          <p>{{content}}</p>
+          <p>{{content.value}}</p>
         {{/if}}
       </div>`);
 
@@ -106,6 +106,37 @@ Handlebars.registerHelper({
     const { template } = root.actions[index];
     return template;
   }
+});
+
+/**
+ * Button Templates
+ */
+Handlebars.registerPartial({
+  list_phone_numbers: `
+  <div class="flex flex-col gap-2">
+    {{#each data.contact_numbers}}
+      <a
+        class="flex items-center gap-1 text-blue-900 font-bold"
+        href="https://wa.me/{{this}}"
+      >
+        <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{../data.icon}}}</span>
+        {{this}}
+      </a>
+    {{/each}}
+  </div>`,
+
+  contact_us: `
+  <div class="flex flex-col gap-2">
+    {{#each data.items}}
+      {{#icon_with_content this}}{{/icon_with_content}}
+    {{/each}}
+  </div>`,
+
+  simple_text: `
+  <div data-customize-trigger="">
+    {{data._content.value}}
+  </div>
+  `
 });
 
 const app = {
@@ -120,50 +151,26 @@ const app = {
   eventMap: {},
 
   templates: {
-    list_phone_numbers: Handlebars.registerPartial(
-      "list_phone_numbers",
-      `<div class="flex flex-col gap-2">
-          {{#each data.contact_numbers}}
-            <a
-              class="flex items-center gap-1 text-blue-900 font-bold"
-              href="https://wa.me/{{this}}"
-            >
-              <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{../data.icon}}}</span>
-              {{this}}
-            </a>
-          {{/each}}
-        </div>`
-    ),
-    contact_us: Handlebars.registerPartial(
-      "contact_us",
-      `<div class="flex flex-col gap-2">
-          {{#each data.items}}
-            {{#icon_with_content this}}{{/icon_with_content}}
-          {{/each}}
-        </div>`
-    ),
-    simple_text: Handlebars.registerPartial("simple_text", `{{data.content}}`),
-
     render: Handlebars.compile(`
-    <div data-app data-customize="backrgound, favicon" class="flex flex-col w-full justify-between h-full gap-8 z-10">
+    <div data-app data-customize-trigger="backrgound, favicon" class="flex flex-col w-full justify-between h-full gap-8 z-10">
       {{#app_bg backrgound}}{{/app_bg}}
 
       <header class="flex justify-center items-center pt-8">
-        <div data-customize="logo">
+        <div data-customize-trigger="logo">
           {{#image logo}}{{/image}}
         </div>
       </header>
       <main class="flex flex-col items-center justify-center px-4">
         {{#if status}}
           <div data-main class="flex w-full flex-col items-center justify-center">
-            <div data-customize="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
+            <div data-customize-trigger="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
               <div
                 data-slide-container
                 class="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
               >
                 <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
                   {{#each actions}}
-                    <li data-customize="actions[{{@index}}].data">
+                    <li data-customize-trigger="actions[{{@index}}].data">
                       {{#app_button this @index}}{{/app_button}}
                     </li>
                   {{/each}}
@@ -177,7 +184,7 @@ const app = {
                   {{#each actions}}
                     {{#if template}}
                       <div
-                        data-customize="events"
+                        data-customize-trigger="events"
                         id="template-{{@index}}"
                         class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
                       >
@@ -202,7 +209,7 @@ const app = {
             </div>
 
             {{#if GST}}
-              <div data-customize="GST" class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+              <div data-customize-trigger="GST" class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
                 <a>GST – {{ GST.value }}</a>
               </div>
             {{/if}}
@@ -237,7 +244,7 @@ const app = {
       </main>
 
       <footer class="pb-4">
-        <p data-customize="Copyright" class="text-center text-gray-600">
+        <p data-customize-trigger="Copyright" class="text-center text-gray-600">
           {{Copyright.value}}
         </p>
       </footer>
@@ -298,7 +305,7 @@ const app = {
     ));
 
     $contentBlocks.forEach($el =>
-      this.eventListener($el, "click", () => this.onContentBlockSelect($el))
+      this.maskEventListener($el, "click", () => this.onContentBlockSelect($el))
     );
 
     const { height } = $slideContainer.getBoundingClientRect();
@@ -309,17 +316,17 @@ const app = {
     ));
 
     $backButtons.forEach($el =>
-      this.eventListener($el, "click", () => this.goBack())
+      $el.addEventListener("click", () => this.goBack())
     );
   },
 
-  eventListener($el, event, callback) {
+  maskEventListener($el, event, callback) {
     if (this.mode === MODE.CUSTOMIZER) {
       const id = randomId();
       this.eventMap[id] = { $el, events: { [event]: callback } };
 
       handleMultiAssignDatasetValue(
-        $el.closest("[data-customize]"),
+        $el.closest("[data-customize-trigger]"),
         "eventId",
         id
       );

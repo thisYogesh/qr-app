@@ -90,6 +90,15 @@ Handlebars.registerHelper({
 });
 
 Handlebars.registerPartial({
+  anchor: `
+    {{#setting_block this.field.title}}
+      <div class="flex gap-2">
+        {{#input_control 'Text' 'text' this.field.value.text}}{{/input_control}}
+        {{#input_control 'Hyperlink' 'text' this.field.value.href}}{{/input_control}}
+      </div>
+    {{/setting_block}}
+  `,
+
   size: `
   {{#setting_block this.field.title}}
     <div class="flex gap-2">
@@ -149,22 +158,22 @@ class AppCustomizer {
     this.settingsMap = {};
   }
 
-  get $customisers() {
-    const { _$customisers } = this;
-    const $customisers =
-      _$customisers ||
-      (this._$customisers = [
+  get $customiseTriggers() {
+    const { _$customiseTriggers } = this;
+    const $customiseTriggers =
+      _$customiseTriggers ||
+      (this._$customiseTriggers = [
         ...document.querySelectorAll(
-          "[data-customize]:not([data-customize=events])"
+          "[data-customize-trigger]:not([data-customize-trigger=events])"
         )
       ]);
-    return $customisers;
+    return $customiseTriggers;
   }
 
   get currentAppliedEvents() {
-    const { selectedCustomizeId, $customisers, eventMap } = this;
+    const { selectedCustomizeId, $customiseTriggers, eventMap } = this;
 
-    const $customizerEl = $customisers.find(
+    const $customizerEl = $customiseTriggers.find(
       $el => $el.dataset.customizeId === selectedCustomizeId
     );
     const { eventId = "" } = $customizerEl.dataset;
@@ -205,10 +214,11 @@ class AppCustomizer {
       this.showConfigHandler();
     });
 
-    this.$customisers.forEach($el => {
+    this.$customiseTriggers.forEach($el => {
       const $trigger = document.createElement("span");
+      const { customizeTrigger } = $el.dataset;
 
-      $el.dataset.customize
+      customizeTrigger
         .split(",")
         .map(key => key.trim())
         .forEach(block => {
@@ -355,6 +365,8 @@ class AppCustomizer {
 
   makeField(field) {
     const { title, value } = field;
+    if (title.indexOf("_") === 0) return "";
+
     const template = Handlebars.compile(`
       <div class="root p-2">
         {{#if this.field}}
