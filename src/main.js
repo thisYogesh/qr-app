@@ -133,7 +133,7 @@ Handlebars.registerPartial({
   </div>`,
 
   simple_text: `
-  <div data-customize-trigger="">
+  <div data-customize-trigger="actions[{{@index}}].data._content">
     {{data._content.value}}
   </div>
   `

@@ -1,6 +1,7 @@
 import Handlebars from "./handlebars";
 import { handleMultiAssignDatasetValue } from "../helpers";
 import { randomId } from "../utils";
+import startCase from "lodash/startCase";
 
 let counter = 0;
 const getEval = path => {
@@ -72,7 +73,7 @@ Handlebars.registerHelper({
     return Handlebars.compile(`
       <div data-field class="setting-block flex flex-col gap-2 border border-gray-300 p-2 rounded">
         <div class="main-settings">
-          <span class="capitalize text-sm">${title}</span>
+          <span class="capitalize text-sm">${startCase(title)}</span>
           ${innerContent}
         </div>
 
@@ -90,6 +91,10 @@ Handlebars.registerHelper({
 });
 
 Handlebars.registerPartial({
+  wrapper: `
+    {{#setting_block this.field.title}}
+    {{/setting_block}}
+  `,
   anchor: `
     {{#setting_block this.field.title}}
       <div class="flex gap-2">
@@ -339,13 +344,15 @@ class AppCustomizer {
 
     settings.forEach(setting => {
       if (setting.type) {
-        fields.push(this.makeField({ title: setting._path, value: setting }));
-      } else
+        const { _path, title } = setting;
+        fields.push(this.makeField({ title: title || _path, value: setting }));
+      } else {
         fields.push(
           ...getFields(setting).map(({ title, value }) =>
-            this.makeField({ title, value })
+            this.makeField({ title: title, value })
           )
         );
+      }
     });
 
     return fields.join("");

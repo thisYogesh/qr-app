@@ -25,6 +25,7 @@
         }
       },
       "backrgound": {
+        "type": "wrapper",
         "image": {
           "type": "image",
           "src": "https://manyog.s3.ap-south-1.amazonaws.com/assets/tools-bg.jpg"
@@ -148,6 +149,7 @@
               }
             },
             "_content": {
+              "title": "Content",
               "type": "value",
               "value": "Coming soon...!"
             }

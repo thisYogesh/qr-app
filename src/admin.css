@@ -75,3 +75,9 @@ input[type="text"] {
     rgb(118 118 118 / 15%)
   );
 }
+
+/* Hide empty message when block is selected */
+[data-settings-viewer]:has([data-settings]:not(:empty))
+  > .empty-settings-viewer {
+  display: none;
+}
