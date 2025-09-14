@@ -24,7 +24,7 @@ Handlebars.registerHelper({
     return type;
   },
 
-  media_control: function(obj) {
+  media_control: function(obj, svg_markup = false) {
     return Handlebars.compile(`
       <div class="media-control flex flex-col gap-1">
         <div class="media-control__preview bg-gray-100 border border-dashed border-gray-300 flex rounded justify-center">
@@ -35,7 +35,9 @@ Handlebars.registerHelper({
               {{{this.svg_markup}}}
             </div>
           {{else}}
-            No Image Provided
+            <p class="flex items-center h-32 text-sm text-gray-400">
+              No Image Provided
+            </p>
           {{/if}}
         </div>
 
@@ -49,22 +51,27 @@ Handlebars.registerHelper({
       stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
-          <button class="button basis-0 grow shrink-0">Paste SVG</button>
+          ${
+            svg_markup
+              ? '<button class="button basis-0 grow shrink-0">Paste SVG</button>'
+              : ""
+          }
+          
         </div>
       </div>
     `)(obj);
   },
 
-  input_control: function(label, type, value) {
+  input_control: function(label, type, value, placeholder = "Enter value") {
     const id = `input-${counter++}`;
     return Handlebars.compile(`
       <div class="input flex flex-col gap-0.5">
         {{#if label}}
           <label for="${id}" class="input__label capitalize text-gray-700 font-semibold text-xs">{{ label }}</label>
         {{/if}}
-        <input id="${id}" class="text-sm h-8" type="{{this.type}}" value="{{this.value}}"/>
+        <input id="${id}" class="text-sm h-8" type="{{this.type}}" value="{{this.value}}" placeholder="{{placeholder}}"/>
       </div>
-    `)({ label, type, value });
+    `)({ label, type, value, placeholder });
   },
 
   setting_block: function(title, util) {
@@ -72,7 +79,7 @@ Handlebars.registerHelper({
 
     return Handlebars.compile(`
       <div data-field class="setting-block flex flex-col gap-2 border border-gray-300 p-2 rounded">
-        <div class="main-settings">
+        <div class="main-settings flex flex-col gap-2">
           <span class="capitalize text-sm">${startCase(title)}</span>
           ${innerContent}
         </div>
@@ -107,8 +114,8 @@ Handlebars.registerPartial({
   size: `
   {{#setting_block this.field.title}}
     <div class="flex gap-2">
-      {{#input_control 'width' 'text' this.field.value.width}}{{/input_control}}
-      {{#input_control 'height' 'text' this.field.value.height}}{{/input_control}}
+      {{#input_control 'width' 'text' this.field.value.width 'auto'}}{{/input_control}}
+      {{#input_control 'height' 'text' this.field.value.height 'auto'}}{{/input_control}}
     </div>
   {{/setting_block}}
   `,
@@ -125,6 +132,12 @@ Handlebars.registerPartial({
   image: `
   {{#setting_block this.field.title}}
     {{#media_control this.field.value}}{{/media_control}}
+  {{/setting_block}}
+  `,
+
+  "image-only": `
+  {{#setting_block this.field.title}}
+    {{#media_control this.field.value false}}{{/media_control}}
   {{/setting_block}}
   `,
 
@@ -205,7 +218,7 @@ class AppCustomizer {
   }
 
   init({ storeConfig, eventMap }) {
-    const $app = (this.$app = document.querySelector("[data-app]"));
+    const $app = (this.$app = document.querySelector("[data-customizer]"));
     const $settingsViewer = (this.$settingsViewer = document.querySelector(
       "[data-settings-viewer]"
     ));
@@ -286,8 +299,10 @@ class AppCustomizer {
 
   showConfigHandler() {
     const { highlightedCustomizeId } = this;
-    const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);
 
+    if (this.selectedCustomizeId === highlightedCustomizeId) return;
+
+    const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);
     const $prevSelectedHighlighter = document.querySelector(
       "[data-hc-id].--selected"
     );
@@ -300,6 +315,7 @@ class AppCustomizer {
       `[data-hc-id="${selectedCustomizeId}"]`
     );
     $selectedHighlighter.classList.add("--selected");
+    $selectedHighlighter.classList.remove("hidden");
 
     this.showConfig();
   }

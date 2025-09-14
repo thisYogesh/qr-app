@@ -19,9 +19,9 @@ Handlebars.registerHelper({
 
   image: function(ctx) {
     const { type, src, svg_markup, size = {} } = ctx;
-    if (type !== "image") return;
+    if (!["image", "image-only"].includes(type)) return;
 
-    const { height, width } = size;
+    const { height = "auto", width = "auto" } = size;
     const template = Handlebars.compile(`
       {{#if src}}
         <img src="{{src}}" height="{{height}}" width="{{width}}"/>
@@ -32,6 +32,7 @@ Handlebars.registerHelper({
 
     return template({ src, svg_markup, height, width });
   },
+
   app_bg: function(ctx) {
     const template = Handlebars.compile(
       `<div class="bg absolute inset-0" style="--bg-image: url({{image.src}}); --bg-opacity: {{opacity.value}}; --bg-size: {{bg_size.height}} {{bg_size.width}}"></div>`
@@ -108,9 +109,6 @@ Handlebars.registerHelper({
   }
 });
 
-/**
- * Button Templates
- */
 Handlebars.registerPartial({
   list_phone_numbers: `
   <div class="flex flex-col gap-2">
@@ -152,102 +150,115 @@ const app = {
 
   templates: {
     render: Handlebars.compile(`
-    <div data-app data-customize-trigger="backrgound, favicon" class="flex flex-col w-full justify-between h-full gap-8 z-10">
-      {{#app_bg backrgound}}{{/app_bg}}
-
-      <header class="flex justify-center items-center pt-8">
-        <div data-customize-trigger="logo">
-          {{#image logo}}{{/image}}
+    <div data-customizer class="flex flex-col gap-0.5 w-full h-full">
+      <div class="flex items-center gap-1 p-1" data-customize-trigger="metadata">
+        <div class="w-5">
+          {{#image metadata.favicon}}{{/image}}
         </div>
-      </header>
-      <main class="flex flex-col items-center justify-center px-4">
-        {{#if status}}
-          <div data-main class="flex w-full flex-col items-center justify-center">
-            <div data-customize-trigger="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
-              <div
-                data-slide-container
-                class="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
-              >
-                <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
-                  {{#each actions}}
-                    <li data-customize-trigger="actions[{{@index}}].data">
-                      {{#app_button this @index}}{{/app_button}}
-                    </li>
-                  {{/each}}
-                </ul>
+        <span class="text-sm">
+          {{metadata.title.value}}
+        </span>
+      </div>
 
-                <div
-                  data-content-container
-                  id="content"
-                  class="relative w-full flex-shrink-0"
-                >
-                  {{#each actions}}
-                    {{#if template}}
-                      <div
-                        data-customize-trigger="events"
-                        id="template-{{@index}}"
-                        class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
-                      >
-                        <div class="flex items-center">
-                          <button
-                            data-back
-                            class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
-                          >
-                            <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
-                              <use href="./svg-sprites.svg#back-arrow" />
-                            </svg>
-                          </button>
+      <div class="flex flex-col gap-2 w-full bg-white rounded-lg border border-gray-200 h-full">
+        <div data-app data-customize-trigger="backrgound" class="relative flex flex-col w-full justify-between h-full gap-8 z-10">
+          {{#app_bg backrgound}}{{/app_bg}}
 
-                          <span class="ml-2"> {{data.button.label}} </span>
-                        </div>
-                        {{> (dynamic_template)}}
-                      </div>
-                    {{/if}}
-                  {{/each}}
-                </div>
-              </div>  
+          <header class="flex justify-center items-center pt-8">
+            <div data-customize-trigger="logo">
+              {{#image logo}}{{/image}}
             </div>
+          </header>
+          <main class="flex flex-col items-center justify-center px-4">
+            {{#if status}}
+              <div data-main class="flex w-full flex-col items-center justify-center">
+                <div data-customize-trigger="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
+                  <div
+                    data-slide-container
+                    class="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
+                  >
+                    <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
+                      {{#each actions}}
+                        <li data-customize-trigger="actions[{{@index}}].data">
+                          {{#app_button this @index}}{{/app_button}}
+                        </li>
+                      {{/each}}
+                    </ul>
 
-            {{#if GST}}
-              <div data-customize-trigger="GST" class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
-                <a>GST – {{ GST.value }}</a>
+                    <div
+                      data-content-container
+                      id="content"
+                      class="relative w-full flex-shrink-0"
+                    >
+                      {{#each actions}}
+                        {{#if template}}
+                          <div
+                            data-customize-trigger="events"
+                            id="template-{{@index}}"
+                            class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
+                          >
+                            <div class="flex items-center">
+                              <button
+                                data-back
+                                class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
+                              >
+                                <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
+                                  <use href="./svg-sprites.svg#back-arrow" />
+                                </svg>
+                              </button>
+
+                              <span class="ml-2"> {{data.button.label}} </span>
+                            </div>
+                            {{> (dynamic_template)}}
+                          </div>
+                        {{/if}}
+                      {{/each}}
+                    </div>
+                  </div>  
+                </div>
+
+                {{#if GST}}
+                  <div data-customize-trigger="GST" class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+                    <a>GST – {{ GST.value }}</a>
+                  </div>
+                {{/if}}
+              </div>
+            {{else}}
+              <div>
+                <div class="p-2">
+                  <canvas
+                    id="dotlottie-canvas"
+                    class="transform rotate-45 w-40 h-40"
+                  ></canvas>
+                </div>  
+                <p
+                  data-status="0"
+                  class="flex items-center justify-center gap-1 mt-2"
+                >
+                  <svg
+                    class="w-6 h-6 text-yellow-500"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13.995 1.827a1.745 1.745 0 0 0-2.969 0l-9.8 17.742a1.603 1.603 0 0 0 0 1.656 1.678 1.678 0 0 0 1.48.775H22.28a1.68 1.68 0 0 0 1.484-.775 1.608 1.608 0 0 0 .003-1.656zM12 8h1v7h-1zm.5 10.5a1 1 0 1 1 1-1 1.002 1.002 0 0 1-1 1z"
+                      fill="currentColor"
+                    />
+                    <path fill="none" d="M0 0h24v24H0z" />
+                  </svg>
+                  <span class="text-blue-900"> We are opening soon!! </span>
+                </p>
               </div>
             {{/if}}
-          </div>
-        {{else}}
-          <div>
-            <div class="p-2">
-              <canvas
-                id="dotlottie-canvas"
-                class="transform rotate-45 w-40 h-40"
-              ></canvas>
-            </div>  
-            <p
-              data-status="0"
-              class="flex items-center justify-center gap-1 mt-2"
-            >
-              <svg
-                class="w-6 h-6 text-yellow-500"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.995 1.827a1.745 1.745 0 0 0-2.969 0l-9.8 17.742a1.603 1.603 0 0 0 0 1.656 1.678 1.678 0 0 0 1.48.775H22.28a1.68 1.68 0 0 0 1.484-.775 1.608 1.608 0 0 0 .003-1.656zM12 8h1v7h-1zm.5 10.5a1 1 0 1 1 1-1 1.002 1.002 0 0 1-1 1z"
-                  fill="currentColor"
-                />
-                <path fill="none" d="M0 0h24v24H0z" />
-              </svg>
-              <span class="text-blue-900"> We are opening soon!! </span>
-            </p>
-          </div>
-        {{/if}}
-      </main>
+          </main>
 
-      <footer class="pb-4">
-        <p data-customize-trigger="Copyright" class="text-center text-gray-600">
-          {{Copyright.value}}
-        </p>
-      </footer>
+          <footer class="pb-4">
+            <p data-customize-trigger="Copyright" class="text-center text-gray-600">
+              {{Copyright.value}}
+            </p>
+          </footer>
+        </div>
+      </div>
     </div>
     `)
   },
@@ -281,7 +292,9 @@ const app = {
     fr.querySelector("div").innerHTML = appContent;
 
     // inject html into <render-app/>
-    $app.replaceWith(fr.querySelector("[data-app]"));
+    const appSelector =
+      this.mode === MODE.NORMAL ? "[data-app]" : "[data-customizer]";
+    $app.replaceWith(fr.querySelector(appSelector));
     this.init();
 
     // emit event to know markup had injeected into html

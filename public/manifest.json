@@ -10,18 +10,17 @@
 
         "size": {
           "type": "size",
-          "height": "auto",
           "width": "160px"
         }
       },
-      "favicon": {
-        "type": "image",
-        "src": "https://manyog.s3.ap-south-1.amazonaws.com/icon.svg",
-        "svg_markup": "",
-        "size": {
-          "type": "size",
-          "height": "100px",
-          "width": "100px"
+      "metadata": {
+        "title": {
+          "type": "value",
+          "value": "Manyog app"
+        },
+        "favicon": {
+          "type": "image-only",
+          "src": "https://manyog.s3.ap-south-1.amazonaws.com/icon.svg"
         }
       },
       "backrgound": {
@@ -32,8 +31,7 @@
         },
         "bg_size": {
           "type": "size",
-          "width": "200px",
-          "height": "auto"
+          "width": "200px"
         },
         "opacity": {
           "type": "opacity",
@@ -42,6 +40,11 @@
       },
 
       "action_background": {
+        "background_image": {
+          "type": "image",
+          "src": "",
+          "svg_markup": ""
+        },
         "background_color": {
           "type": "color",
           "value": "#ffffff"
