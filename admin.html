@@ -9,11 +9,11 @@
   </head>
   <body>
     <div class="main-admin-layout grid h-screen">
-      <aside class="flex flex-col">
-        <div class="flex flex-col p-4 font-bold border-b border-b-gray-100">
+      <aside class="flex flex-col border-r border-r-gray-200">
+        <div class="flex flex-col p-4 font-bold border-b border-b-gray-200">
           QR App <span class="text-sm font-medium">(https://qr.manyog.in)</span>
         </div>
-        <div class="funtional-block p-4 border-b border-b-gray-100">
+        <div class="funtional-block p-4 ">
           <div class="font-medium mb-1">Settings</div>
 
           <div class="flex flex-col gap-1.5">
@@ -51,13 +51,21 @@
           <render-app data-mode="2" />
         </div>
       </div>
-      <div data-settings-viewer>
+      <aside data-settings-viewer class="border-l border-l-gray-200">
         <div data-settings></div>
         <div data-block-events></div>
-        <p class="empty-settings-viewer text-sm text-gray-600 text-center p-5">
-          Please select a block to continue
-        </p>
-      </div>
+        <div
+          class="flex flex-col items-center empty-settings-viewer text-sm text-center p-5 h-full justify-center"
+        >
+          <div class="svg w-1/2 opacity-10">
+            <include-svg src="/svg/settings.svg" />
+          </div>
+
+          <span class="text-gray-600">
+            Please select a block to continue.
+          </span>
+        </div>
+      </aside>
     </div>
 
     <script type="module" src="/src/main.js"></script>

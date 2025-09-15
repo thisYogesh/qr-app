@@ -155,7 +155,7 @@ const app = {
         <div class="w-5">
           {{#image metadata.favicon}}{{/image}}
         </div>
-        <span class="text-sm">
+        <span class="text-[13px]">
           {{metadata.title.value}}
         </span>
       </div>

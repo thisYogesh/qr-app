@@ -4,12 +4,16 @@
   grid-template-columns: 20% auto 20%;
 }
 
+.funtional-block {
+  @apply border-b border-b-gray-200;
+}
+
 .app-builder {
-  max-width: 400px;
+  max-width: 390px;
 }
 
 [data-hc-id] {
-  position: absolute;
+  @apply absolute;
   z-index: 100;
 }
 
