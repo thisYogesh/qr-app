@@ -85,3 +85,11 @@ input[type="text"] {
   > .empty-settings-viewer {
   display: none;
 }
+
+.action-buttons {
+  display: none;
+}
+
+[data-settings-viewer]:has([data-settings]:not(:empty)) > .action-buttons {
+  display: flex;
+}

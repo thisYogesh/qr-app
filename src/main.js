@@ -368,11 +368,6 @@ const app = {
 
     $el.addEventListener(event, () => {
       this.eventHandler(layoutUpdate, listener);
-      // if (this.mode === MODE.CUSTOMIZER && layoutUpdate) {
-      //   const layoutUpdate = new Event("@layout-update");
-      //   window.dispatchEvent(layoutUpdate);
-      // }
-      // listener();
     });
   },
 

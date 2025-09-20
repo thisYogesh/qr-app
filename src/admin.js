@@ -173,6 +173,7 @@ class AppCustomizer {
     this.$triggerHighlighters = [];
     this.selectedCustomizeId = null;
     this.highlightedCustomizeId = null;
+    this.layoutUpdateInProgress = false;
     this.settingsMap = {};
   }
 
@@ -265,6 +266,7 @@ class AppCustomizer {
 
   onSettingBlockHover(e) {
     e.stopPropagation();
+    if (this.layoutUpdateInProgress) return;
 
     const { $trigger, dataset } = e.currentTarget;
     const {
@@ -443,5 +445,8 @@ window.addEventListener("@render-done", e => {
 });
 
 window.addEventListener("@layout-update", () => {
+  Customizer.layoutUpdateInProgress = true;
   Customizer.resetAndDisableCustomizeTrigger();
+
+  setTimeout(() => (Customizer.layoutUpdateInProgress = false), 500);
 });

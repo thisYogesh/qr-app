@@ -51,9 +51,15 @@
           <render-app data-mode="2" />
         </div>
       </div>
-      <aside data-settings-viewer class="border-l border-l-gray-200">
-        <div data-settings></div>
-        <div data-block-events></div>
+      <aside
+        data-settings-viewer
+        class="flex flex-col justify-between border-l border-l-gray-200"
+      >
+        <div>
+          <div data-settings></div>
+          <div data-block-events></div>
+        </div>
+
         <div
           class="flex flex-col items-center empty-settings-viewer text-sm text-center p-5 h-full justify-center"
         >
@@ -64,6 +70,11 @@
           <span class="text-gray-600">
             Please select a block to continue.
           </span>
+        </div>
+
+        <div class="action-buttons flex p-2 gap-2">
+          <button class="button basis-0 grow">Save</button>
+          <button class="button basis-0 grow">Cancel</button>
         </div>
       </aside>
     </div>
