@@ -26,7 +26,7 @@ Handlebars.registerHelper({
 
   media_control: function(obj, svg_markup = false) {
     return Handlebars.compile(`
-      <div class="media-control flex flex-col gap-1">
+      <div class="media-control flex flex-col gap-2">
         <div class="media-control__preview bg-gray-100 border border-dashed border-gray-300 flex rounded justify-center">
           {{#if this.src}}
             <img src="{{this.src}}" class="w-32 h-32 object-contain image-bg"/>
@@ -170,7 +170,7 @@ const getSettingKeys = (customizeIds, settingsMap) => {
 
 class AppCustomizer {
   constructor() {
-    this.$triggers = [];
+    this.$triggerHighlighters = [];
     this.selectedCustomizeId = null;
     this.highlightedCustomizeId = null;
     this.settingsMap = {};
@@ -244,7 +244,7 @@ class AppCustomizer {
           this.settingsMap[id] = block;
 
           $trigger.classList.add("hidden", "pointer-events-none");
-          this.$triggers.push($trigger);
+          this.$triggerHighlighters.push($trigger);
 
           $el.$trigger = $trigger;
 
@@ -281,7 +281,7 @@ class AppCustomizer {
     style.setProperty("top", top + "px");
     classList.remove("hidden");
 
-    [...this.$triggers]
+    [...this.$triggerHighlighters]
       .filter($el => $el !== $trigger)
       .filter($el => $el.dataset.hcId !== this.selectedCustomizeId)
       .forEach($el => $el.classList.add("hidden"));
@@ -360,8 +360,11 @@ class AppCustomizer {
 
     settings.forEach(setting => {
       if (setting.type) {
-        const { _path, title } = setting;
-        fields.push(this.makeField({ title: title || _path, value: setting }));
+        const { _path, _block_title } = setting;
+        const [_title] = _path.split(".").reverse();
+        fields.push(
+          this.makeField({ title: _block_title || _title, value: setting })
+        );
       } else {
         fields.push(
           ...getFields(setting).map(({ title, value }) =>
@@ -410,8 +413,35 @@ class AppCustomizer {
     };
     return fields;
   }
+
+  resetAndDisableCustomizeTrigger() {
+    const { $triggerHighlighters } = this;
+    const $visibleTriggers = $triggerHighlighters.filter($el => {
+      const { classList } = $el;
+      return classList.contains("--selected") || !classList.contains("hidden");
+    });
+
+    $visibleTriggers.forEach($el => {
+      $el.classList.remove("--selected");
+      $el.classList.add("hidden");
+    });
+
+    this.highlightedCustomizeId = null;
+    this.selectedCustomizeId = null;
+  }
 }
 
 const Customizer = new AppCustomizer();
 window.Customizer = Customizer;
-window.addEventListener("@render-done", e => Customizer.init(e));
+
+window.addEventListener("@render-done", e => {
+  Customizer.init(e);
+
+  window.addEventListener("resize", () =>
+    Customizer.resetAndDisableCustomizeTrigger()
+  );
+});
+
+window.addEventListener("@layout-update", () => {
+  Customizer.resetAndDisableCustomizeTrigger();
+});

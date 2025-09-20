@@ -48,6 +48,7 @@ Handlebars.registerHelper({
 
     const temp = Handlebars.compile(`
     <a
+      data-customize-trigger="actions[{{index}}].data.button"
       {{#if template}}
         data-trigger="#template-{{index}}"
       {{/if}}
@@ -179,7 +180,7 @@ const app = {
                   >
                     <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
                       {{#each actions}}
-                        <li data-customize-trigger="actions[{{@index}}].data">
+                        <li>
                           {{#app_button this @index}}{{/app_button}}
                         </li>
                       {{/each}}
@@ -318,7 +319,13 @@ const app = {
     ));
 
     $contentBlocks.forEach($el =>
-      this.maskEventListener($el, "click", () => this.onContentBlockSelect($el))
+      this.eventListener({
+        $el,
+        event: "click",
+        listener: () => this.onContentBlockSelect($el),
+        layoutUpdate: true,
+        maskEvent: true
+      })
     );
 
     const { height } = $slideContainer.getBoundingClientRect();
@@ -329,24 +336,44 @@ const app = {
     ));
 
     $backButtons.forEach($el =>
-      $el.addEventListener("click", () => this.goBack())
+      this.eventListener({
+        $el,
+        event: "click",
+        listener: () => this.goBack(),
+        layoutUpdate: true,
+        maskEvent: false
+      })
     );
   },
 
-  maskEventListener($el, event, callback) {
-    if (this.mode === MODE.CUSTOMIZER) {
-      const id = randomId();
-      this.eventMap[id] = { $el, events: { [event]: callback } };
+  eventHandler(layoutUpdate, listener) {
+    if (this.mode === MODE.CUSTOMIZER && layoutUpdate) {
+      const layoutUpdate = new Event("@layout-update");
+      window.dispatchEvent(layoutUpdate);
+    }
+    listener();
+  },
 
-      handleMultiAssignDatasetValue(
-        $el.closest("[data-customize-trigger]"),
-        "eventId",
-        id
-      );
+  eventListener({ $el, event, listener, layoutUpdate = true, maskEvent }) {
+    if (this.mode === MODE.CUSTOMIZER && maskEvent) {
+      const id = randomId();
+      this.eventMap[id] = {
+        $el,
+        events: { [event]: () => this.eventHandler(layoutUpdate, listener) }
+      };
+
+      handleMultiAssignDatasetValue($el, "eventId", id);
       return;
     }
 
-    $el.addEventListener(event, callback);
+    $el.addEventListener(event, () => {
+      this.eventHandler(layoutUpdate, listener);
+      // if (this.mode === MODE.CUSTOMIZER && layoutUpdate) {
+      //   const layoutUpdate = new Event("@layout-update");
+      //   window.dispatchEvent(layoutUpdate);
+      // }
+      // listener();
+    });
   },
 
   enableWranchAnimation() {
