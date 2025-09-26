@@ -1,7 +1,9 @@
 import Handlebars from "./handlebars";
 import { handleMultiAssignDatasetValue } from "../helpers";
-import { randomId } from "../utils";
+import { randomId } from "./utils";
 import startCase from "lodash/startCase";
+import { MEDIA_TYPE } from "./enum";
+import "../components/media";
 
 let counter = 0;
 const getEval = path => {
@@ -24,41 +26,55 @@ Handlebars.registerHelper({
     return type;
   },
 
+  /**
+   *  Markup for downarrow button
+   *  <span class="sep w-[2px]"></span>
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
+        <path d="M19 9L14 14.1599C13.7429 14.4323 13.4329 14.6493 13.089 14.7976C12.7451 14.9459 12.3745 15.0225 12 15.0225C11.6255 15.0225 11.2549 14.9459 10.9109 14.7976C10.567 14.6493 10.2571 14.4323 10 14.1599L5 9" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+   */
+
   media_control: function(obj, svg_markup = false) {
     return Handlebars.compile(`
-      <div class="media-control flex flex-col gap-2">
+      <media-control class="media-control flex flex-col gap-2">
         <div class="media-control__preview bg-gray-100 border border-dashed border-gray-300 flex rounded justify-center">
           {{#if this.src}}
-            <img src="{{this.src}}" class="w-32 h-32 object-contain image-bg"/>
-          {{else if this.svg_markup}}
-            <div class="media-control__svg w-32 h-32 image-bg">
-              {{{this.svg_markup}}}
-            </div>
-          {{else}}
-            <p class="flex items-center h-32 text-sm text-gray-400">
+            <img src="{{this.src}}" class="media-control__preview-img w-32 h-32 object-contain image-bg"/>
+            <div class="hidden media-control__preview-svg w-32 h-32 image-bg"></div>
+            <p class="media-control__preview-none hidden flex items-center h-32 text-sm text-gray-400">
               No Image Provided
             </p>
+            <input type="hidden" name="type" value="${MEDIA_TYPE.DEFAULT}"/>
+          {{else if this.svg_markup}}
+            <img class="hidden media-control__preview-img w-32 h-32 object-contain image-bg"/>
+            <div class="media-control__preview-svg w-32 h-32 image-bg">
+              {{{this.svg_markup}}}
+            </div>
+            <p class="media-control__preview-none hidden flex items-center h-32 text-sm text-gray-400">
+              No Image Provided
+            </p>
+            <input type="hidden" name="type" value="${MEDIA_TYPE.SVG_MARKUP}"/>
+          {{else}}
+            <img class="hidden media-control__preview-img w-32 h-32 object-contain image-bg"/>
+            <div class="hidden media-control__preview-svg w-32 h-32 image-bg"></div>
+            <p class="media-control__preview-none flex items-center h-32 text-sm text-gray-400">
+              No Image Provided
+            </p>
+            <input type="hidden" name="type" />
           {{/if}}
         </div>
 
         <div class="flex gap-1">
-          <button class="flex items-center justify-between button basis-0 grow shrink-0">
+          <button data-action="upload" class="button basis-0 grow shrink-0">
             Upload Image
-            <span class="sep w-[2px]"></span>
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
-              <path
-      d="M19 9L14 14.1599C13.7429 14.4323 13.4329 14.6493 13.089 14.7976C12.7451 14.9459 12.3745 15.0225 12 15.0225C11.6255 15.0225 11.2549 14.9459 10.9109 14.7976C10.567 14.6493 10.2571 14.4323 10 14.1599L5 9"
-      stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
           </button>
           ${
             svg_markup
-              ? '<button class="button basis-0 grow shrink-0">Paste SVG</button>'
+              ? '<button data-action="svg-markup" class="button basis-0 grow shrink-0">SVG Markup</button>'
               : ""
           }
-          
         </div>
-      </div>
+      </media-control>
     `)(obj);
   },
 

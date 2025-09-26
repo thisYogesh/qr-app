@@ -1,7 +1,7 @@
 import Handlebars from "./handlebars";
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
-import { randomId } from "../utils";
+import { randomId } from "./utils";
 import { handleMultiAssignDatasetValue } from "../helpers";
 
 const MODE = {

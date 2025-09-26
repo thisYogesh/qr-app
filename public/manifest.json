@@ -152,7 +152,7 @@
               }
             },
             "_content": {
-              "title": "Content",
+              "_block_title": "Content",
               "type": "value",
               "value": "Coming soon...!"
             }
