@@ -5,7 +5,8 @@ class MediaControl extends HTMLElement {
   constructor() {
     super();
 
-    this.mediaType = null;
+    this.ogMediaType = null;
+    this.currentMediaType = null;
     this.$previewEl = null;
     this.previewData = null;
   }
@@ -16,17 +17,25 @@ class MediaControl extends HTMLElement {
 
   init() {
     const Q = this.querySelector.bind(this);
-    const [$uploadCta, $svgContentCta, mediaType, $actionContainer] = [
+    const [
+      $uploadCta,
+      $svgContentCta,
+      currentMediaType,
+      $actionContainer,
+      $previewArea
+    ] = [
       Q('[data-action="upload"]'),
       Q('[data-action="svg-markup"]'),
       Q('input[name="type"]')?.value,
-      Q(".media-control__actions")
+      Q(".media-control__actions"),
+      Q(".media-control__preview")
     ];
 
     this.$uploadCta = $uploadCta;
     this.$svgContentCta = $svgContentCta;
-    this.mediaType = mediaType;
     this.$actionContainer = $actionContainer;
+    this.$previewArea = $previewArea;
+    this.ogMediaType = this.currentMediaType = currentMediaType;
 
     this.setupPreviewEl();
     this.setupUploadCta();
@@ -34,6 +43,52 @@ class MediaControl extends HTMLElement {
 
     $uploadCta.addEventListener("click", () => this.openFileExplorer());
     $svgContentCta.addEventListener("click", () => this.openSvgContentBox());
+
+    $previewArea.addEventListener("dragover", e => this.onDragOver(e));
+    $previewArea.addEventListener("dragleave", () => this.onDragLeave());
+    $previewArea.addEventListener("dragend", e => this.onDragLeave());
+    $previewArea.addEventListener("drop", e => this.onDragDrop(e));
+  }
+
+  async onDragDrop(e) {
+    e.preventDefault();
+    const { $previewArea } = this;
+    try {
+      const [file] = e.dataTransfer.files;
+
+      const dataURL = await getDataUrl(file);
+      this.setImagePreview(dataURL);
+
+      // Remove active state
+      $previewArea.classList.add("border-gray-300");
+      $previewArea.classList.remove("border-blue-700", "border-red-500");
+    } catch {
+      // Remove active state
+      $previewArea.classList.add("border-gray-300");
+      $previewArea.classList.remove("border-blue-700", "border-red-500");
+    }
+  }
+
+  onDragLeave() {
+    const { $previewArea } = this;
+    $previewArea.classList.add("border-gray-300");
+    $previewArea.classList.remove("border-blue-700", "border-red-500");
+  }
+
+  onDragOver(e) {
+    e.preventDefault();
+
+    const { $previewArea } = this;
+    const { types } = e.dataTransfer;
+
+    if (!types.includes("Files")) {
+      $previewArea.classList.remove("border-gray-300");
+      $previewArea.classList.add("border-red-500");
+      return;
+    }
+
+    $previewArea.classList.remove("border-gray-300");
+    $previewArea.classList.add("border-blue-700");
   }
 
   setupSvgContentBox() {
@@ -86,8 +141,12 @@ class MediaControl extends HTMLElement {
   }
 
   cancelSvgUpdateOperation() {
-    const { $svgContentTextarea, $previewEl, _svgMarkup } = this;
+    const { $svgContentTextarea, $previewEl, _svgMarkup, ogMediaType } = this;
     $svgContentTextarea.remove();
+
+    this.currentMediaType = ogMediaType;
+    this.updatePreviewEL();
+
     $previewEl.innerHTML = _svgMarkup;
 
     // Reset container to old state
@@ -125,10 +184,10 @@ class MediaControl extends HTMLElement {
   }
 
   openSvgContentBox() {
-    const { mediaType } = this;
+    const { currentMediaType } = this;
 
-    if (mediaType !== MEDIA_TYPE.SVG_MARKUP) {
-      this.mediaType = MEDIA_TYPE.SVG_MARKUP;
+    if (currentMediaType !== MEDIA_TYPE.SVG_MARKUP) {
+      this.currentMediaType = MEDIA_TYPE.SVG_MARKUP;
       this.updatePreviewEL();
     }
 
@@ -146,7 +205,7 @@ class MediaControl extends HTMLElement {
   }
 
   setupPreviewEl() {
-    const { mediaType } = this;
+    const { currentMediaType } = this;
     const Q = this.querySelector.bind(this);
     const [$imageEl, $svgEl, $noneEl] = [
       Q(".media-control__preview-img"),
@@ -154,7 +213,7 @@ class MediaControl extends HTMLElement {
       Q(".media-control__preview-none")
     ];
 
-    switch (mediaType) {
+    switch (currentMediaType) {
       case MEDIA_TYPE.DEFAULT: {
         this.$previewEl = $imageEl;
         break;
@@ -174,10 +233,10 @@ class MediaControl extends HTMLElement {
   }
 
   updatePreviewEL() {
-    const { $previewEls, mediaType } = this;
+    const { $previewEls, currentMediaType } = this;
     const { $imageEl, $svgEl, $noneEl } = $previewEls;
 
-    switch (mediaType) {
+    switch (currentMediaType) {
       case MEDIA_TYPE.DEFAULT: {
         this.$previewEl = $imageEl;
         [$svgEl, $noneEl].forEach($el => $el.classList.add("hidden"));
@@ -208,36 +267,26 @@ class MediaControl extends HTMLElement {
     this.$file = $file;
   }
 
-  setPreview() {
-    const { mediaType, previewData, $previewEl } = this;
+  setImagePreview(dataURL) {
+    const { currentMediaType, $previewEl } = this;
 
-    switch (mediaType) {
-      case MEDIA_TYPE.DEFAULT: {
-        $previewEl.src = previewData;
-        break;
-      }
-
-      case MEDIA_TYPE.SVG_MARKUP: {
-        $previewEl.innerHTML = previewData;
-        break;
-      }
+    if (currentMediaType === MEDIA_TYPE.DEFAULT) {
+      $previewEl.src = dataURL;
+      $previewEl.classList.remove("hidden");
     }
-
-    $previewEl.classList.remove("hidden");
   }
 
   async onFileChange() {
-    const { $file, mediaType } = this;
+    const { $file, currentMediaType } = this;
     const [file] = $file.files;
     const dataURL = await getDataUrl(file);
 
-    if (mediaType !== MEDIA_TYPE.DEFAULT) {
-      this.mediaType = MEDIA_TYPE.DEFAULT;
+    if (currentMediaType !== MEDIA_TYPE.DEFAULT) {
+      this.currentMediaType = MEDIA_TYPE.DEFAULT;
       this.updatePreviewEL();
     }
 
-    this.previewData = dataURL;
-    this.setPreview();
+    this.setImagePreview(dataURL);
   }
 
   openFileExplorer() {
