@@ -24,6 +24,7 @@ export default defineConfig({
   plugins: [tailwindcss(), injectBuildHash(), includeSvg()],
   assetsInclude: ["**/*.lottie"],
   server: {
+    host: "app.local",
     port: 5000
     // strictPort: true
   },

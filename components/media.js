@@ -16,37 +16,115 @@ class MediaControl extends HTMLElement {
 
   init() {
     const Q = this.querySelector.bind(this);
-    const [$uploadCta, $svgContentBox, mediaType] = [
+    const [$uploadCta, $svgContentCta, mediaType, $actionContainer] = [
       Q('[data-action="upload"]'),
       Q('[data-action="svg-markup"]'),
-      Q('input[name="type"]')?.value
+      Q('input[name="type"]')?.value,
+      Q(".media-control__actions")
     ];
 
     this.$uploadCta = $uploadCta;
-    this.$svgContentBox = $svgContentBox;
+    this.$svgContentCta = $svgContentCta;
     this.mediaType = mediaType;
+    this.$actionContainer = $actionContainer;
 
     this.setupPreviewEl();
     this.setupUploadCta();
     this.setupSvgContentBox();
 
     $uploadCta.addEventListener("click", () => this.openFileExplorer());
-    $svgContentBox.addEventListener("click", () => this.enableSvgContentBox());
+    $svgContentCta.addEventListener("click", () => this.openSvgContentBox());
   }
 
   setupSvgContentBox() {
-    const $svgContentBox = document.createElement("textarea");
-    $svgContentBox.classList.add(
+    const $svgContentTextarea = document.createElement("textarea");
+    const $updateSvgContent = document.createElement("button");
+    const $cancelSvgContent = document.createElement("button");
+
+    // Update button states
+    [
+      { $el: $updateSvgContent, title: "Update" },
+      { $el: $cancelSvgContent, title: "Cancel" }
+    ].forEach(({ $el, title }) => {
+      $el.classList.add("button", "basis-0", "grow", "shrink-0");
+      $el.innerHTML = title;
+    });
+
+    $svgContentTextarea.classList.add(
       "w-full",
       "h-full",
       "text-sm",
       "p-2",
       "resize-none"
     );
-    this.$svgContentBox = $svgContentBox;
+
+    $cancelSvgContent.addEventListener("click", () =>
+      this.cancelSvgUpdateOperation()
+    );
+
+    $updateSvgContent.addEventListener("click", () => this.updateSvgMarkup());
+
+    this.$svgContentTextarea = $svgContentTextarea;
+    this.$updateSvgContent = $updateSvgContent;
+    this.$cancelSvgContent = $cancelSvgContent;
   }
 
-  enableSvgContentBox() {
+  updateSvgMarkup() {
+    const { $svgContentTextarea, $previewEl } = this;
+    const updatedSvgMarkup = $svgContentTextarea.value;
+    $svgContentTextarea.remove();
+
+    this._svgMarkup = updatedSvgMarkup;
+    $previewEl.innerHTML = updatedSvgMarkup;
+
+    // Reset container to old state
+    $previewEl.classList.add("w-32", "image-bg");
+    $previewEl.classList.remove("w-full");
+
+    // revert action button state
+    this.updateActionButons(false);
+  }
+
+  cancelSvgUpdateOperation() {
+    const { $svgContentTextarea, $previewEl, _svgMarkup } = this;
+    $svgContentTextarea.remove();
+    $previewEl.innerHTML = _svgMarkup;
+
+    // Reset container to old state
+    $previewEl.classList.add("w-32", "image-bg");
+    $previewEl.classList.remove("w-full");
+
+    // revert action button state
+    this.updateActionButons(false);
+  }
+
+  updateActionButons(svgEditMode = true) {
+    // Update buttons
+    const {
+      $uploadCta,
+      $svgContentCta,
+      $updateSvgContent,
+      $cancelSvgContent,
+      $actionContainer
+    } = this;
+
+    if (!svgEditMode) {
+      [$updateSvgContent, $cancelSvgContent].forEach($el => $el.remove());
+      [$uploadCta, $svgContentCta].forEach($el =>
+        $actionContainer.appendChild($el)
+      );
+
+      return;
+    }
+
+    // Show svg related buttons
+    [$uploadCta, $svgContentCta].forEach($el => $el.remove());
+    [$updateSvgContent, $cancelSvgContent].forEach($el =>
+      $actionContainer.appendChild($el)
+    );
+  }
+
+  openSvgContentBox() {
     const { mediaType } = this;
 
     if (mediaType !== MEDIA_TYPE.SVG_MARKUP) {
@@ -54,15 +132,17 @@ class MediaControl extends HTMLElement {
       this.updatePreviewEL();
     }
 
-    const { $previewEl, $svgContentBox } = this;
+    const { $previewEl, $svgContentTextarea } = this;
     $previewEl.classList.remove("w-32", "image-bg");
     $previewEl.classList.add("w-full");
     this._svgMarkup = $previewEl.innerHTML;
-    $svgContentBox.value = this._svgMarkup.trim();
+    $svgContentTextarea.value = this._svgMarkup.trim();
 
     $previewEl.innerHTML = "";
-    $previewEl.appendChild($svgContentBox);
-    $svgContentBox.focus();
+    $previewEl.appendChild($svgContentTextarea);
+    $svgContentTextarea.focus();
+
+    this.updateActionButons();
   }
 
   setupPreviewEl() {

@@ -64,7 +64,7 @@ Handlebars.registerHelper({
           {{/if}}
         </div>
 
-        <div class="flex gap-1">
+        <div class="media-control__actions flex gap-1">
           <button data-action="upload" class="button basis-0 grow shrink-0">
             Upload Image
           </button>
