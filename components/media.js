@@ -52,12 +52,11 @@ class MediaControl extends HTMLElement {
 
   async onDragDrop(e) {
     e.preventDefault();
+
     const { $previewArea } = this;
     try {
       const [file] = e.dataTransfer.files;
-
-      const dataURL = await getDataUrl(file);
-      this.setImagePreview(dataURL);
+      await this.onFileChange(file);
 
       // Remove active state
       $previewArea.classList.add("border-gray-300");
@@ -67,6 +66,20 @@ class MediaControl extends HTMLElement {
       $previewArea.classList.add("border-gray-300");
       $previewArea.classList.remove("border-blue-700", "border-red-500");
     }
+  }
+
+  async onFileChange(fileObj) {
+    const { $file, currentMediaType } = this;
+    const [file] = fileObj ? [fileObj] : $file.files;
+    const dataURL = await getDataUrl(file);
+
+    if (currentMediaType !== MEDIA_TYPE.DEFAULT) {
+      this.currentMediaType = MEDIA_TYPE.DEFAULT;
+      this.cancelSvgUpdateOperation();
+      this.updatePreviewEL();
+    }
+
+    this.setImagePreview(dataURL);
   }
 
   onDragLeave() {
@@ -274,19 +287,6 @@ class MediaControl extends HTMLElement {
       $previewEl.src = dataURL;
       $previewEl.classList.remove("hidden");
     }
-  }
-
-  async onFileChange() {
-    const { $file, currentMediaType } = this;
-    const [file] = $file.files;
-    const dataURL = await getDataUrl(file);
-
-    if (currentMediaType !== MEDIA_TYPE.DEFAULT) {
-      this.currentMediaType = MEDIA_TYPE.DEFAULT;
-      this.updatePreviewEL();
-    }
-
-    this.setImagePreview(dataURL);
   }
 
   openFileExplorer() {

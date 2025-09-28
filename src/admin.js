@@ -250,8 +250,10 @@ class AppCustomizer {
     });
 
     this.$customiseTriggers.forEach($el => {
-      const $trigger = document.createElement("span");
+      const $trigger = document.createElement("a");
       const { customizeTrigger } = $el.dataset;
+
+      $trigger.classList.add("flex", "justify-end", "items-center");
 
       customizeTrigger
         .split(",")
@@ -278,6 +280,36 @@ class AppCustomizer {
     $anchors.forEach($anchor =>
       $anchor.addEventListener("click", e => e.preventDefault())
     );
+
+    this.prepareEventDots();
+  }
+
+  prepareEventDots() {
+    const { eventMap } = this;
+    Object.values(eventMap).forEach(details => {
+      const { $el, events } = details;
+      const $dotTrigger = document.createElement("span");
+
+      $el.classList.add("relative", "[&:hover>.event-trigger]:flex");
+      $dotTrigger.classList.add(
+        "event-trigger",
+        "hidden",
+        "absolute",
+        "w-[10px]",
+        "h-[10px]",
+        "bg-blue-500",
+        "rounded-full",
+        "mr-5",
+        "right-0"
+      );
+
+      $el.appendChild($dotTrigger);
+
+      $dotTrigger.addEventListener("click", e => {
+        e.stopPropagation();
+        events.click();
+      });
+    });
   }
 
   onSettingBlockHover(e) {
@@ -318,6 +350,7 @@ class AppCustomizer {
   showConfigHandler() {
     const { highlightedCustomizeId } = this;
 
+    // avoid re-renderign same config
     if (this.selectedCustomizeId === highlightedCustomizeId) return;
 
     const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);

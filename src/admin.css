@@ -93,3 +93,23 @@ input[type="text"] {
 [data-settings-viewer]:has([data-settings]:not(:empty)) > .action-buttons {
   display: flex;
 }
+
+.event-trigger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  @apply border border-blue-500 rounded-full;
+  animation: vibrate 1s ease infinite;
+}
+
+@keyframes vibrate {
+  from {
+    inset: 0px;
+    opacity: 1;
+  }
+
+  to {
+    inset: -7px;
+    opacity: 0;
+  }
+}
