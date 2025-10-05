@@ -31,7 +31,7 @@ jobs:
           # Move to a temporary folder
           mv dist ../dist-temp  # adjust if your build folder is named differently
           git fetch origin build || echo "No existing build branch"
-          git checkout --orphan build
+          git checkout build
           git reset
           rm -rf *
           mv ../dist-temp/* .
