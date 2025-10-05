@@ -36,7 +36,7 @@ jobs:
           rm -rf *
           mv ../dist-temp/* .
           git add .
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "thisYogesh"
+          git config user.email "yog99mail@gmail.com"
           git commit -m "Build from ${GITHUB_SHA}"
           git push -f origin build
