@@ -14,6 +14,7 @@ const injectBuildHash = () => ({
 });
 
 export default {
+  base: "",
   assetsInclude: ["**/*.lottie"],
   plugins: [injectBuildHash()],
 };
