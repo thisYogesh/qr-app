@@ -1,0 +1,42 @@
+name: Build and Push to "build" Branch
+
+on:
+  push:
+    branches:
+      - main # run this when main is updated
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # important so we can push later
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build
+
+      # Create a separate branch (build) and push compiled output
+      - name: Deploy build folder to "build" branch
+        run: |
+          # Move to a temporary folder
+          mv dist ../dist-temp  # adjust if your build folder is named differently
+          git fetch origin build || echo "No existing build branch"
+          git checkout --orphan build
+          git reset
+          rm -rf *
+          mv ../dist-temp/* .
+          git add .
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Build from ${GITHUB_SHA}"
+          git push -f origin build
