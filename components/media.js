@@ -275,7 +275,7 @@ class MediaControl extends HTMLElement {
     const $file = document.createElement("input");
     $file.type = "file";
 
-    $file.addEventListener("change", e => this.onFileChange(e));
+    $file.addEventListener("change", e => this.onFileChange());
 
     this.$file = $file;
   }

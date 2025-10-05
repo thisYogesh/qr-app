@@ -194,7 +194,6 @@ const app = {
                       {{#each actions}}
                         {{#if template}}
                           <div
-                            data-customize-trigger="events"
                             id="template-{{@index}}"
                             class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
                           >
@@ -303,6 +302,14 @@ const app = {
     buildEvent.storeConfig = storeConfig;
     buildEvent.eventMap = this.eventMap;
     window.dispatchEvent(buildEvent);
+  },
+
+  reRender() {
+    const { templates, storeConfig } = this;
+    const $appBuilder = document.querySelector(".app-builder");
+    const appContent = templates.render(storeConfig);
+
+    $appBuilder.innerHTML = appContent;
   },
 
   init() {

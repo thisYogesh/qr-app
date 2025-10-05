@@ -1,0 +1,447 @@
+import Handlebars from "./handlebars";
+import { handleMultiAssignDatasetValue } from "../helpers";
+import { randomId } from "./utils";
+import startCase from "lodash/startCase";
+import { MEDIA_TYPE } from "./enum";
+import "../components/media";
+
+let counter = 0;
+const getEval = path => {
+  const paths = path
+    .split(",")
+    .map(path => path.trim())
+    .map(path => `{_path: '${path}', ...obj.${path}}`);
+  return new Function("obj", `return [${paths}]`);
+};
+
+const getFields = value =>
+  [...Object.entries(value)]
+    .filter(([_, value]) => typeof value.type === "string")
+    .map(([title, value]) => ({ title, value }));
+
+Handlebars.registerHelper({
+  dynamic_field: function(fieldObj) {
+    const { value } = fieldObj.field;
+    const { type } = value;
+    return type;
+  },
+
+  /**
+   *  Markup for downarrow button
+   *  <span class="sep w-[2px]"></span>
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
+        <path d="M19 9L14 14.1599C13.7429 14.4323 13.4329 14.6493 13.089 14.7976C12.7451 14.9459 12.3745 15.0225 12 15.0225C11.6255 15.0225 11.2549 14.9459 10.9109 14.7976C10.567 14.6493 10.2571 14.4323 10 14.1599L5 9" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+   */
+
+  media_control: function(obj, svg_markup = false) {
+    return Handlebars.compile(`
+      <div class="flex flex-col gap-2">
+        <div class="media-control__preview bg-gray-100 border border-dashed border-gray-300 flex rounded justify-center">
+          {{#if this.src}}
+            <img src="{{this.src}}" class="media-control__preview-img w-32 h-32 object-contain image-bg"/>
+            <div class="hidden media-control__preview-svg w-32 h-32 image-bg"></div>
+            <p class="media-control__preview-none hidden flex items-center h-32 text-sm text-gray-400">
+              No Image Provided
+            </p>
+            <input type="hidden" name="type" value="${MEDIA_TYPE.DEFAULT}"/>
+          {{else if this.svg_markup}}
+            <img class="hidden media-control__preview-img w-32 h-32 object-contain image-bg"/>
+            <div class="media-control__preview-svg w-32 h-32 image-bg">
+              {{{this.svg_markup}}}
+            </div>
+            <p class="media-control__preview-none hidden flex items-center h-32 text-sm text-gray-400">
+              No Image Provided
+            </p>
+            <input type="hidden" name="type" value="${MEDIA_TYPE.SVG_MARKUP}"/>
+          {{else}}
+            <img class="hidden media-control__preview-img w-32 h-32 object-contain image-bg"/>
+            <div class="hidden media-control__preview-svg w-32 h-32 image-bg"></div>
+            <p class="media-control__preview-none flex items-center h-32 text-sm text-gray-400">
+              No Image Provided
+            </p>
+            <input type="hidden" name="type" />
+          {{/if}}
+        </div>
+
+        <div class="media-control__actions flex gap-1">
+          <button data-action="upload" class="button basis-0 grow shrink-0">
+            Upload Image
+          </button>
+          ${
+            svg_markup
+              ? '<button data-action="svg-markup" class="button basis-0 grow shrink-0">SVG Markup</button>'
+              : ""
+          }
+        </div>
+      </div>
+    `)(obj);
+  },
+
+  input_control: function(label, type, value, placeholder = "Enter value") {
+    const id = `input-${counter++}`;
+    return Handlebars.compile(`
+      <div class="input flex flex-col gap-0.5">
+        {{#if label}}
+          <label for="${id}" class="input__label capitalize text-gray-700 font-semibold text-xs">{{ label }}</label>
+        {{/if}}
+        <input id="${id}" class="text-sm h-8" type="{{this.type}}" value="{{this.value}}" placeholder="{{placeholder}}"/>
+      </div>
+    `)({ label, type, value, placeholder });
+  },
+
+  setting_block: function(title, util) {
+    const innerContent = util.fn(this);
+
+    return Handlebars.compile(`
+      <div data-field class="setting-block flex flex-col gap-2 border border-gray-300 p-2 rounded">
+        <div class="main-settings flex flex-col gap-2">
+          <span class="capitalize text-sm">${startCase(title)}</span>
+          ${innerContent}
+        </div>
+
+        {{#if this.fields.length}}
+          <div class="sub-settings flex flex-col gap-2">
+            {{#each this.fields}}
+              {{> (dynamic_field this) }}
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+      </div>
+    `)(this);
+  }
+});
+
+Handlebars.registerPartial({
+  wrapper: `
+    {{#setting_block this.field.title}}
+    {{/setting_block}}
+  `,
+  anchor: `
+    {{#setting_block this.field.title}}
+      <div class="flex gap-2">
+        {{#input_control 'Text' 'text' this.field.value.text}}{{/input_control}}
+        {{#input_control 'Hyperlink' 'text' this.field.value.href}}{{/input_control}}
+      </div>
+    {{/setting_block}}
+  `,
+
+  size: `
+  {{#setting_block this.field.title}}
+    <div class="flex gap-2">
+      {{#input_control 'width' 'text' this.field.value.width 'auto'}}{{/input_control}}
+      {{#input_control 'height' 'text' this.field.value.height 'auto'}}{{/input_control}}
+    </div>
+  {{/setting_block}}
+  `,
+
+  "link-button": `
+  {{#setting_block this.field.title}}
+    <div class="flex flex-col gap-2">
+      {{#input_control 'Title' 'text' this.field.value.label}}{{/input_control}}
+      {{#input_control 'Hyperlink' 'text' this.field.value.href}}{{/input_control}}
+    </div>
+  {{/setting_block}}
+  `,
+
+  image: `
+  {{#setting_block this.field.title}}
+    <media-control class="media-control">
+      {{#media_control this.field.value}}{{/media_control}}
+    </media-control>
+  {{/setting_block}}
+  `,
+
+  "image-only": `
+  {{#setting_block this.field.title}}
+    <media-control class="media-control">
+      {{#media_control this.field.value false}}{{/media_control}}
+    </media-control>
+  {{/setting_block}}
+  `,
+
+  color: `
+  {{#setting_block this.field.title}}
+    {{#input_control '' 'color' this.field.value.value}}{{/input_control}}
+  {{/setting_block}}
+  `,
+  button: `
+  {{#setting_block this.field.title}}
+    {{#input_control 'Title' 'text' this.field.value.label}}{{/input_control}}
+  {{/setting_block}}
+  `,
+  value: `
+  {{#setting_block this.field.title}}
+    {{#input_control '' 'text' this.field.value.value}}{{/input_control}}
+  {{/setting_block}}
+  `,
+  opacity: `
+  {{#setting_block this.field.title}}
+    <input type="range" min="0" max="1" step="0.01" value="{{this.field.value.value}}"/>
+  {{/setting_block}}
+  `
+});
+
+const getSettingKeys = (customizeIds, settingsMap) => {
+  const keys = customizeIds.split(",").map(id => settingsMap[id]?.trim());
+  return keys.join(",");
+};
+
+class AppCustomizer {
+  constructor() {
+    this.$triggerHighlighters = [];
+    this.selectedCustomizeId = null;
+    this.highlightedCustomizeId = null;
+    this.layoutUpdateInProgress = false;
+    this.settingsMap = {};
+  }
+
+  get $customiseTriggers() {
+    const { _$customiseTriggers } = this;
+    const $customiseTriggers =
+      _$customiseTriggers ||
+      (this._$customiseTriggers = [
+        ...document.querySelectorAll("[data-customize-trigger]")
+      ]);
+    return $customiseTriggers;
+  }
+
+  get currentAppliedEvents() {
+    const { selectedCustomizeId, $customiseTriggers, eventMap } = this;
+
+    const $customizerEl = $customiseTriggers.find(
+      $el => $el.dataset.customizeId === selectedCustomizeId
+    );
+    const { eventId = "" } = $customizerEl.dataset;
+    const events = eventId
+      .split(",")
+      .filter(id => id)
+      .map(id => {
+        const { events } = eventMap?.[id];
+        return {
+          eventId: id,
+          events: Object.keys(events)
+        };
+      });
+
+    return events.filter(e => e);
+  }
+
+  get currentBlockSettings() {
+    const { storeConfig, selectedCustomizeId, settingsMap } = this;
+    const keys = getSettingKeys(selectedCustomizeId, settingsMap);
+    const settings = getEval(keys)(storeConfig);
+
+    return settings;
+  }
+
+  init({ storeConfig, eventMap }) {
+    const $app = (this.$app = document.querySelector("[data-customizer]"));
+    const $settingsViewer = (this.$settingsViewer = document.querySelector(
+      "[data-settings-viewer]"
+    ));
+    this.$settings = $settingsViewer.querySelector("[data-settings]");
+
+    this.eventMap = eventMap;
+    this.storeConfig = storeConfig;
+
+    $app.addEventListener("click", () => {
+      this.showConfigHandler();
+    });
+
+    this.$customiseTriggers.forEach($el => {
+      const $trigger = document.createElement("a");
+      const { customizeTrigger } = $el.dataset;
+
+      $trigger.classList.add("flex", "justify-end", "items-center");
+
+      customizeTrigger
+        .split(",")
+        .map(key => key.trim())
+        .forEach(block => {
+          const id = randomId();
+          this.settingsMap[id] = block;
+
+          $trigger.classList.add("hidden", "pointer-events-none");
+          this.$triggerHighlighters.push($trigger);
+
+          $el.$trigger = $trigger;
+
+          handleMultiAssignDatasetValue($trigger, "hcId", id);
+          handleMultiAssignDatasetValue($el, "customizeId", id);
+        });
+
+      document.body.append($trigger);
+      $el.addEventListener("mouseover", e => this.onSettingBlockHover(e));
+    });
+
+    // Prevent default behavior of all <a></a> elements
+    const $anchors = $app.querySelectorAll("a");
+    $anchors.forEach($anchor =>
+      $anchor.addEventListener("click", e => e.preventDefault())
+    );
+
+    this.prepareEventDots();
+  }
+
+  prepareEventDots() {
+    const { eventMap } = this;
+    Object.values(eventMap).forEach(details => {
+      const { $el, events } = details;
+      const $dotTrigger = document.createElement("span");
+
+      $el.classList.add("relative", "[&:hover>.event-trigger]:flex");
+      $dotTrigger.classList.add(
+        "event-trigger",
+        "hidden",
+        "absolute",
+        "w-[10px]",
+        "h-[10px]",
+        "bg-blue-500",
+        "rounded-full",
+        "mr-5",
+        "right-0"
+      );
+
+      $el.appendChild($dotTrigger);
+
+      $dotTrigger.addEventListener("click", e => {
+        e.stopPropagation();
+        events.click();
+      });
+    });
+  }
+
+  onSettingBlockHover(e) {
+    e.stopPropagation();
+    if (this.layoutUpdateInProgress) return;
+
+    const { $trigger, dataset } = e.currentTarget;
+    const {
+      height,
+      width,
+      left,
+      top
+    } = e.currentTarget.getBoundingClientRect();
+
+    const { style, classList } = $trigger;
+    style.setProperty("height", height + "px");
+    style.setProperty("width", width + "px");
+    style.setProperty("left", left + "px");
+    style.setProperty("top", top + "px");
+    classList.remove("hidden");
+
+    [...this.$triggerHighlighters]
+      .filter($el => $el !== $trigger)
+      .filter($el => $el.dataset.hcId !== this.selectedCustomizeId)
+      .forEach($el => $el.classList.add("hidden"));
+
+    const { customizeId } = dataset;
+    this.highlightedCustomizeId = customizeId;
+  }
+
+  getSettingMeta(customizeIds) {
+    const { settingsMap } = this;
+    const keys = customizeIds.split(",").map(id => settingsMap[id]?.trim());
+
+    return keys.join(",");
+  }
+
+  showConfigHandler() {
+    const { highlightedCustomizeId } = this;
+
+    // avoid re-renderign same config
+    if (this.selectedCustomizeId === highlightedCustomizeId) return;
+
+    const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);
+    const $prevSelectedHighlighter = document.querySelector(
+      "[data-hc-id].--selected"
+    );
+    if ($prevSelectedHighlighter) {
+      $prevSelectedHighlighter.classList.remove("--selected");
+      $prevSelectedHighlighter.classList.add("hidden");
+    }
+
+    const $selectedHighlighter = document.querySelector(
+      `[data-hc-id="${selectedCustomizeId}"]`
+    );
+    $selectedHighlighter.classList.add("--selected");
+    $selectedHighlighter.classList.remove("hidden");
+
+    this.showConfig();
+  }
+
+  showConfig() {
+    const settingsHTML = this.buildSettingsHTML();
+    this.$settings.innerHTML = settingsHTML;
+  }
+
+  buildSettingsHTML() {
+    const { currentBlockSettings: settings } = this;
+    const fields = [];
+
+    settings.forEach(setting => {
+      if (setting.type) {
+        const { _path, _block_title } = setting;
+        const [_title] = _path.split(".").reverse();
+        fields.push(
+          this.makeField({ title: _block_title || _title, value: setting })
+        );
+      } else {
+        fields.push(
+          ...getFields(setting).map(({ title, value }) =>
+            this.makeField({ title: title, value })
+          )
+        );
+      }
+    });
+
+    return fields.join("");
+  }
+
+  makeField(field) {
+    const { title, value } = field;
+    if (title.indexOf("_") === 0) return "";
+
+    const template = Handlebars.compile(`
+      <div class="root p-2">
+        {{#if this.field}}
+          {{> (dynamic_field this) }}
+        {{/if}}
+      </div>`);
+
+    const fieldMap = this.extractFields({ title, value });
+
+    return template(fieldMap);
+  }
+
+  extractFields(field) {
+    const { value } = field;
+    const fields = {
+      field,
+      fields: getFields(value).map(field => this.extractFields(field))
+    };
+    return fields;
+  }
+
+  resetAndDisableCustomizeTrigger() {
+    const { $triggerHighlighters } = this;
+    const $visibleTriggers = $triggerHighlighters.filter($el => {
+      const { classList } = $el;
+      return classList.contains("--selected") || !classList.contains("hidden");
+    });
+
+    $visibleTriggers.forEach($el => {
+      $el.classList.remove("--selected");
+      $el.classList.add("hidden");
+    });
+
+    this.highlightedCustomizeId = null;
+    this.selectedCustomizeId = null;
+  }
+}
+
+const Customizer = new AppCustomizer();
+
+export default Customizer;
