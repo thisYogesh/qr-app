@@ -56,14 +56,13 @@ const app = {
       </div>`
     ),
     simple_text: Handlebars.registerPartial("simple_text", `{{data.content}}`),
-    dynamic_template: Handlebars.registerHelper(
-      "dynamic_template",
-      function (context) {
-        const { index, root } = context.data;
-        const { template } = root.actions[index];
-        return template;
-      }
-    ),
+    dynamic_template: Handlebars.registerHelper("dynamic_template", function(
+      context
+    ) {
+      const { index, root } = context.data;
+      const { template } = root.actions[index];
+      return template;
+    }),
     render: Handlebars.compile(`
       <div data-main class="flex w-full md:w-96 flex-col items-center justify-center">
         <div class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
@@ -147,7 +146,7 @@ const app = {
 
   async install() {
     const buildHash = "<build-hash>".replace("<build-hash>", "") || Date.now();
-    const { items } = await fetch(`/qr-app-data.json?hash=${buildHash}`)
+    const { items } = await fetch(`./qr-app-data.json?hash=${buildHash}`)
       .then((resp) => resp.json())
       .then((data) => data);
 
@@ -186,8 +185,9 @@ const app = {
     );
     this.$contentContainer = $containerEl;
     this.$slideContainer = $slideContainer;
-    const $contentBlocks = (this.$contentBlocks =
-      $slideContainer.querySelectorAll("[data-trigger], [data-fn]"));
+    const $contentBlocks = (this.$contentBlocks = $slideContainer.querySelectorAll(
+      "[data-trigger], [data-fn]"
+    ));
 
     $contentBlocks.forEach(($el) =>
       $el.addEventListener("click", () => this.onContentBlockSelect($el))
@@ -196,8 +196,9 @@ const app = {
     const { height } = $slideContainer.getBoundingClientRect();
     $slideContainer.style.setProperty("--root-height", `${height}px`);
 
-    const $backButtons = (this.$backButtons =
-      $slideContainer.querySelectorAll("[data-back]"));
+    const $backButtons = (this.$backButtons = $slideContainer.querySelectorAll(
+      "[data-back]"
+    ));
 
     $backButtons.forEach(($el) =>
       $el.addEventListener("click", () => this.goBack())
