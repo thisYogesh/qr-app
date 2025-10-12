@@ -238,6 +238,16 @@ class AppCustomizer {
     return settings;
   }
 
+  get hasAddNewConfig() {
+    const { settingsMap, selectedCustomizeId, storeConfig } = this;
+    const key = settingsMap[selectedCustomizeId];
+    const [value] = key.split(".").reverse();
+
+    return value === "new"
+      ? storeConfig[settingsMap[selectedCustomizeId]]
+      : null;
+  }
+
   init({ storeConfig, eventMap }) {
     const $app = (this.$app = document.querySelector("[data-customizer]"));
     const $settingsViewer = (this.$settingsViewer = document.querySelector(
@@ -350,6 +360,12 @@ class AppCustomizer {
     if (this.selectedCustomizeId === highlightedCustomizeId) return;
 
     const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);
+
+    if (this.hasAddNewConfig) {
+      console.log(this.hasAddNewConfig);
+      return;
+    }
+
     const $prevSelectedHighlighter = document.querySelector(
       "[data-hc-id].--selected"
     );
@@ -435,6 +451,14 @@ class AppCustomizer {
     this.highlightedCustomizeId = null;
     this.selectedCustomizeId = null;
   }
+
+  createNewBlock(baseKey, selectedOption) {
+    const configObj = this.storeConfig[baseKey];
+    const { value } =
+      configObj.options.find(option => option.value === selectedOption) || {};
+
+    return configObj[value];
+  },
 }
 
 const Customizer = new AppCustomizer();

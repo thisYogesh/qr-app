@@ -51,13 +51,13 @@ Handlebars.registerHelper({
   },
 
   app_button: function(ctx, index) {
-    const { data, template } = ctx;
-    const { background_color = {}, icon, label, href } = data.button;
+    const { button, template } = ctx;
+    const { background_color = {}, icon, label, href } = button;
     const { value: bg_color } = background_color;
 
     const temp = Handlebars.compile(`
     <a
-      data-customize-trigger="actions[{{index}}].data.button"
+      data-customize-trigger="actions[{{index}}].button"
       {{#if template}}
         data-trigger="#template-{{index}}"
       {{/if}}
@@ -95,7 +95,7 @@ Handlebars.registerHelper({
     ];
 
     const template = Handlebars.compile(`
-      <div data-customize-trigger="actions[{{parentIndex}}].data.items[{{index}}]" class="flex text-sm items-start gap-1 text-blue-900 font-medium">
+      <div data-customize-trigger="actions[{{parentIndex}}].items[{{index}}]" class="flex text-sm items-start gap-1 text-blue-900 font-medium">
         <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">
           {{#image icon}}{{/image}}
         </span>
@@ -120,29 +120,24 @@ Handlebars.registerHelper({
 });
 
 Handlebars.registerPartial({
-  list_phone_numbers: `
-  <div class="flex flex-col gap-2">
-    {{#each data.contact_numbers}}
-      <a
-        class="flex items-center gap-1 text-blue-900 font-bold"
-        href="https://wa.me/{{this}}"
-      >
-        <span class="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full">{{{../data.icon}}}</span>
-        {{this}}
-      </a>
-    {{/each}}
-  </div>`,
-
   contact_us: `
   <div class="flex flex-col gap-2">
-    {{#each data.items}}
+    {{#each items}}
       {{#icon_with_content this}}{{/icon_with_content}}
     {{/each}}
+
+    <div data-customize-trigger="actions.items.new">
+      <place-holder class="py-1 rounded-sm">
+        <span data-info class="z-10 px-1">
+          + Add Row
+        </span>
+      </place-holder>
+    </div>
   </div>`,
 
   simple_text: `
-  <div data-customize-trigger="actions[{{@index}}].data._content">
-    {{data._content.value}}
+  <div data-customize-trigger="actions[{{@index}}].content">
+    {{content.value}}
   </div>
   `
 });
@@ -193,6 +188,15 @@ const app = {
                           {{#app_button this @index}}{{/app_button}}
                         </li>
                       {{/each}}
+                      <li>
+                        <div data-customize-trigger="actions.new">
+                          <place-holder class="px-2 py-1 rounded-3xl">
+                            <span data-info class="z-10 py-1 px-1">
+                              + Add Button
+                            </span>
+                          </place-holder>
+                        </div>
+                      </li>
                     </ul>
 
                     <div
@@ -216,7 +220,7 @@ const app = {
                                 </svg>
                               </button>
 
-                              <span class="ml-2"> {{data.button.label}} </span>
+                              <span class="ml-2"> {{button.label}} </span>
                             </div>
                             {{> (dynamic_template)}}
                           </div>
@@ -294,7 +298,7 @@ const app = {
 
   async install() {
     const buildHash = "<build-hash>".replace("<build-hash>", "") || Date.now();
-    const { items } = await fetch(`/manifest.json?hash=${buildHash}`)
+    const { items } = await fetch(`/manifest-test.json?hash=${buildHash}`)
       .then(resp => resp.json())
       .then(data => data);
 
