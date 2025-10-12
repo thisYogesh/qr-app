@@ -4,7 +4,7 @@ export const handleMultiAssignDatasetValue = ($el, prop, value) => {
 };
 
 export const getInteratorValues = IteratorValue => {
-  if (IteratorValue.constructor !== Iterator) throw "Not an Iterator";
+  // if (IteratorValue.constructor !== Iterator) throw "Not an Iterator";
 
   const values = [];
   let value = null;

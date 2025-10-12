@@ -4,6 +4,7 @@ import { randomId } from "./utils";
 import startCase from "lodash/startCase";
 import { MEDIA_TYPE } from "./enum";
 import "../components/media";
+import "../components/placeholder";
 
 let counter = 0;
 const getEval = path => {
@@ -42,7 +43,7 @@ Handlebars.registerHelper({
             <img src="{{this.src}}" class="media-control__preview-img w-32 h-32 object-contain image-bg"/>
             <div class="hidden media-control__preview-svg w-32 h-32 image-bg"></div>
             <p class="media-control__preview-none hidden flex items-center h-32 text-sm text-gray-400">
-              No Image Provided
+              No Image Selected
             </p>
             <input type="hidden" name="type" value="${MEDIA_TYPE.DEFAULT}"/>
           {{else if this.svg_markup}}
@@ -51,14 +52,14 @@ Handlebars.registerHelper({
               {{{this.svg_markup}}}
             </div>
             <p class="media-control__preview-none hidden flex items-center h-32 text-sm text-gray-400">
-              No Image Provided
+              No Image Selected
             </p>
             <input type="hidden" name="type" value="${MEDIA_TYPE.SVG_MARKUP}"/>
           {{else}}
             <img class="hidden media-control__preview-img w-32 h-32 object-contain image-bg"/>
             <div class="hidden media-control__preview-svg w-32 h-32 image-bg"></div>
             <p class="media-control__preview-none flex items-center h-32 text-sm text-gray-400">
-              No Image Provided
+              No Image Selected
             </p>
             <input type="hidden" name="type" />
           {{/if}}

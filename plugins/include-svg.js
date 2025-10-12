@@ -1,3 +1,8 @@
+/**
+ * Example
+ * <include-svg src="/path/to.svg" />
+ */
+
 import path from "path";
 import { getInteratorValues } from "../helpers";
 import fs from "fs/promises";

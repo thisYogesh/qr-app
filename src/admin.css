@@ -113,3 +113,26 @@ input[type="text"] {
     opacity: 0;
   }
 }
+
+place-holder {
+  @apply relative w-full min-h-full flex justify-center text-sm items-center border border-gray-400 overflow-hidden cursor-pointer;
+}
+
+place-holder::after,
+place-holder::before {
+  @apply absolute bg-gray-400;
+  content: "";
+  width: var(--diagonal-length);
+  height: 1px;
+  left: 50%;
+  top: 50%;
+}
+
+place-holder::after {
+  transform: translateX(-50%) translateY(-50%) rotate(var(--diagonal-angle));
+}
+
+place-holder::before {
+  transform: translateX(-50%) translateY(-50%)
+    rotate(calc(var(--diagonal-angle) * -1));
+}

@@ -25,8 +25,16 @@ Handlebars.registerHelper({
     const template = Handlebars.compile(`
       {{#if src}}
         <img src="{{src}}" height="{{height}}" width="{{width}}"/>
-      {{else}}
+      {{else if svg_markup}}
         <span class="flex svg">{{{svg_markup}}}</span>
+      {{else}}
+        <div class="flex min-w-40 min-h-16 text-gray-600">
+          <place-holder class="bg-white">
+            <span class="bg-white z-10 py-1.5 text-sm">
+              Attach Image
+            </span>
+          </place-holder>
+        </div>
       {{/if}}
     `);
 

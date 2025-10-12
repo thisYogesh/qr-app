@@ -1,3 +1,4 @@
+import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 // import handlebars from "vite-plugin-handlebars";
@@ -21,7 +22,18 @@ const injectBuildHash = () => ({
 });
 
 export default defineConfig({
-  plugins: [tailwindcss(), injectBuildHash(), includeSvg()],
+  plugins: [
+    tailwindcss(),
+    injectBuildHash(),
+    includeSvg(),
+    {
+      name: "watch-extra-folder",
+      configureServer(server) {
+        const folderToWatch = path.resolve("/svg");
+        server.watcher.add(folderToWatch);
+      }
+    }
+  ],
   assetsInclude: ["**/*.lottie"],
   server: {
     host: "app.local",
