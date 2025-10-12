@@ -3,6 +3,7 @@ import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
 import { randomId } from "./utils";
 import { handleMultiAssignDatasetValue } from "../helpers";
+import "../components/placeholder";
 
 const MODE = {
   NORMAL: "1",
@@ -28,10 +29,10 @@ Handlebars.registerHelper({
       {{else if svg_markup}}
         <span class="flex svg">{{{svg_markup}}}</span>
       {{else}}
-        <div class="flex min-w-40 min-h-16 text-gray-600">
-          <place-holder class="bg-white">
-            <span class="bg-white z-10 py-1.5 text-[13px]">
-              Attach Image
+        <div class="flex min-w-40 min-h-16">
+          <place-holder>
+            <span data-info class="z-10 py-1.5">
+              Add Image
             </span>
           </place-holder>
         </div>
@@ -231,9 +232,9 @@ const app = {
                   </div>
                 {{else}}
                   <div data-customize-trigger="Bottomline" class="min-w-42 mt-8">
-                    <place-holder class="bg-white px-2">
-                      <span class="bg-white z-10 py-1 px-1 text-[13px]">
-                        Enter Text
+                    <place-holder class="px-2">
+                      <span data-info class="z-10 py-1 px-1">
+                        Add Text
                       </span>
                     </place-holder>
                   </div>
@@ -276,9 +277,9 @@ const app = {
             {{else}}
               <div class="px-2">
                 <div data-customize-trigger="Copyright">
-                  <place-holder class="bg-white px-2">
-                    <span class="bg-white z-10 py-1 px-1 text-[13px]">
-                      Add © Info
+                  <place-holder class="px-2">
+                    <span data-info class="z-10 py-1 px-1">
+                      Add Text
                     </span>
                   </place-holder>
                 </div>

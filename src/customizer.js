@@ -3,8 +3,8 @@ import { handleMultiAssignDatasetValue } from "../helpers";
 import { randomId } from "./utils";
 import startCase from "lodash/startCase";
 import { MEDIA_TYPE } from "./enum";
+
 import "../components/media";
-import "../components/placeholder";
 
 let counter = 0;
 const getEval = path => {
@@ -132,8 +132,8 @@ Handlebars.registerPartial({
   size: `
   {{#setting_block this.field.title}}
     <div class="flex gap-2">
-      {{#input_control this value='width' type='text' value=this.field.value.width placeholder='auto'}}{{/input_control}}
-      {{#input_control this value='height' type='text' value=this.field.value.height placeholder='auto'}}{{/input_control}}
+      {{#input_control this label='width' type='text' value=this.field.value.width placeholder='auto'}}{{/input_control}}
+      {{#input_control this label='height' type='text' value=this.field.value.height placeholder='auto'}}{{/input_control}}
     </div>
   {{/setting_block}}
   `,

@@ -1,0 +1,28 @@
+place-holder {
+  @apply relative bg-gray-100 w-full min-h-full flex justify-center text-sm items-center border border-dashed border-gray-400 overflow-hidden cursor-pointer text-gray-400;
+
+  [data-info] {
+    @apply bg-gray-100 text-[13px];
+  }
+}
+
+place-holder::after,
+place-holder::before {
+  @apply absolute border-gray-400 border-dashed;
+  content: "";
+  width: var(--diagonal-length);
+  height: 0;
+  left: 50%;
+  top: 50%;
+}
+
+place-holder::after {
+  @apply border-b;
+  transform: translateX(-50%) translateY(-50%) rotate(var(--diagonal-angle));
+}
+
+place-holder::before {
+  @apply border-t;
+  transform: translateX(-50%) translateY(-50%)
+    rotate(calc(var(--diagonal-angle) * -1));
+}

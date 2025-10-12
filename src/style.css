@@ -1,4 +1,5 @@
-/* @import "tailwindcss"; */
+@import "tailwindcss";
+@import "./placeholder.css";
 
 body {
   min-height: 100svh;
