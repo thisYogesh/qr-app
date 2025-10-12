@@ -159,13 +159,13 @@
           }
         }
       ],
-      "GST": {
+      "Bottomline": {
         "type": "value",
-        "value": "27ALGPJ0695K1ZR"
+        "value": ""
       },
       "Copyright": {
         "type": "value",
-        "value": "© 2025 Manyog. All rights reserved."
+        "value": ""
       }
     }
   ]

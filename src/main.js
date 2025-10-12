@@ -30,7 +30,7 @@ Handlebars.registerHelper({
       {{else}}
         <div class="flex min-w-40 min-h-16 text-gray-600">
           <place-holder class="bg-white">
-            <span class="bg-white z-10 py-1.5 text-sm">
+            <span class="bg-white z-10 py-1.5 text-[13px]">
               Attach Image
             </span>
           </place-holder>
@@ -225,9 +225,17 @@ const app = {
                   </div>  
                 </div>
 
-                {{#if GST}}
-                  <div data-customize-trigger="GST" class="bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
-                    <a>GST – {{ GST.value }}</a>
+                {{#if Bottomline.value}}
+                  <div data-customize-trigger="Bottomline" class="relative bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+                    <a>{{ Bottomline.value }}</a>
+                  </div>
+                {{else}}
+                  <div data-customize-trigger="Bottomline" class="min-w-42 mt-8">
+                    <place-holder class="bg-white px-2">
+                      <span class="bg-white z-10 py-1 px-1 text-[13px]">
+                        Enter Text
+                      </span>
+                    </place-holder>
                   </div>
                 {{/if}}
               </div>
@@ -261,9 +269,21 @@ const app = {
           </main>
 
           <footer class="pb-4">
-            <p data-customize-trigger="Copyright" class="text-center text-gray-600">
-              {{Copyright.value}}
-            </p>
+            {{#if Copyright.value}}
+              <p data-customize-trigger="Copyright" class="text-center text-gray-600">
+                {{Copyright.value}}
+              </p>
+            {{else}}
+              <div class="px-2">
+                <div data-customize-trigger="Copyright">
+                  <place-holder class="bg-white px-2">
+                    <span class="bg-white z-10 py-1 px-1 text-[13px]">
+                      Add © Info
+                    </span>
+                  </place-holder>
+                </div>
+              </div>
+            {{/if}}
           </footer>
         </div>
       </div>

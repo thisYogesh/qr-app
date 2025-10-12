@@ -115,7 +115,7 @@ input[type="text"] {
 }
 
 place-holder {
-  @apply relative w-full min-h-full flex justify-center text-sm items-center border border-gray-400 overflow-hidden cursor-pointer;
+  @apply relative w-full min-h-full flex justify-center text-sm items-center border border-gray-400 overflow-hidden cursor-pointer text-gray-500;
 }
 
 place-holder::after,

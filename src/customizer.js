@@ -79,7 +79,8 @@ Handlebars.registerHelper({
     `)(obj);
   },
 
-  input_control: function(label, type, value, placeholder = "Enter value") {
+  input_control: function(_, options) {
+    const { label, type, value, placeholder = "Enter value" } = options.hash;
     const id = `input-${counter++}`;
     return Handlebars.compile(`
       <div class="input flex flex-col gap-0.5">
@@ -122,8 +123,8 @@ Handlebars.registerPartial({
   anchor: `
     {{#setting_block this.field.title}}
       <div class="flex gap-2">
-        {{#input_control 'Text' 'text' this.field.value.text}}{{/input_control}}
-        {{#input_control 'Hyperlink' 'text' this.field.value.href}}{{/input_control}}
+        {{#input_control this label='Text' type='text' value=this.field.value.text}}{{/input_control}}
+        {{#input_control this label='Hyperlink' type='text' value=this.field.value.href}}{{/input_control}}
       </div>
     {{/setting_block}}
   `,
@@ -131,8 +132,8 @@ Handlebars.registerPartial({
   size: `
   {{#setting_block this.field.title}}
     <div class="flex gap-2">
-      {{#input_control 'width' 'text' this.field.value.width 'auto'}}{{/input_control}}
-      {{#input_control 'height' 'text' this.field.value.height 'auto'}}{{/input_control}}
+      {{#input_control this value='width' type='text' value=this.field.value.width placeholder='auto'}}{{/input_control}}
+      {{#input_control this value='height' type='text' value=this.field.value.height placeholder='auto'}}{{/input_control}}
     </div>
   {{/setting_block}}
   `,
@@ -140,8 +141,8 @@ Handlebars.registerPartial({
   "link-button": `
   {{#setting_block this.field.title}}
     <div class="flex flex-col gap-2">
-      {{#input_control 'Title' 'text' this.field.value.label}}{{/input_control}}
-      {{#input_control 'Hyperlink' 'text' this.field.value.href}}{{/input_control}}
+      {{#input_control this label='Title' type='text' value=this.field.value.label}}{{/input_control}}
+      {{#input_control this label='Hyperlink' type='text' value=this.field.value.href}}{{/input_control}}
     </div>
   {{/setting_block}}
   `,
@@ -164,17 +165,17 @@ Handlebars.registerPartial({
 
   color: `
   {{#setting_block this.field.title}}
-    {{#input_control '' 'color' this.field.value.value}}{{/input_control}}
+    {{#input_control this type='color' value=this.field.value.value}}{{/input_control}}
   {{/setting_block}}
   `,
   button: `
   {{#setting_block this.field.title}}
-    {{#input_control 'Title' 'text' this.field.value.label}}{{/input_control}}
+    {{#input_control this label='Title' type='text' value=this.field.value.label}}{{/input_control}}
   {{/setting_block}}
   `,
   value: `
   {{#setting_block this.field.title}}
-    {{#input_control '' 'text' this.field.value.value}}{{/input_control}}
+    {{#input_control this type='text' value=this.field.value.value}}{{/input_control}}
   {{/setting_block}}
   `,
   opacity: `
@@ -184,7 +185,7 @@ Handlebars.registerPartial({
   `
 });
 
-const getSettingKeys = (customizeIds, settingsMap) => {
+const getSettingKeys = (customizeIds = "", settingsMap) => {
   const keys = customizeIds.split(",").map(id => settingsMap[id]?.trim());
   return keys.join(",");
 };
@@ -230,7 +231,7 @@ class AppCustomizer {
   }
 
   get currentBlockSettings() {
-    const { storeConfig, selectedCustomizeId, settingsMap } = this;
+    const { storeConfig, selectedCustomizeId = "", settingsMap } = this;
     const keys = getSettingKeys(selectedCustomizeId, settingsMap);
     const settings = getEval(keys)(storeConfig);
 
@@ -340,13 +341,6 @@ class AppCustomizer {
 
     const { customizeId } = dataset;
     this.highlightedCustomizeId = customizeId;
-  }
-
-  getSettingMeta(customizeIds) {
-    const { settingsMap } = this;
-    const keys = customizeIds.split(",").map(id => settingsMap[id]?.trim());
-
-    return keys.join(",");
   }
 
   showConfigHandler() {
