@@ -3,6 +3,8 @@ import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
 import { randomId } from "./utils";
 import { handleMultiAssignDatasetValue } from "../helpers";
+
+// common component shared accross main app and customizer
 import "../components/placeholder";
 
 const MODE = {
@@ -165,7 +167,7 @@ const app = {
         </span>
       </div>
 
-      <div class="flex flex-col gap-2 w-full bg-white rounded-lg border border-gray-200 h-full">
+      <div class="flex flex-col gap-2 w-full bg-white rounded-lg overflow-hidden border border-gray-200 h-full">
         <div data-app data-customize-trigger="backrgound" class="relative flex flex-col w-full justify-between h-full gap-8 z-10">
           {{#app_bg backrgound}}{{/app_bg}}
 
@@ -174,7 +176,7 @@ const app = {
               {{#image logo}}{{/image}}
             </div>
           </header>
-          <main class="flex flex-col items-center justify-center px-4">
+          <main class="flex flex-col items-center justify-center">
             {{#if status}}
               <div data-main class="flex w-full flex-col items-center justify-center">
                 <div data-customize-trigger="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
@@ -279,14 +281,12 @@ const app = {
                 {{Copyright.value}}
               </p>
             {{else}}
-              <div class="px-2">
-                <div data-customize-trigger="Copyright">
-                  <place-holder class="px-2">
-                    <span data-info class="z-10 py-1 px-1">
-                      Add Text
-                    </span>
-                  </place-holder>
-                </div>
+              <div data-customize-trigger="Copyright">
+                <place-holder>
+                  <span data-info class="z-10 py-1 px-1">
+                    Add Text
+                  </span>
+                </place-holder>
               </div>
             {{/if}}
           </footer>
@@ -298,7 +298,7 @@ const app = {
 
   async install() {
     const buildHash = "<build-hash>".replace("<build-hash>", "") || Date.now();
-    const { items } = await fetch(`/manifest-test.json?hash=${buildHash}`)
+    const { items } = await fetch(`/manifest.json?hash=${buildHash}`)
       .then(resp => resp.json())
       .then(data => data);
 

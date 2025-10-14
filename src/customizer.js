@@ -458,7 +458,7 @@ class AppCustomizer {
       configObj.options.find(option => option.value === selectedOption) || {};
 
     return configObj[value];
-  },
+  }
 }
 
 const Customizer = new AppCustomizer();

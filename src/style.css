@@ -3,10 +3,11 @@
 
 body {
   min-height: 100svh;
+  @apply bg-gray-100;
 }
 
-[data-main] {
-  max-width: 384px;
+[data-app] {
+  @apply max-w-[650px] mx-auto shadow-md border-x border-white bg-white px-3;
 }
 
 [data-slide-container] {
