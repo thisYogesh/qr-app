@@ -42,7 +42,7 @@ class MediaControl extends HTMLElement {
     this.setupSvgContentBox();
 
     $uploadCta.addEventListener("click", () => this.openFileExplorer());
-    $svgContentCta.addEventListener("click", () => this.openSvgContentBox());
+    $svgContentCta?.addEventListener("click", () => this.openSvgContentBox());
 
     $previewArea.addEventListener("dragover", e => this.onDragOver(e));
     $previewArea.addEventListener("dragleave", () => this.onDragLeave());

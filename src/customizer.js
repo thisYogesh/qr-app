@@ -15,6 +15,10 @@ const getEval = path => {
   return new Function("obj", `return [${paths}]`);
 };
 
+const pushNewBlockEval = path => {
+  return new Function("config", "newBlock", `config['${path}'].push(newBlock)`);
+};
+
 const getFields = value =>
   [...Object.entries(value)]
     .filter(([_, value]) => typeof value.type === "string")
@@ -197,6 +201,21 @@ class AppCustomizer {
     this.highlightedCustomizeId = null;
     this.layoutUpdateInProgress = false;
     this.settingsMap = {};
+    this.addNewConfigTemplate = Handlebars.compile(`
+    <div class="pt-2">
+      <h4 class="p-2 font-medium">Select Type Of Button</h4>
+      <div data-config-form class="flex flex-col gap-1 p-2">
+        {{#each options}}
+          <label class="flex items-center border border-blue-200 bg-blue-50 rounded-md px-2 py-3 gap-2">
+            <input type="radio" value="{{this.value}}" name="option"/>
+            <span class="text-sm text-gray-800">
+              {{ this.title }}
+            </span>
+          </label>
+        {{/each}}
+      </div>
+    </div>
+    `);
   }
 
   get $customiseTriggers() {
@@ -242,10 +261,9 @@ class AppCustomizer {
     const { settingsMap, selectedCustomizeId, storeConfig } = this;
     const key = settingsMap[selectedCustomizeId];
     const [value] = key.split(".").reverse();
+    const config = storeConfig[settingsMap[selectedCustomizeId]];
 
-    return value === "new"
-      ? storeConfig[settingsMap[selectedCustomizeId]]
-      : null;
+    return value === "new" ? config : null;
   }
 
   init({ storeConfig, eventMap }) {
@@ -353,6 +371,30 @@ class AppCustomizer {
     this.highlightedCustomizeId = customizeId;
   }
 
+  showAddNewOptions(config) {
+    const { $settings, addNewConfigTemplate } = this;
+    const { options } = config;
+    const optionsHTML = addNewConfigTemplate({ options });
+
+    $settings.innerHTML = optionsHTML;
+    this.initNewConfigEvents();
+  }
+
+  initNewConfigEvents() {
+    const { $settings, settingsMap, selectedCustomizeId } = this;
+    const $configForm = $settings.querySelector("[data-config-form]");
+
+    $configForm.addEventListener("change", e => {
+      const selectedOption = e.target.value;
+      const key = settingsMap[selectedCustomizeId];
+      const newBlockConfig = this.getNewBlockValue(key, selectedOption);
+      const { path, value } = newBlockConfig;
+
+      pushNewBlockEval(path)(this.storeConfig, value);
+      window.app.reRender();
+    });
+  }
+
   showConfigHandler() {
     const { highlightedCustomizeId } = this;
 
@@ -361,10 +403,9 @@ class AppCustomizer {
 
     const selectedCustomizeId = (this.selectedCustomizeId = highlightedCustomizeId);
 
-    if (this.hasAddNewConfig) {
-      console.log(this.hasAddNewConfig);
-      return;
-    }
+    // Show option selection flow, if it's new item
+    const { hasAddNewConfig } = this;
+    if (hasAddNewConfig) return this.showAddNewOptions(hasAddNewConfig);
 
     const $prevSelectedHighlighter = document.querySelector(
       "[data-hc-id].--selected"
@@ -452,12 +493,16 @@ class AppCustomizer {
     this.selectedCustomizeId = null;
   }
 
-  createNewBlock(baseKey, selectedOption) {
+  getNewBlockValue(baseKey, selectedOption) {
     const configObj = this.storeConfig[baseKey];
+
+    const path = baseKey.split(".");
+    path.pop();
+
     const { value } =
       configObj.options.find(option => option.value === selectedOption) || {};
 
-    return configObj[value];
+    return { path: path.join("."), value: configObj[value] };
   }
 }
 

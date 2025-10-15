@@ -62,7 +62,7 @@
           "template": "contact_us",
           "button": {
             "type": "button",
-            "label": "",
+            "label": "Button Text",
             "background_color": {
               "type": "color",
               "value": "#000000"
@@ -79,7 +79,7 @@
           "template": "simple_text",
           "button": {
             "type": "button",
-            "label": "",
+            "label": "Button Text",
             "background_color": {
               "type": "color",
               "value": "#000000"

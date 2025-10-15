@@ -298,7 +298,7 @@ const app = {
 
   async install() {
     const buildHash = "<build-hash>".replace("<build-hash>", "") || Date.now();
-    const { items } = await fetch(`/manifest.json?hash=${buildHash}`)
+    const { items } = await fetch(`/manifest-test.json?hash=${buildHash}`)
       .then(resp => resp.json())
       .then(data => data);
 
