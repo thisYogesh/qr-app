@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
-import { useFetch } from "./useFetch";
+import { useEffect } from "react";
+import { fetchConfig, setConfigFetchStatus } from "../states/app";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function useStoreConfig() {
-  const { data } = useFetch("/manifest.json");
-  const [storeConfig, setStoreConfig] = useState(null);
+  const dispatch = useDispatch();
+  const storeConfig = useSelector(state => state.app.storeConfig);
 
   useEffect(() => {
-    const { items } = data;
-    const url = new URL(window.location.href);
-    const storeId = url.searchParams.get("store_id");
-
-    const storeConfig = storeId?.trim()
-      ? items.find(config => config.store_id === storeId)
-      : items[0];
-
-    setStoreConfig(storeConfig);
-  }, [data]);
+    dispatch(fetchConfig());
+    dispatch(setConfigFetchStatus(true));
+  }, []);
 
   return { current: storeConfig };
 }

@@ -14,3 +14,12 @@ export const getInteratorValues = IteratorValue => {
 
   return values;
 };
+
+export const IfElse = (_if, doIf, doElse = null) => {
+  const _return = { if: doIf, else: doElse };
+
+  if (_if && typeof doIf === "function") _return.if = doIf();
+  if (!_if && typeof doElse === "function") _return.else = doElse();
+
+  return _if ? _return.doIf : _return.doElse;
+};
