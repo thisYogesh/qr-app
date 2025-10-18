@@ -156,143 +156,145 @@ const AppHelper = {
 
   eventMap: {},
 
+  customizerWrapper: `
+  <div data-customizer class="flex flex-col gap-0.5 w-full h-full">
+    <div class="flex items-center gap-1 p-1" data-customize-trigger="metadata">
+      <div class="w-5">
+        {{#image metadata.favicon}}{{/image}}
+      </div>
+      <span class="text-[13px]">
+        {{metadata.title.value}}
+      </span>
+    </div>
+
+    <div class="flex flex-col gap-2 w-full bg-white rounded-lg overflow-hidden border border-gray-200 h-full">
+    </div>
+  </div>`,
+
   templates: {
     render: Handlebars.compile(`
-    <div data-customizer class="flex flex-col gap-0.5 w-full h-full">
-      <div class="flex items-center gap-1 p-1" data-customize-trigger="metadata">
-        <div class="w-5">
-          {{#image metadata.favicon}}{{/image}}
+    <div data-app data-customize-trigger="backrgound" class="relative flex flex-col w-full justify-between h-full gap-8 z-10">
+      {{#app_bg backrgound}}{{/app_bg}}
+
+      <header class="flex justify-center items-center pt-8">
+        <div data-customize-trigger="logo">
+          {{#image logo}}{{/image}}
         </div>
-        <span class="text-[13px]">
-          {{metadata.title.value}}
-        </span>
-      </div>
-
-      <div class="flex flex-col gap-2 w-full bg-white rounded-lg overflow-hidden border border-gray-200 h-full">
-        <div data-app data-customize-trigger="backrgound" class="relative flex flex-col w-full justify-between h-full gap-8 z-10">
-          {{#app_bg backrgound}}{{/app_bg}}
-
-          <header class="flex justify-center items-center pt-8">
-            <div data-customize-trigger="logo">
-              {{#image logo}}{{/image}}
-            </div>
-          </header>
-          <main class="flex flex-col items-center justify-center">
-            {{#if status}}
-              <div data-main class="flex w-full flex-col items-center justify-center">
-                <div data-customize-trigger="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
-                  <div
-                    data-slide-container
-                    class="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
-                  >
-                    <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
-                      {{#each actions}}
-                        <li>
-                          {{#app_button this @index}}{{/app_button}}
-                        </li>
-                      {{/each}}
-                      <li>
-                        <div data-customize-trigger="actions.new">
-                          <place-holder class="px-2 py-1 rounded-3xl">
-                            <span data-info class="z-10 py-1 px-1">
-                              + Add Button
-                            </span>
-                          </place-holder>
-                        </div>
-                      </li>
-                    </ul>
-
-                    <div
-                      data-content-container
-                      id="content"
-                      class="relative w-full flex-shrink-0"
-                    >
-                      {{#each actions}}
-                        {{#if template}}
-                          <div
-                            id="template-{{@index}}"
-                            class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
-                          >
-                            <div class="flex items-center">
-                              <button
-                                data-back
-                                class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
-                              >
-                                <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
-                                  <use href="./svg-sprites.svg#back-arrow" />
-                                </svg>
-                              </button>
-
-                              <span class="ml-2"> {{button.label}} </span>
-                            </div>
-                            {{> (dynamic_template)}}
-                          </div>
-                        {{/if}}
-                      {{/each}}
+      </header>
+      <main class="flex flex-col items-center justify-center">
+        {{#if status}}
+          <div data-main class="flex w-full flex-col items-center justify-center">
+            <div data-customize-trigger="action_background" class="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
+              <div
+                data-slide-container
+                class="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
+              >
+                <ul data-trigger-container class="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4">
+                  {{#each actions}}
+                    <li>
+                      {{#app_button this @index}}{{/app_button}}
+                    </li>
+                  {{/each}}
+                  <li>
+                    <div data-customize-trigger="actions.new">
+                      <place-holder class="px-2 py-1 rounded-3xl">
+                        <span data-info class="z-10 py-1 px-1">
+                          + Add Button
+                        </span>
+                      </place-holder>
                     </div>
-                  </div>  
-                </div>
+                  </li>
+                </ul>
 
-                {{#if Bottomline.value}}
-                  <div data-customize-trigger="Bottomline" class="relative bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
-                    <a>{{ Bottomline.value }}</a>
-                  </div>
-                {{else}}
-                  <div data-customize-trigger="Bottomline" class="min-w-42 mt-8">
-                    <place-holder class="px-2">
-                      <span data-info class="z-10 py-1 px-1">
-                        Add Text
-                      </span>
-                    </place-holder>
-                  </div>
-                {{/if}}
-              </div>
-            {{else}}
-              <div>
-                <div class="p-2">
-                  <canvas
-                    id="dotlottie-canvas"
-                    class="transform rotate-45 w-40 h-40"
-                  ></canvas>
-                </div>  
-                <p
-                  data-status="0"
-                  class="flex items-center justify-center gap-1 mt-2"
+                <div
+                  data-content-container
+                  id="content"
+                  class="relative w-full flex-shrink-0"
                 >
-                  <svg
-                    class="w-6 h-6 text-yellow-500"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M13.995 1.827a1.745 1.745 0 0 0-2.969 0l-9.8 17.742a1.603 1.603 0 0 0 0 1.656 1.678 1.678 0 0 0 1.48.775H22.28a1.68 1.68 0 0 0 1.484-.775 1.608 1.608 0 0 0 .003-1.656zM12 8h1v7h-1zm.5 10.5a1 1 0 1 1 1-1 1.002 1.002 0 0 1-1 1z"
-                      fill="currentColor"
-                    />
-                    <path fill="none" d="M0 0h24v24H0z" />
-                  </svg>
-                  <span class="text-blue-900"> We are opening soon!! </span>
-                </p>
-              </div>
-            {{/if}}
-          </main>
+                  {{#each actions}}
+                    {{#if template}}
+                      <div
+                        id="template-{{@index}}"
+                        class="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
+                      >
+                        <div class="flex items-center">
+                          <button
+                            data-back
+                            class="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
+                          >
+                            <svg viewBox="0 0 20 20" class="h-5 w-5" aria-hidden="true">
+                              <use href="./svg-sprites.svg#back-arrow" />
+                            </svg>
+                          </button>
 
-          <footer class="pb-4">
-            {{#if Copyright.value}}
-              <p data-customize-trigger="Copyright" class="text-center text-gray-600">
-                {{Copyright.value}}
-              </p>
+                          <span class="ml-2"> {{button.label}} </span>
+                        </div>
+                        {{> (dynamic_template)}}
+                      </div>
+                    {{/if}}
+                  {{/each}}
+                </div>
+              </div>  
+            </div>
+
+            {{#if Bottomline.value}}
+              <div data-customize-trigger="Bottomline" class="relative bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+                <a>{{ Bottomline.value }}</a>
+              </div>
             {{else}}
-              <div data-customize-trigger="Copyright">
-                <place-holder>
+              <div data-customize-trigger="Bottomline" class="min-w-42 mt-8">
+                <place-holder class="px-2">
                   <span data-info class="z-10 py-1 px-1">
                     Add Text
                   </span>
                 </place-holder>
               </div>
             {{/if}}
-          </footer>
-        </div>
-      </div>
+          </div>
+        {{else}}
+          <div>
+            <div class="p-2">
+              <canvas
+                id="dotlottie-canvas"
+                class="transform rotate-45 w-40 h-40"
+              ></canvas>
+            </div>  
+            <p
+              data-status="0"
+              class="flex items-center justify-center gap-1 mt-2"
+            >
+              <svg
+                class="w-6 h-6 text-yellow-500"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.995 1.827a1.745 1.745 0 0 0-2.969 0l-9.8 17.742a1.603 1.603 0 0 0 0 1.656 1.678 1.678 0 0 0 1.48.775H22.28a1.68 1.68 0 0 0 1.484-.775 1.608 1.608 0 0 0 .003-1.656zM12 8h1v7h-1zm.5 10.5a1 1 0 1 1 1-1 1.002 1.002 0 0 1-1 1z"
+                  fill="currentColor"
+                />
+                <path fill="none" d="M0 0h24v24H0z" />
+              </svg>
+              <span class="text-blue-900"> We are opening soon!! </span>
+            </p>
+          </div>
+        {{/if}}
+      </main>
+
+      <footer class="pb-4">
+        {{#if Copyright.value}}
+          <p data-customize-trigger="Copyright" class="text-center text-gray-600">
+            {{Copyright.value}}
+          </p>
+        {{else}}
+          <div data-customize-trigger="Copyright">
+            <place-holder>
+              <span data-info class="z-10 py-1 px-1">
+                Add Text
+              </span>
+            </place-holder>
+          </div>
+        {{/if}}
+      </footer>
     </div>
     `)
   },
