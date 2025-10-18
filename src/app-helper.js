@@ -3,6 +3,7 @@ import { DotLottie } from "@lottiefiles/dotlottie-web";
 import WranchTightningJson from "../lottie/wranch-tightning.json";
 import { randomId } from "./utils";
 import { handleMultiAssignDatasetValue } from "../helpers";
+import { createRoot } from "react-dom/client";
 
 // common component shared accross main app and customizer
 import "../components/placeholder";
@@ -144,7 +145,7 @@ Handlebars.registerPartial({
   `
 });
 
-const app = {
+const AppHelper = {
   URL: new URL(location.href),
   storeConfig: null,
 
@@ -298,7 +299,7 @@ const app = {
 
   async install() {
     const buildHash = "<build-hash>".replace("<build-hash>", "") || Date.now();
-    const { items } = await fetch(`/manifest-test.json?hash=${buildHash}`)
+    const { items } = await fetch(`/manifest.json?hash=${buildHash}`)
       .then(resp => resp.json())
       .then(data => data);
 
@@ -313,21 +314,10 @@ const app = {
 
   build() {
     const { templates, storeConfig } = this;
-
-    const fr = document.createDocumentFragment();
-    fr.append(document.createElement("div"));
-
-    const $app = document.querySelector("render-app");
-    this.mode = $app.dataset.mode;
-
     const appContent = templates.render(storeConfig);
 
-    fr.querySelector("div").innerHTML = appContent;
-
-    // inject html into <render-app/>
-    const appSelector =
-      this.mode === MODE.NORMAL ? "[data-app]" : "[data-customizer]";
-    $app.replaceWith(fr.querySelector(appSelector));
+    const $appDom = document.querySelector("[data-render-app]");
+    $appDom.innerHTML = appContent;
     this.init();
 
     // emit event to know markup had injeected into html
@@ -457,5 +447,4 @@ const app = {
   }
 };
 
-window.app = app;
-window.addEventListener("DOMContentLoaded", () => app.install());
+export default AppHelper;

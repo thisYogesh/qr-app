@@ -14,10 +14,14 @@
     "vite": "^7.0.4"
   },
   "dependencies": {
+    "@babel/preset-react": "^7.27.1",
     "@lottiefiles/dotlottie-web": "^0.48.0",
     "@tailwindcss/vite": "^4.1.13",
+    "@vitejs/plugin-react": "^4.7.0",
     "handlebars": "^4.7.8",
     "lodash": "^4.17.21",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "vite-plugin-handlebars": "^2.0.0"
   }
 }

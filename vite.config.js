@@ -1,5 +1,6 @@
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 // import handlebars from "vite-plugin-handlebars";
 import includeSvg from "./plugins/include-svg";
@@ -23,6 +24,11 @@ const injectBuildHash = () => ({
 
 export default defineConfig({
   plugins: [
+    react({
+      babel: {
+        presets: ["@babel/preset-react"]
+      }
+    }),
     tailwindcss(),
     injectBuildHash(),
     includeSvg(),
@@ -47,5 +53,9 @@ export default defineConfig({
         admin: "admin.html"
       }
     }
+  },
+  esbuild: {
+    include: /\.(js|jsx)$ /,
+    jsxInject: `import React from 'react'`
   }
 });
