@@ -21,5 +21,5 @@ export const IfElse = (_if, doIf, doElse = null) => {
   if (_if && typeof doIf === "function") _return.if = doIf();
   if (!_if && typeof doElse === "function") _return.else = doElse();
 
-  return _if ? _return.doIf : _return.doElse;
+  return _if ? _return.if : _return.else;
 };

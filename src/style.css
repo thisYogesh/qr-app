@@ -7,14 +7,14 @@ body {
 }
 
 [data-app] {
-  @apply max-w-[650px] mx-auto shadow-md border-x border-white bg-white px-3;
+  @apply max-w-[650px] mx-auto shadow-md border-x border-white bg-white;
 }
 
 [data-slide-container] {
   height: var(--dynamic-height, var(--root-height, unset));
 }
 
-.bg {
+.app-bg {
   background-image: var(--bg-image);
   background-size: var(--bg-size, auto);
   opacity: var(--bg-opacity, 1);

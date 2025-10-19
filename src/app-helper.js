@@ -6,7 +6,7 @@ import { handleMultiAssignDatasetValue } from "../helpers";
 import { createRoot } from "react-dom/client";
 
 // common component shared accross main app and customizer
-import "../components/placeholder";
+import "../components/web/placeholder";
 
 const MODE = {
   NORMAL: "1",
@@ -318,7 +318,7 @@ const AppHelper = {
     const { templates, storeConfig } = this;
     const appContent = templates.render(storeConfig);
 
-    const $appDom = document.querySelector("[data-render-app]");
+    const $appDom = document.querySelector("[data-app]");
     $appDom.innerHTML = appContent;
     this.init();
 

@@ -1,5 +1,5 @@
-import { MEDIA_TYPE } from "../src/enum";
-import { getDataUrl } from "../src/utils";
+import { MEDIA_TYPE } from "../../src/enum";
+import { getDataUrl } from "../../src/utils";
 
 class MediaControl extends HTMLElement {
   constructor() {
