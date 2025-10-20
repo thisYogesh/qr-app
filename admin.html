@@ -8,82 +8,8 @@
     <link href="src/admin.css" rel="stylesheet" />
   </head>
   <body>
-    <div class="main-admin-layout grid h-screen">
-      <aside class="flex flex-col border-r border-r-gray-200 bg-white">
-        <div class="flex flex-col p-4 font-bold border-b border-b-gray-200">
-          QR App <span class="text-sm font-medium">(https://qr.manyog.in)</span>
-        </div>
-        <div class="funtional-block p-4 ">
-          <div class="font-medium mb-1">Settings</div>
+    <div id="app" class="h-full"></div>
 
-          <div class="flex flex-col gap-1.5">
-            <div class="flex gap-1 text-sm items-center">
-              <span class="svg flex w-4 h-4">
-                <include-svg src="/svg/block.svg" />
-              </span>
-              Logo
-            </div>
-            <div class="flex gap-1 text-sm items-center">
-              <span class="svg flex w-4 h-4">
-                <include-svg src="/svg/block.svg" />
-              </span>
-              Backrgound
-            </div>
-            <div class="flex gap-1 text-sm items-center">
-              <span class="svg flex w-4 h-4">
-                <include-svg src="/svg/block.svg" />
-              </span>
-              Backrgound
-            </div>
-          </div>
-        </div>
-        <div class="funtional-block p-4">
-          <span class="font-medium">Settings 2</span>
-
-          <div class="flex flex-col gap-1">
-            <div class="text-sm">Logo</div>
-            <div class="text-sm">Favicon</div>
-          </div>
-        </div>
-      </aside>
-      <div class="flex justify-center p-4 ">
-        <div class="app-builder flex-grow overflow-hidden">
-          <render-app data-mode="2" />
-        </div>
-      </div>
-      <aside
-        data-settings-viewer
-        class="flex flex-col justify-between border-l border-l-gray-200 bg-white"
-      >
-        <div>
-          <div data-settings></div>
-          <div data-block-events></div>
-        </div>
-
-        <div
-          class="flex flex-col items-center empty-settings-viewer text-sm text-center p-5 h-full justify-center"
-        >
-          <div class="svg w-1/2 opacity-10">
-            <include-svg src="/svg/settings.svg" />
-          </div>
-
-          <span class="text-gray-600">
-            Please select a block to continue.
-          </span>
-        </div>
-
-        <div class="action-buttons flex p-2 gap-2">
-          <button disabled class="button basis-0 grow disabled:opacity-40">
-            Save
-          </button>
-          <button disabled class="button basis-0 grow disabled:opacity-40">
-            Cancel
-          </button>
-        </div>
-      </aside>
-    </div>
-
-    <script type="module" src="/src/main.js"></script>
     <script type="module" src="/src/admin.js"></script>
   </body>
 </html>

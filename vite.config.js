@@ -31,7 +31,7 @@ export default defineConfig({
     }),
     tailwindcss(),
     injectBuildHash(),
-    includeSvg(),
+    // includeSvg(),
     {
       name: "watch-extra-folder",
       configureServer(server) {

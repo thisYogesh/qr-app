@@ -1,5 +1,6 @@
 /**
  * Example
+ * SSR Only
  * <include-svg src="/path/to.svg" />
  */
 

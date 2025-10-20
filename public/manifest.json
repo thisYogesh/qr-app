@@ -5,7 +5,7 @@
       "status": 1,
       "logo": {
         "type": "image",
-        "src": "",
+        "src": "https://manyog.s3.ap-south-1.amazonaws.com/assets/logo.svg",
         "svg_markup": "",
 
         "size": {

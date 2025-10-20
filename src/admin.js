@@ -1,18 +1,9 @@
-import Customizer from "./customizer";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import Main from "./main";
+import { RENDER_MODE } from "./app-context";
 
-window.Customizer = Customizer;
+const $app = document.querySelector("#app");
 
-window.addEventListener("@render-done", e => {
-  Customizer.init(e);
-
-  window.addEventListener("resize", () =>
-    Customizer.resetAndDisableCustomizeTrigger()
-  );
-});
-
-window.addEventListener("@layout-update", () => {
-  Customizer.layoutUpdateInProgress = true;
-  Customizer.resetAndDisableCustomizeTrigger();
-
-  setTimeout(() => (Customizer.layoutUpdateInProgress = false), 500);
-});
+const root = createRoot($app);
+root.render(<Main renderMode={RENDER_MODE.CUSTOMIZER} />);

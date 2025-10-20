@@ -1,17 +1,25 @@
 import React from "react";
-import App from "./app";
+import App from "../components/app";
 import { Provider } from "react-redux";
 import { store } from "./store";
-import AppContextProvider from "./app-context";
+import AppContextProvider, { RENDER_MODE } from "./app-context";
 
+// web components
 import "../components/web/placeholder";
-import "../components/media";
+import "../components/web/media";
+import Customizer from "../components/customizer";
 
-export default function Main() {
+export default function Main({ renderMode }) {
   return (
     <Provider store={store}>
-      <AppContextProvider>
-        <App />
+      <AppContextProvider renderMode={renderMode}>
+        {renderMode !== RENDER_MODE.CUSTOMIZER ? (
+          <App />
+        ) : (
+          <Customizer>
+            <App />
+          </Customizer>
+        )}
       </AppContextProvider>
     </Provider>
   );

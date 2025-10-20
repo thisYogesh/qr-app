@@ -4,12 +4,7 @@ import Media from "./media";
 
 export default function ActionButton({ data, index }) {
   const { button, template } = data;
-  const {
-    background_color = {},
-    icon,
-    label,
-    href = "javascript:void(0)"
-  } = button;
+  const { background_color = {}, icon, label, href = "" } = button;
   const { value: bg_color = "#000", text_color = "#fff" } = background_color;
 
   return (

@@ -13,12 +13,12 @@
   max-width: 390px;
 }
 
-[data-hc-id] {
+.highlighter {
   @apply absolute;
   z-index: 100;
 }
 
-[data-hc-id]::after {
+.highlighter::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -27,7 +27,7 @@
   border-radius: 6px;
 }
 
-[data-hc-id].--selected::after {
+.highlighter.--selected::after {
   border-color: #10b981;
 }
 

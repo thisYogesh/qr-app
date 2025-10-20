@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import useStoreConfig from "../hooks/useStoreConfig";
 import { IfElse } from "../helpers";
-import AppBg from "../components/app-background";
-import Media from "../components/media";
-import ActionButton from "../components/action-button";
+import AppBg from "./app-background";
+import Media from "./media";
+import ActionButton from "./action-button";
+import { AppContext, RENDER_MODE } from "../src/app-context";
 
 export default () => {
+  const { renderMode } = useContext(AppContext);
   const { current: storeConfig } = useStoreConfig();
 
   return IfElse(storeConfig, () => (
-    <div data-app className="h-full">
+    <div data-app className="h-full w-full">
       <div
         data-customize-trigger="backrgound"
         className="relative flex flex-col w-full justify-between h-full gap-8 z-10 px-3"
@@ -45,15 +47,18 @@ export default () => {
                       <ActionButton data={action} index={index} />
                     </li>
                   ))}
-                  <li>
-                    <div data-customize-trigger="actions.new">
-                      <place-holder className="px-2 py-1 rounded-3xl">
-                        <span data-info className="z-10 py-1 px-1">
-                          + Add Button
-                        </span>
-                      </place-holder>
-                    </div>
-                  </li>
+
+                  {IfElse(renderMode !== RENDER_MODE.NORMAL, () => (
+                    <li>
+                      <div data-customize-trigger="actions.new">
+                        <place-holder className="px-2 py-1 rounded-3xl">
+                          <span data-info className="z-10 py-1 px-1">
+                            + Add Button
+                          </span>
+                        </place-holder>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
 
                 <div
