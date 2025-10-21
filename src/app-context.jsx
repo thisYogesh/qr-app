@@ -10,6 +10,21 @@ export default function AppContextProvider({
   children,
   renderMode = RENDER_MODE.NORMAL
 }) {
-  const [state] = useState({ renderMode });
-  return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
+  const [state, setState] = useState({
+    renderMode,
+
+    // props for custimizer
+    highlightedCustomizeId: "",
+    selectedCustomizeId: ""
+  });
+
+  const setContext = props => {
+    setState(prev => ({ ...prev, ...props }));
+  };
+
+  return (
+    <AppContext.Provider value={{ state, setContext }}>
+      {children}
+    </AppContext.Provider>
+  );
 }
