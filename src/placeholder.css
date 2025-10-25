@@ -2,6 +2,12 @@
   place-holder {
     @apply relative bg-gray-100 w-full min-h-full flex justify-center text-sm items-center border border-dashed border-gray-400 overflow-hidden cursor-pointer text-gray-400 rounded-sm;
 
+    &:hover,
+    &:hover::after,
+    &:hover::before {
+      @apply border-blue-400 text-blue-400;
+    }
+
     [data-info] {
       @apply bg-gray-100 text-[13px];
     }

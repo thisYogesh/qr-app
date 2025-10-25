@@ -1,0 +1,34 @@
+import { CONFIG_TYPE } from "../../src/enum";
+import Anchor from "../anchor";
+import CustomizeTrigger from "../customize-trigger";
+import Media from "../media";
+
+export default function TwoColumn({ items }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {items.map(row => (
+        <CustomizeTrigger data={row}>
+          <div className="flex text-sm items-start gap-1 text-blue-900 font-medium">
+            <span className="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">
+              <Media data={row.icon} />
+            </span>
+
+            {row.type === CONFIG_TYPE.ANCHOR ? (
+              <Anchor data={row} />
+            ) : (
+              <p>{row.value}</p>
+            )}
+          </div>
+        </CustomizeTrigger>
+      ))}
+
+      <div data-customize-trigger="actions.items.new">
+        <place-holder className="py-1 rounded-sm">
+          <span data-info className="z-10 px-1">
+            + Add Row
+          </span>
+        </place-holder>
+      </div>
+    </div>
+  );
+}

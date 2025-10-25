@@ -11,8 +11,8 @@ export default function ActionButton({ data, index }) {
     <a
       data-customize-trigger={`actions[${index}].button`}
       data-trigger={template ? `#template-${index}` : ""}
-      href={`${href}`}
-      target="_blank"
+      href={href ? href : undefined}
+      target={href ? "_blank" : undefined}
       style={{ "--bg-color": bg_color, "--text-color": text_color }}
       className="app-button w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105"
     >

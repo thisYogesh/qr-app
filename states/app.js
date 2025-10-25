@@ -18,7 +18,7 @@ export const fetchConfig = createAsyncThunk(
     const { configInFetch, storeConfig } = thunkApi.getState().app;
     if (configInFetch || storeConfig) return;
 
-    return fetch("/manifest.json")
+    return fetch("/manifest-test.json")
       .then(resp => resp.json())
       .then(json => json);
   }

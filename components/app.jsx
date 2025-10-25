@@ -68,11 +68,10 @@ export default () => {
                     className="relative w-full flex-shrink-0"
                   >
                     {storeConfig?.actions?.map((action, index) =>
-                      IfElse(
-                        action.template,
+                      action.template ? (
                         <div
                           key={index}
-                          id="template-{{@index}}"
+                          id={`template-${index}`}
                           className="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
                         >
                           <div className="flex items-center">
@@ -89,14 +88,11 @@ export default () => {
                               </svg>
                             </button>
 
-                            <span className="ml-2">
-                              {" "}
-                              {action.button.label}{" "}
-                            </span>
+                            <span className="ml-2">{action.button.label}</span>
                           </div>
                           {/* {{> (dynamic_template)}} */}
                         </div>
-                      )
+                      ) : null
                     )}
                   </div>
                 </div>

@@ -146,7 +146,7 @@
 
       "actions": [
         {
-          "template": "contact_us",
+          "template": "two-column",
           "button": {
             "type": "button",
             "label": "Button Text",

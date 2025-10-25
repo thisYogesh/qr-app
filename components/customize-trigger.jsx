@@ -63,6 +63,5 @@ export default function CustomizeTrigger({ data, children }) {
   return cloneElement(children, {
     ref: $elRef,
     onClick: onClick
-    // onMouseOut: onMouseOut
   });
 }
