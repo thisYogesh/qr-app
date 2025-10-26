@@ -1,13 +1,16 @@
 import React, { cloneElement, useContext, useEffect, useRef } from "react";
-import { AppContext } from "../src/app-context";
+import { AppContext, RENDER_MODE } from "../src/app-context";
 
 const $highlighters = [];
 export default function CustomizeTrigger({ data, children }) {
-  const { setContext } = useContext(AppContext);
+  const { state } = useContext(AppContext);
   const $elRef = useRef(null);
   const $highlighterRef = useRef(null);
 
   useEffect(() => {
+    // If app isn't render under customiser, then don't create $highlighter element
+    if (state.renderMode !== RENDER_MODE.CUSTOMIZER) return;
+
     const $highlighter = document.createElement("a");
     const { classList } = $highlighter;
     classList.add(
@@ -33,9 +36,14 @@ export default function CustomizeTrigger({ data, children }) {
 
   useEffect(() => {
     const { current: $el } = $elRef;
-    $el?.addEventListener("mouseover", onMouseOver);
 
-    return () => $el?.removeEventListener("mouseover", onMouseOver);
+    $el?.addEventListener("mouseover", onMouseOver);
+    $el?.addEventListener("click", onClick);
+
+    return () => {
+      $el?.removeEventListener("mouseover", onMouseOver);
+      $el?.removeEventListener("click", onClick);
+    };
   }, [$elRef?.current]);
 
   const onMouseOver = e => {
@@ -60,8 +68,9 @@ export default function CustomizeTrigger({ data, children }) {
     console.log(data);
   };
 
-  return cloneElement(children, {
-    ref: $elRef,
-    onClick: onClick
-  });
+  return state.renderMode !== RENDER_MODE.CUSTOMIZER
+    ? children
+    : cloneElement(children, {
+        ref: $elRef
+      });
 }

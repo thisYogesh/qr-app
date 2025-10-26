@@ -6,6 +6,8 @@ import Media from "./media";
 import ActionButton from "./action-button";
 import { AppContext, RENDER_MODE } from "../src/app-context";
 import CustomizeTrigger from "./customize-trigger";
+import RenderActionTemplate from "./actions_templates/render";
+import SlideContainer from "./actions_templates/slide-container";
 
 export default () => {
   const { state } = useContext(AppContext);
@@ -31,110 +33,44 @@ export default () => {
               data-main
               className="flex w-full flex-col items-center justify-center"
             >
-              <div
-                data-customize-trigger="action_background"
-                className="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full"
-              >
-                <div
-                  data-slide-container
-                  className="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
-                >
-                  <ul
-                    data-trigger-container
-                    className="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4"
-                  >
-                    {storeConfig?.actions?.map((action, index) => (
-                      <li key={index}>
-                        <ActionButton data={action} index={index} />
-                      </li>
-                    ))}
+              <SlideContainer storeConfig={storeConfig} />
 
-                    {IfElse(state?.renderMode !== RENDER_MODE.NORMAL, () => (
-                      <li>
-                        <div data-customize-trigger="actions.new">
-                          <place-holder className="px-2 py-1 rounded-3xl">
-                            <span data-info className="z-10 py-1 px-1">
-                              + Add Button
-                            </span>
-                          </place-holder>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div
-                    data-content-container
-                    id="content"
-                    className="relative w-full flex-shrink-0"
-                  >
-                    {storeConfig?.actions?.map((action, index) =>
-                      action.template ? (
-                        <div
-                          key={index}
-                          id={`template-${index}`}
-                          className="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
-                        >
-                          <div className="flex items-center">
-                            <button
-                              data-back
-                              className="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
-                            >
-                              <svg
-                                viewBox="0 0 20 20"
-                                className="h-5 w-5"
-                                aria-hidden="true"
-                              >
-                                <use href="./svg-sprites.svg#back-arrow" />
-                              </svg>
-                            </button>
-
-                            <span className="ml-2">{action.button.label}</span>
-                          </div>
-                          {/* {{> (dynamic_template)}} */}
-                        </div>
-                      ) : null
-                    )}
+              {storeConfig?.Bottomline.value ? (
+                <CustomizeTrigger data={storeConfig?.Bottomline}>
+                  <div className="relative bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm">
+                    <a>{storeConfig?.Bottomline.value}</a>
                   </div>
-                </div>
-              </div>
-
-              {IfElse(
-                storeConfig?.Bottomline.value,
-                <div
-                  data-customize-trigger="Bottomline"
-                  className="relative bg-white font-bold mt-8 px-2 py-1 rounded-md shadow text-blue-900 text-center text-sm"
-                >
-                  <a>{storeConfig?.Bottomline.value}</a>
-                </div>,
-                <div
-                  data-customize-trigger="Bottomline"
-                  className="min-w-42 mt-8"
-                >
-                  <place-holder className="px-2">
-                    <span data-info className="z-10 py-1 px-1">
-                      Add Text
-                    </span>
-                  </place-holder>
-                </div>
+                </CustomizeTrigger>
+              ) : (
+                <CustomizeTrigger data={storeConfig?.Bottomline}>
+                  <div className="min-w-42 mt-8">
+                    <place-holder className="px-2">
+                      <span data-info className="z-10 py-1 px-1">
+                        Add Text
+                      </span>
+                    </place-holder>
+                  </div>
+                </CustomizeTrigger>
               )}
             </div>
           </main>
           <footer className="pb-4">
             {IfElse(
               storeConfig?.Copyright?.value,
-              <p
-                data-customize-trigger="Copyright"
-                className="text-center text-gray-600"
-              >
-                {storeConfig?.Copyright?.value}
-              </p>,
-              <div data-customize-trigger="Copyright">
-                <place-holder>
-                  <span data-info className="z-10 py-1 px-1">
-                    Add Text
-                  </span>
-                </place-holder>
-              </div>
+              <CustomizeTrigger data={storeConfig?.Copyright}>
+                <p className="text-center text-gray-600">
+                  {storeConfig?.Copyright?.value}
+                </p>
+              </CustomizeTrigger>,
+              <CustomizeTrigger data={storeConfig?.Copyright}>
+                <div>
+                  <place-holder>
+                    <span data-info className="z-10 py-1 px-1">
+                      Add Text
+                    </span>
+                  </place-holder>
+                </div>
+              </CustomizeTrigger>
             )}
           </footer>
         </div>

@@ -2,14 +2,14 @@ import React from "react";
 import { IfElse } from "../helpers";
 import Media from "./media";
 
-export default function ActionButton({ data, index }) {
+export default function ActionButton({ data, index, ref }) {
   const { button, template } = data;
   const { background_color = {}, icon, label, href = "" } = button;
   const { value: bg_color = "#000", text_color = "#fff" } = background_color;
 
   return (
     <a
-      data-customize-trigger={`actions[${index}].button`}
+      ref={ref}
       data-trigger={template ? `#template-${index}` : ""}
       href={href ? href : undefined}
       target={href ? "_blank" : undefined}

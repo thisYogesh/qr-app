@@ -146,7 +146,7 @@
 
       "actions": [
         {
-          "template": "two-column",
+          "template": "TwoColumn",
           "button": {
             "type": "button",
             "label": "Button Text",

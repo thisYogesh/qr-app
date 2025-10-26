@@ -1,9 +1,12 @@
+import React from "react";
 import { CONFIG_TYPE } from "../../src/enum";
 import Anchor from "../anchor";
 import CustomizeTrigger from "../customize-trigger";
 import Media from "../media";
 
-export default function TwoColumn({ items }) {
+export default function TwoColumn({ data }) {
+  console.log(data);
+  const { items } = data;
   return (
     <div className="flex flex-col gap-2">
       {items.map(row => (
