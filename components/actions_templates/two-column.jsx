@@ -5,7 +5,6 @@ import CustomizeTrigger from "../customize-trigger";
 import Media from "../media";
 
 export default function TwoColumn({ data }) {
-  console.log(data);
   const { items } = data;
   return (
     <div className="flex flex-col gap-2">

@@ -2,10 +2,23 @@ import React, { cloneElement, useContext, useEffect, useRef } from "react";
 import { AppContext, RENDER_MODE } from "../src/app-context";
 
 const $highlighters = [];
-export default function CustomizeTrigger({ data, children }) {
+export default function CustomizeTrigger({
+  data,
+  isNew = false,
+  children,
+  ...props
+}) {
   const { state } = useContext(AppContext);
   const $elRef = useRef(null);
   const $highlighterRef = useRef(null);
+
+  // This is to make sure exOnClick is always attached to click listener
+  useEffect(() => {
+    const { current: $el } = $elRef;
+    $el?.addEventListener("click", exOnClick);
+
+    return () => $el?.removeEventListener("click", exOnClick);
+  }, [$elRef?.current]);
 
   useEffect(() => {
     // If app isn't render under customiser, then don't create $highlighter element
@@ -36,6 +49,7 @@ export default function CustomizeTrigger({ data, children }) {
 
   useEffect(() => {
     const { current: $el } = $elRef;
+    if (state.renderMode !== RENDER_MODE.CUSTOMIZER) return;
 
     $el?.addEventListener("mouseover", onMouseOver);
     $el?.addEventListener("click", onClick);
@@ -63,14 +77,16 @@ export default function CustomizeTrigger({ data, children }) {
     classList.remove("hidden");
   };
 
+  const exOnClick = () => {
+    props?.exOnClick?.();
+  };
+
   const onClick = e => {
     e.stopPropagation();
     console.log(data);
   };
 
-  return state.renderMode !== RENDER_MODE.CUSTOMIZER
-    ? children
-    : cloneElement(children, {
-        ref: $elRef
-      });
+  return cloneElement(children, {
+    ref: $elRef
+  });
 }
