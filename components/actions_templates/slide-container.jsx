@@ -62,12 +62,11 @@ export default function SlideContainer({ storeConfig }) {
           >
             {storeConfig?.actions?.map((action, index) => (
               <li key={index}>
-                <CustomizeTrigger
-                  data={action.button}
-                  exOnClick={() => slideTo(`#template-${index}`)}
-                >
-                  <ActionButton data={action} index={index} />
-                </CustomizeTrigger>
+                <ActionButton
+                  data={action}
+                  index={index}
+                  onClick={() => slideTo(`#template-${index}`)}
+                />
               </li>
             ))}
 
