@@ -10,17 +10,23 @@ export default function TwoColumn({ data }) {
     <div className="flex flex-col gap-2">
       {items.map(row => (
         <CustomizeTrigger data={row}>
-          <div className="flex text-sm items-start gap-1 text-blue-900 font-medium">
-            <span className="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">
-              <Media data={row.icon} />
-            </span>
+          {({ ref, events }) => (
+            <div
+              ref={ref}
+              {...events}
+              className="flex text-sm items-start gap-1 text-blue-900 font-medium"
+            >
+              <span className="flex bg-yellow-400 text-blue-900 h-7 w-7 p-1.5 rounded-full flex-shrink-0">
+                <Media data={row.icon} />
+              </span>
 
-            {row.type === CONFIG_TYPE.ANCHOR ? (
-              <Anchor data={row} />
-            ) : (
-              <p>{row.value}</p>
-            )}
-          </div>
+              {row.type === CONFIG_TYPE.ANCHOR ? (
+                <Anchor data={row} />
+              ) : (
+                <p>{row.value}</p>
+              )}
+            </div>
+          )}
         </CustomizeTrigger>
       ))}
 

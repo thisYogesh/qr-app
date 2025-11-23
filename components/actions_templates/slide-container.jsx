@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef } from "react";
-import ActionButton from "../action-button";
 import CustomizeTrigger from "../customize-trigger";
 import RenderActionTemplate from "./render";
 import { IfElse } from "../../helpers";
 import { AppContext, RENDER_MODE } from "../../src/app-context";
+import Media from "../media";
 
 export default function SlideContainer({ storeConfig }) {
   const { state } = useContext(AppContext);
@@ -49,80 +49,138 @@ export default function SlideContainer({ storeConfig }) {
     );
   };
 
+  const handleActionButtonClick = (e, defaultClick, customiserClick) => {
+    if (state.renderMode === RENDER_MODE.CUSTOMIZER) return customiserClick(e);
+
+    defaultClick();
+  };
+
   return (
-    <CustomizeTrigger data={storeConfig?.action_background}>
-      <div className="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full">
+    <CustomizeTrigger
+      name="slide-container"
+      data={storeConfig?.action_background}
+    >
+      {({ ref, events }) => (
         <div
-          ref={$slideContainer}
-          className="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
+          {...events}
+          ref={ref}
+          className="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full"
         >
-          <ul
-            data-trigger-container
-            className="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4"
-          >
-            {storeConfig?.actions?.map((action, index) => (
-              <li key={index}>
-                <ActionButton
-                  data={action}
-                  index={index}
-                  onClick={() => slideTo(`#template-${index}`)}
-                />
-              </li>
-            ))}
-
-            {IfElse(state?.renderMode !== RENDER_MODE.NORMAL, () => (
-              <li>
-                <CustomizeTrigger isNew data={storeConfig?.["actions.new"]}>
-                  <div data-customize-trigger="actions.new">
-                    <place-holder className="px-2 py-1 rounded-3xl">
-                      <span data-info className="z-10 py-1 px-1">
-                        + Add Button
-                      </span>
-                    </place-holder>
-                  </div>
-                </CustomizeTrigger>
-              </li>
-            ))}
-          </ul>
-
           <div
-            ref={$contentContainer}
-            id="content"
-            className="relative w-full flex-shrink-0"
+            ref={$slideContainer}
+            className="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
           >
-            {storeConfig?.actions?.map((action, index) =>
-              action.template ? (
-                <div
-                  key={index}
-                  id={`template-${index}`}
-                  className="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
-                >
-                  <div className="flex items-center">
-                    <button
-                      ref={$el => $slideBack.current.push($el)}
-                      className="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
-                    >
-                      <svg
-                        viewBox="0 0 20 20"
-                        className="h-5 w-5"
-                        aria-hidden="true"
+            <ul
+              data-trigger-container
+              className="p-6 md:p-8 trigger flex flex-col w-full flex-shrink-0 gap-4"
+            >
+              {storeConfig?.actions?.map((action, index) => (
+                <li key={index}>
+                  <CustomizeTrigger name="action-button" data={action.button}>
+                    {({ ref, events, EventDot }) => (
+                      <a
+                        ref={ref}
+                        onMouseOver={events?.onMouseOver}
+                        onClick={e =>
+                          handleActionButtonClick(
+                            e,
+                            () => slideTo(`#template-${index}`),
+                            events.onClick
+                          )
+                        }
+                        data-trigger={
+                          action?.template ? `#template-${index}` : ""
+                        }
+                        href={
+                          action.button.href ? action.button.href : undefined
+                        }
+                        target={action.button.href ? "_blank" : undefined}
+                        style={{
+                          "--bg-color":
+                            action.button.background_color.bg_color || "#000",
+                          "--text-color":
+                            action.button.background_color.text_color || "#fff"
+                        }}
+                        className="relative app-button w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105"
                       >
-                        <use href="./svg-sprites.svg#back-arrow" />
-                      </svg>
-                    </button>
+                        {IfElse(action.button.icon, () => (
+                          <span className="flex h-5 w-5">
+                            <Media data={action.button.icon} />
+                          </span>
+                        ))}
+                        {action.button.label}
 
-                    <span className="ml-2">{action.button.label}</span>
+                        <EventDot
+                          onClick={e =>
+                            e.stopPropagation() || slideTo(`#template-${index}`)
+                          }
+                        />
+                      </a>
+                    )}
+                  </CustomizeTrigger>
+                </li>
+              ))}
+
+              {IfElse(state?.renderMode !== RENDER_MODE.NORMAL, () => (
+                <li>
+                  <CustomizeTrigger isNew data={storeConfig?.["actions.new"]}>
+                    {({ ref, events }) => (
+                      <div
+                        ref={ref}
+                        {...events}
+                        data-customize-trigger="actions.new"
+                      >
+                        <place-holder className="px-2 py-1 rounded-3xl">
+                          <span data-info className="z-10 py-1 px-1">
+                            + Add Button
+                          </span>
+                        </place-holder>
+                      </div>
+                    )}
+                  </CustomizeTrigger>
+                </li>
+              ))}
+            </ul>
+
+            <div
+              ref={$contentContainer}
+              id="content"
+              className="relative w-full flex-shrink-0"
+            >
+              {storeConfig?.actions?.map((action, index) =>
+                action.template ? (
+                  <div
+                    key={index}
+                    id={`template-${index}`}
+                    className="flex flex-col gap-4 p-6 md:p-8 hidden w-full content-block bg-white"
+                  >
+                    <div className="flex items-center">
+                      <button
+                        ref={$el => $slideBack.current.push($el)}
+                        className="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
+                      >
+                        <svg
+                          viewBox="0 0 20 20"
+                          className="h-5 w-5"
+                          aria-hidden="true"
+                        >
+                          <use href="./svg-sprites.svg#back-arrow" />
+                        </svg>
+                      </button>
+
+                      <span className="ml-2">{action.button.label}</span>
+                    </div>
+                    <RenderActionTemplate
+                      data={action}
+                      template={action.template}
+                    />
                   </div>
-                  <RenderActionTemplate
-                    data={action}
-                    template={action.template}
-                  />
-                </div>
-              ) : null
-            )}
+                ) : null
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </CustomizeTrigger>
   );
 }

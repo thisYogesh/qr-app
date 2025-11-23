@@ -1,8 +1,14 @@
-import React, { cloneElement, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { AppContext, RENDER_MODE } from "../src/app-context";
+import { getSettings } from "../src/helpers";
 
 const $highlighters = [];
-export default function CustomizeTrigger({ data, isNew = false, children }) {
+export default function CustomizeTrigger({
+  name,
+  data,
+  isNew = false,
+  children
+}) {
   const { state } = useContext(AppContext);
   const $elRef = useRef(null);
   const $highlighterRef = useRef(null);
@@ -54,16 +60,19 @@ export default function CustomizeTrigger({ data, isNew = false, children }) {
   // TODO: Write a logic to show settings
   const onClick = e => {
     e.stopPropagation();
-    console.log(data, isNew);
+    console.log(getSettings([data]));
   };
 
   const customizerEvents =
-    state.renderMode === RENDER_MODE.CUSTOMIZER
-      ? { onMouseOver: onMouseOver, onClick: onClick }
-      : null;
+    state.renderMode === RENDER_MODE.CUSTOMIZER ? { onMouseOver, onClick } : {};
 
-  return cloneElement(children, {
-    ref: $elRef,
-    ...customizerEvents
-  });
+  const EventDot = ({ ...props }) =>
+    state.renderMode === RENDER_MODE.CUSTOMIZER ? (
+      <span
+        {...props}
+        className="event-trigger absolute w-[10px] h-[10px] bg-blue-500 rounded-full mr-5 right-0"
+      ></span>
+    ) : null;
+
+  return children?.({ ref: $elRef, events: customizerEvents, EventDot });
 }

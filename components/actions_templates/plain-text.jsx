@@ -5,7 +5,11 @@ export default function PlainText({ data }) {
   const { content } = data;
   return (
     <CustomizeTrigger data={content}>
-      <div>{content.value}</div>
+      {({ ref, events }) => (
+        <div {...events} ref={ref}>
+          {content.value}
+        </div>
+      )}
     </CustomizeTrigger>
   );
 }

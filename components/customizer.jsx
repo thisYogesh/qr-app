@@ -1,9 +1,10 @@
 import React from "react";
 import SvgBlock from "../svg/block";
-import SvgSettings from "../svg/settings";
+
 import Media from "./media";
 import useStoreConfig from "../hooks/useStoreConfig";
 import CustomizeTrigger from "./customize-trigger";
+import Settings from "./settings";
 
 export default function Customizer({ children }) {
   const { current: storeConfig } = useStoreConfig();
@@ -52,14 +53,20 @@ export default function Customizer({ children }) {
         <div className="app-builder flex-grow overflow-hidden">
           <div data-customizer className="flex flex-col gap-0.5 w-full h-full">
             <CustomizeTrigger data={storeConfig?.metadata}>
-              <div className="flex items-center gap-1 p-1">
-                <div className="w-5">
-                  <Media data={storeConfig?.metadata?.favicon} />
+              {({ ref, events }) => (
+                <div
+                  ref={ref}
+                  {...events}
+                  className="flex items-center gap-1 p-1"
+                >
+                  <div className="w-5">
+                    <Media data={storeConfig?.metadata?.favicon} />
+                  </div>
+                  <span className="text-[13px]">
+                    {storeConfig.metadata.title.value}
+                  </span>
                 </div>
-                <span className="text-[13px]">
-                  {storeConfig.metadata.title.value}
-                </span>
-              </div>
+              )}
             </CustomizeTrigger>
 
             <div className="flex flex-col gap-2 w-full bg-white rounded-lg overflow-hidden border border-gray-200 h-full">
@@ -68,34 +75,8 @@ export default function Customizer({ children }) {
           </div>
         </div>
       </div>
-      <aside
-        data-settings-viewer
-        className="flex flex-col justify-between border-l border-l-gray-200 bg-white"
-      >
-        <div>
-          <div data-settings></div>
-          <div data-block-events></div>
-        </div>
 
-        <div className="flex flex-col items-center empty-settings-viewer text-sm text-center p-5 h-full justify-center">
-          <div className="svg w-1/2 opacity-10">
-            <SvgSettings />
-          </div>
-
-          <span className="text-gray-600">
-            Please select a block to continue.
-          </span>
-        </div>
-
-        <div className="action-buttons flex p-2 gap-2">
-          <button disabled className="button basis-0 grow disabled:opacity-40">
-            Save
-          </button>
-          <button disabled className="button basis-0 grow disabled:opacity-40">
-            Cancel
-          </button>
-        </div>
-      </aside>
+      <Settings />
     </div>
   ) : null;
 }

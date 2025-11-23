@@ -4,49 +4,55 @@
       "store_id": "MTc1MjMzMzQyOTY0Ng==",
       "status": 1,
       "logo": {
-        "type": "image",
+        "@title": "Logo",
+        "@type": "image",
         "src": "",
         "svg_markup": "",
 
         "size": {
-          "type": "size",
-          "width": ""
+          "@title": "Size",
+          "@type": "size"
         }
       },
       "metadata": {
         "title": {
-          "type": "value",
+          "@title": "Title",
+          "@type": "value",
           "value": "Manyog app"
         },
         "favicon": {
-          "type": "image-only",
+          "@title": "Favicon",
+          "@type": "image-only",
           "src": "https://manyog.s3.ap-south-1.amazonaws.com/icon.svg"
         }
       },
       "backrgound": {
-        "type": "wrapper",
+        "@title": "Backrgound",
+        "@type": "wrapper",
         "image": {
-          "type": "image",
+          "@title": "Image",
+          "@type": "image",
           "src": "https://manyog.s3.ap-south-1.amazonaws.com/assets/tools-bg.jpg"
         },
         "bg_size": {
-          "type": "size",
+          "@title": "BG Size",
+          "@type": "size",
           "width": "200px"
         },
         "opacity": {
-          "type": "opacity",
+          "@title": "Opacity",
+          "@type": "opacity",
           "value": 0.05
         }
       },
-
       "action_background": {
         "background_image": {
-          "type": "image",
+          "@type": "image",
           "src": "",
           "svg_markup": ""
         },
         "background_color": {
-          "type": "color",
+          "@type": "color",
           "value": "#ffffff"
         }
       },
@@ -61,14 +67,14 @@
         "contact_us": {
           "template": "contact_us",
           "button": {
-            "type": "button",
+            "@type": "button",
             "label": "Button Text",
             "background_color": {
-              "type": "color",
+              "@type": "color",
               "value": "#000000"
             },
             "icon": {
-              "type": "image",
+              "@type": "image",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
             }
@@ -78,34 +84,34 @@
         "simple_text": {
           "template": "simple_text",
           "button": {
-            "type": "button",
+            "@type": "button",
             "label": "Button Text",
             "background_color": {
-              "type": "color",
+              "@type": "color",
               "value": "#000000"
             },
             "icon": {
-              "type": "image",
+              "@type": "image",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
             }
           },
           "content": {
-            "_block_title": "Content",
-            "type": "value",
+            "@title": "Content",
+            "@type": "value",
             "value": "Content"
           }
         },
         "link_button": {
           "button": {
-            "type": "link-button",
+            "@type": "link-button",
             "label": "Link Button",
             "background_color": {
-              "type": "color",
+              "@type": "color",
               "value": "#000080"
             },
             "icon": {
-              "type": "image",
+              "@type": "image",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
             },
@@ -121,24 +127,24 @@
         ],
         "anchor": {
           "icon": {
-            "type": "image",
+            "@type": "image",
             "src": "",
             "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
           },
           "content": {
-            "type": "anchor",
+            "@type": "anchor",
             "text": "Text",
             "href": "https://link"
           }
         },
         "value": {
           "icon": {
-            "type": "image",
+            "@type": "image",
             "src": "",
             "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
           },
           "content": {
-            "type": "value",
+            "@type": "value",
             "value": "Text"
           }
         }
@@ -148,14 +154,17 @@
         {
           "template": "TwoColumn",
           "button": {
-            "type": "button",
+            "@title": "Button",
+            "@type": "button",
             "label": "Button Text",
             "background_color": {
-              "type": "color",
+              "@title": "Background_color",
+              "@type": "color",
               "value": "#000000"
             },
             "icon": {
-              "type": "image",
+              "@title": "Icon",
+              "@type": "image",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
             }
@@ -165,31 +174,31 @@
         {
           "template": "PlainText",
           "button": {
-            "type": "button",
+            "@type": "button",
             "label": "Button Text",
             "background_color": {
-              "type": "color",
+              "@type": "color",
               "value": "#000000"
             },
             "icon": {
-              "type": "image",
+              "@type": "image",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
             }
           },
           "content": {
             "_block_title": "Content",
-            "type": "value",
+            "@type": "value",
             "value": "Coming soon...!"
           }
         }
       ],
       "Bottomline": {
-        "type": "value",
+        "@type": "value",
         "value": ""
       },
       "Copyright": {
-        "type": "value",
+        "@type": "value",
         "value": ""
       }
     }
