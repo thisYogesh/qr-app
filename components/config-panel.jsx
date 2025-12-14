@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SvgSettings from "../svg/settings";
+import { useSelector } from "react-redux";
+import ControlRenderer from "./controls/render";
 
-export default function Settings() {
+export default function ConfigurationPanel() {
+  const currentSettings = useSelector(state => state.app.currentSettings);
+
+  useEffect(() => {
+    console.log(currentSettings);
+  }, [currentSettings]);
+
   return (
     <aside
       data-settings-viewer
-      className="flex flex-col justify-between border-l border-l-gray-200 bg-white"
+      className="flex flex-col justify-between border-l border-l-gray-200 bg-white p-4"
     >
-      <div data-settings></div>
+      <div data-settings>
+        {currentSettings ? <ControlRenderer field={currentSettings} /> : null}
+      </div>
 
       <div className="flex flex-col items-center empty-settings-viewer text-sm text-center p-5 h-full justify-center">
         <div className="svg w-1/2 opacity-10">

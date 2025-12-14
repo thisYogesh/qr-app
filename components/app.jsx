@@ -1,12 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import useStoreConfig from "../hooks/useStoreConfig";
 import { IfElse } from "../helpers";
 import AppBg from "./app-background";
 import Media from "./media";
-import ActionButton from "./action-button";
-import { AppContext, RENDER_MODE } from "../src/app-context";
+import { AppContext } from "../src/app-context";
 import CustomizeTrigger from "./customize-trigger";
-import RenderActionTemplate from "./actions_templates/render";
 import SlideContainer from "./actions_templates/slide-container";
 
 export default () => {

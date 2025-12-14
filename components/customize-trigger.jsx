@@ -1,14 +1,12 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { AppContext, RENDER_MODE } from "../src/app-context";
 import { getSettings } from "../src/helpers";
+import { useDispatch } from "react-redux";
+import { setSettings } from "../states/app";
 
 const $highlighters = [];
-export default function CustomizeTrigger({
-  name,
-  data,
-  isNew = false,
-  children
-}) {
+export default function CustomizeTrigger({ data, isNew = false, children }) {
+  const dispatch = useDispatch();
   const { state } = useContext(AppContext);
   const $elRef = useRef(null);
   const $highlighterRef = useRef(null);
@@ -60,7 +58,9 @@ export default function CustomizeTrigger({
   // TODO: Write a logic to show settings
   const onClick = e => {
     e.stopPropagation();
-    console.log(getSettings([data]));
+
+    const settings = getSettings([data]);
+    dispatch(setSettings(settings?.[0]));
   };
 
   const customizerEvents =

@@ -28,7 +28,10 @@ const appReducer = createSlice({
   name: "app",
   initialState: {
     storeConfig: null,
-    configInFetch: false
+    configInFetch: false,
+
+    // settings to show in configuration panel
+    currentSettings: null
   },
   reducers: {
     setConfig: (state, config) => {
@@ -37,6 +40,10 @@ const appReducer = createSlice({
 
     setConfigFetchStatus: (state, configInFetch) => {
       state.configInFetch = configInFetch;
+    },
+
+    setSettings: (state, settings) => {
+      state.currentSettings = settings.payload;
     }
   },
 
@@ -51,5 +58,9 @@ const appReducer = createSlice({
   }
 });
 
-export const { setConfig, setConfigFetchStatus } = appReducer.actions;
+export const {
+  setConfig,
+  setConfigFetchStatus,
+  setSettings
+} = appReducer.actions;
 export default appReducer.reducer;

@@ -4,7 +4,7 @@ import SvgBlock from "../svg/block";
 import Media from "./media";
 import useStoreConfig from "../hooks/useStoreConfig";
 import CustomizeTrigger from "./customize-trigger";
-import Settings from "./settings";
+import ConfigurationPanel from "./config-panel";
 
 export default function Customizer({ children }) {
   const { current: storeConfig } = useStoreConfig();
@@ -76,7 +76,7 @@ export default function Customizer({ children }) {
         </div>
       </div>
 
-      <Settings />
+      <ConfigurationPanel />
     </div>
   ) : null;
 }

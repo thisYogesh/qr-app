@@ -15,7 +15,7 @@ const makeField = field => {
 const extractFields = field => {
   const { value } = field;
   const fields = {
-    field,
+    field: value,
     fields: getFields(value).map(field => extractFields(field))
   };
   return fields;
