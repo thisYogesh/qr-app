@@ -7,8 +7,18 @@ import TypeText from "./text";
 import TypeImage from "./image";
 import TypeSize from "./size";
 import TypeValue from "./value";
+import TypeColor from "./color";
+import TypeOpacity from "./opacity";
 
-const CONTROLS = { TypeWrapper, TypeText, TypeImage, TypeSize, TypeValue };
+const CONTROLS = {
+  TypeWrapper,
+  TypeText,
+  TypeImage,
+  TypeSize,
+  TypeValue,
+  TypeColor,
+  TypeOpacity
+};
 
 export default function ControlRenderer({ field }) {
   const { field: currentField } = field;

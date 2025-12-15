@@ -6,7 +6,7 @@ export default function TypeSize({ field }) {
   const { height = "auto", width = "auto", "@title": title } = size;
 
   return (
-    <div class="flex flex-col gap-1">
+    <div className="flex flex-col gap-1">
       <h4 className="capitalize text-sm">{title}</h4>
       <div className="flex gap-1">
         <Input value={width} />
