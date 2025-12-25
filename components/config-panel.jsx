@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
 import SvgSettings from "../svg/settings";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ControlRenderer from "./controls/render";
+import { setSettings } from "../states/app";
 
 export default function ConfigurationPanel() {
+  const dispatch = useDispatch();
   const currentSettings = useSelector(state => state.app.currentSettings);
 
   useEffect(() => {
-    console.log(currentSettings);
-  }, [currentSettings]);
+    window.addEventListener("@layout-reflow", () => {
+      dispatch(setSettings(null));
+    });
+  }, []);
 
   return (
     <aside

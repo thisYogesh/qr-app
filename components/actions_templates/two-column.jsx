@@ -6,12 +6,14 @@ import Media from "../media";
 
 export default function TwoColumn({ data }) {
   const { items } = data;
+
   return (
     <div className="flex flex-col gap-2">
-      {items.map(row => (
-        <CustomizeTrigger data={row}>
+      {items.map((row, index) => (
+        <CustomizeTrigger data={row} key={index}>
           {({ ref, events }) => (
             <div
+              key={index}
               ref={ref}
               {...events}
               className="flex text-sm items-start gap-1 text-blue-900 font-medium"
@@ -20,10 +22,10 @@ export default function TwoColumn({ data }) {
                 <Media data={row.icon} />
               </span>
 
-              {row.type === CONFIG_TYPE.ANCHOR ? (
-                <Anchor data={row} />
+              {row.content["@type"] === CONFIG_TYPE.ANCHOR ? (
+                <Anchor data={row.content} />
               ) : (
-                <p>{row.value}</p>
+                <p>{row.content.value}</p>
               )}
             </div>
           )}

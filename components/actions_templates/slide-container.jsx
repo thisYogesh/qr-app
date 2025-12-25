@@ -5,6 +5,7 @@ import { IfElse } from "../../helpers";
 import { AppContext, RENDER_MODE } from "../../src/app-context";
 import Media from "../media";
 
+const layoutReflow = new Event("@layout-reflow");
 export default function SlideContainer({ storeConfig }) {
   const { state } = useContext(AppContext);
   const $contentContainer = useRef(null);
@@ -19,10 +20,13 @@ export default function SlideContainer({ storeConfig }) {
   }, [$slideBack?.current]);
 
   const goBack = e => {
+    e.stopPropagation();
+
     const { current: $slideContainerEl } = $slideContainer;
     $slideContainerEl.style.removeProperty("--dynamic-height");
     $slideContainerEl.classList.remove("-translate-x-full");
-    e.stopPropagation();
+
+    window.dispatchEvent(layoutReflow);
   };
 
   const slideTo = contentId => {
@@ -47,6 +51,13 @@ export default function SlideContainer({ storeConfig }) {
       "--dynamic-height",
       `${contentHeight}px`
     );
+  };
+
+  const slideToContent = (e, index) => {
+    e.stopPropagation();
+    slideTo(`#template-${index}`);
+
+    window.dispatchEvent(layoutReflow);
   };
 
   const handleActionButtonClick = (e, defaultClick, customiserClick) => {
@@ -108,13 +119,9 @@ export default function SlideContainer({ storeConfig }) {
                             <Media data={action.button.icon} />
                           </span>
                         ))}
-                        {action.button.label}
+                        {action.button.title.value}
 
-                        <EventDot
-                          onClick={e =>
-                            e.stopPropagation() || slideTo(`#template-${index}`)
-                          }
-                        />
+                        <EventDot onClick={e => slideToContent(e, index)} />
                       </a>
                     )}
                   </CustomizeTrigger>
@@ -168,7 +175,7 @@ export default function SlideContainer({ storeConfig }) {
                         </svg>
                       </button>
 
-                      <span className="ml-2">{action.button.label}</span>
+                      <span className="ml-2">{action.button.title.value}</span>
                     </div>
                     <RenderActionTemplate
                       data={action}

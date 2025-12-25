@@ -9,6 +9,7 @@ import TypeSize from "./size";
 import TypeValue from "./value";
 import TypeColor from "./color";
 import TypeOpacity from "./opacity";
+import TypeAnchor from "./anchor";
 
 const CONTROLS = {
   TypeWrapper,
@@ -17,7 +18,8 @@ const CONTROLS = {
   TypeSize,
   TypeValue,
   TypeColor,
-  TypeOpacity
+  TypeOpacity,
+  TypeAnchor
 };
 
 export default function ControlRenderer({ field }) {
@@ -28,5 +30,5 @@ export default function ControlRenderer({ field }) {
 
   if (!Control) console.log("Unknown type found!", control);
 
-  return <>{Control ? <Control field={field} /> : null}</>;
+  return <>{Control ? <Control field={field} key={Math.random()} /> : null}</>;
 }

@@ -16,7 +16,7 @@ export default function TypeWrapper({ field }) {
   };
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="capitalize text-sm">{title}</h4>
+      <h4 className="capitalize text-sm font-medium">{title}</h4>
       {fields?.length > 0 ? renderControls() : null}
     </div>
   );

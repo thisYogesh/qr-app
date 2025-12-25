@@ -11,13 +11,7 @@ export default function Input({ id, label, type = "text", ...props }) {
           {label}
         </label>
       ) : null}
-      <input
-        id={id}
-        className="text-sm h-8"
-        type={type}
-        value={props.value}
-        placeholder={props.placeholder}
-      />
+      <input id={id} className="text-sm h-8" type={type} {...props} />
     </div>
   );
 }
