@@ -66,10 +66,17 @@ export default function SlideContainer({ storeConfig }) {
     window.dispatchEvent(layoutReflow);
   };
 
-  const handleActionButtonClick = (e, defaultClick, customiserClick) => {
-    if (state.renderMode === RENDER_MODE.CUSTOMIZER) return customiserClick(e);
+  const handleActionButtonClick = ({
+    event,
+    action,
+    defaultClick,
+    customiserClick
+  }) => {
+    if (state.renderMode === RENDER_MODE.CUSTOMIZER)
+      return customiserClick(event);
 
-    defaultClick();
+    // takes care of slideTo functionality
+    if (action.template) defaultClick(event);
   };
 
   const onButtonAction = (e, index, action) => {
@@ -112,11 +119,12 @@ export default function SlideContainer({ storeConfig }) {
                         ref={ref}
                         onMouseOver={events?.onMouseOver}
                         onClick={e =>
-                          handleActionButtonClick(
-                            e,
-                            () => slideTo(`#template-${index}`),
-                            events.onClick
-                          )
+                          handleActionButtonClick({
+                            event: e,
+                            action,
+                            defaultClick: e => slideToContent(e, index),
+                            customiserClick: events.onClick
+                          })
                         }
                         data-trigger={
                           action?.template ? `#template-${index}` : undefined
