@@ -66,63 +66,88 @@
 
       "actions.new": {
         "options": [
-          { "value": "contact_us", "title": "List Template" },
+          { "value": "two_column", "title": "List Template" },
           { "value": "simple_text", "title": "Simple Template" },
           { "value": "link_button", "title": "Anchor Button" }
         ],
 
-        "contact_us": {
-          "template": "contact_us",
+        "two_column": {
+          "template": "TwoColumn",
           "button": {
-            "@type": "button",
-            "label": "Button Text",
-            "background_color": {
-              "@type": "color",
-              "value": "#000000"
+            "@title": "Button",
+            "@type": "wrapper",
+            "title": {
+              "@type": "value",
+              "@title": "Title",
+              "value": "Button Text"
             },
             "icon": {
+              "@title": "Icon",
               "@type": "image",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
+            },
+            "background_color": {
+              "@title": "Background Color",
+              "@type": "color",
+              "value": "#000000"
             }
           },
           "items": []
         },
         "simple_text": {
-          "template": "simple_text",
+          "template": "PlainText",
           "button": {
-            "@type": "button",
-            "label": "Button Text",
-            "background_color": {
-              "@type": "color",
-              "value": "#000000"
+            "@type": "wrapper",
+            "@title": "Button",
+            "title": {
+              "@type": "value",
+              "@title": "Title",
+              "value": "Button Text 2"
             },
             "icon": {
               "@type": "image",
+              "@title": "Icon",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
+            },
+            "background_color": {
+              "@type": "color",
+              "@title": "Background Color",
+              "value": "#000000"
             }
           },
           "content": {
             "@title": "Content",
             "@type": "value",
-            "value": "Content"
+            "value": "Enter value here"
           }
         },
         "link_button": {
           "button": {
-            "@type": "link-button",
-            "label": "Link Button",
-            "background_color": {
-              "@type": "color",
-              "value": "#000080"
+            "@type": "wrapper",
+            "@title": "Link Button",
+            "title": {
+              "@type": "value",
+              "@title": "Title",
+              "value": "Link Button"
+            },
+            "href": {
+              "@type": "value",
+              "@title": "Hyperlink",
+              "value": "https://google.com"
             },
             "icon": {
               "@type": "image",
+              "@title": "Icon",
               "src": "",
               "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
             },
-            "href": "https://link"
+            "background_color": {
+              "@type": "color",
+              "@title": "Background Color",
+              "value": "#000000"
+            }
           }
         }
       },
@@ -239,6 +264,33 @@
             "@title": "Content",
             "@type": "value",
             "value": "Coming soon...!"
+          }
+        },
+        {
+          "button": {
+            "@type": "wrapper",
+            "@title": "Link Button",
+            "title": {
+              "@type": "value",
+              "@title": "Title",
+              "value": "Link Button"
+            },
+            "href": {
+              "@type": "value",
+              "@title": "Hyperlink",
+              "value": "https://google.com"
+            },
+            "icon": {
+              "@type": "image",
+              "@title": "Icon",
+              "src": "",
+              "svg_markup": "<svg fill=\"currentColor\" viewBox=\"0 0 32 32\"><path d=\"M7 3.5h-6c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-5h5c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 20.5c-0.552 0-1 0.448-1 1v5h-5c-0.552 0-1 0.448-1 1s0.448 1 1 1h6c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1zM7 26.5h-5v-5c0-0.552-0.448-1-1-1s-1 0.448-1 1v6c0 0.552 0.448 1 1 1h6c0.552 0 1-0.448 1-1s-0.448-1-1-1zM31 3.5h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h5v5c0 0.552 0.448 1 1 1s1-0.448 1-1v-6c0-0.552-0.448-1-1-1z\"></path></svg>"
+            },
+            "background_color": {
+              "@type": "color",
+              "@title": "Background Color",
+              "value": "#000000"
+            }
           }
         }
       ],

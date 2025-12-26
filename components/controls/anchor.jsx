@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Input from "../input";
 
-export default function TypeAnchor({ field }) {
+export default function TypeAnchor({ field, ...props }) {
   const { field: anchor } = field;
   const { href, text, "@title": title } = anchor;
   const [value, setValue] = useState({ href, text });
@@ -9,7 +9,7 @@ export default function TypeAnchor({ field }) {
   const setVal = obj => setValue(prev => ({ ...prev, ...obj }));
 
   return (
-    <div className="flex flex-col gap-1">
+    <div {...props} className="flex flex-col gap-1">
       <h4 className="capitalize text-sm">{title}</h4>
 
       <div className="flex gap-1">

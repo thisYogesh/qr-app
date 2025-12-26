@@ -30,5 +30,11 @@ export default function ControlRenderer({ field }) {
 
   if (!Control) console.log("Unknown type found!", control);
 
-  return <>{Control ? <Control field={field} key={Math.random()} /> : null}</>;
+  return (
+    <>
+      {Control ? (
+        <Control data-control={control} field={field} key={Math.random()} />
+      ) : null}
+    </>
+  );
 }

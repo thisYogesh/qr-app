@@ -2,7 +2,7 @@ import React from "react";
 import { MEDIA_TYPE } from "../../src/enum";
 import ControlRenderer from "./render";
 
-export default function TypeImage({ field, svg_markup = true }) {
+export default function TypeImage({ field, ...props }) {
   const { field: image, fields } = field;
   const { "@title": title, options } = image;
 
@@ -16,7 +16,7 @@ export default function TypeImage({ field, svg_markup = true }) {
     );
   };
   return (
-    <div className="flex flex-col gap-2">
+    <div {...props} className="flex flex-col gap-2">
       {title ? <h4 className="capitalize text-sm">{title}</h4> : null}
       <media-control className="media-control">
         <div className="flex flex-col gap-2">

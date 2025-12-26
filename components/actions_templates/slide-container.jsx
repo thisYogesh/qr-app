@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { act, useContext, useEffect, useRef } from "react";
 import CustomizeTrigger from "../customize-trigger";
 import RenderActionTemplate from "./render";
 import { IfElse } from "../../helpers";
@@ -11,6 +11,12 @@ export default function SlideContainer({ storeConfig }) {
   const $contentContainer = useRef(null);
   const $slideContainer = useRef(null);
   const $slideBack = useRef([]);
+
+  useEffect(() => {
+    const { current: $slideContainerEl } = $slideContainer;
+    const { height } = $slideContainerEl.getBoundingClientRect();
+    $slideContainerEl.style.setProperty("--root-height", `${height}px`);
+  }, []);
 
   useEffect(() => {
     const $els = $slideBack?.current;
@@ -66,6 +72,18 @@ export default function SlideContainer({ storeConfig }) {
     defaultClick();
   };
 
+  const onButtonAction = (e, index, action) => {
+    if (action.template) slideToContent(e, index);
+    else if (action.button?.href?.value)
+      window.open(action.button?.href?.value, "_blank");
+  };
+
+  const getHref = action => {
+    const href = action.button?.href?.value;
+
+    return state.renderMode === RENDER_MODE.CUSTOMIZER ? undefined : href;
+  };
+
   return (
     <CustomizeTrigger
       name="slide-container"
@@ -78,6 +96,7 @@ export default function SlideContainer({ storeConfig }) {
           className="flex items-center justify-center bg-white border border-gray-300 rounded-lg transition-border shadow-md overflow-hidden w-full"
         >
           <div
+            data-slide-container
             ref={$slideContainer}
             className="flex bg-white items-center duration-300 transform transition-all flex-grow max-w-full"
           >
@@ -100,11 +119,9 @@ export default function SlideContainer({ storeConfig }) {
                           )
                         }
                         data-trigger={
-                          action?.template ? `#template-${index}` : ""
+                          action?.template ? `#template-${index}` : undefined
                         }
-                        href={
-                          action.button.href ? action.button.href : undefined
-                        }
+                        href={getHref(action)}
                         target={action.button.href ? "_blank" : undefined}
                         style={{
                           "--bg-color":
@@ -121,7 +138,9 @@ export default function SlideContainer({ storeConfig }) {
                         ))}
                         {action.button.title.value}
 
-                        <EventDot onClick={e => slideToContent(e, index)} />
+                        <EventDot
+                          onClick={e => onButtonAction(e, index, action)}
+                        />
                       </a>
                     )}
                   </CustomizeTrigger>
@@ -177,10 +196,13 @@ export default function SlideContainer({ storeConfig }) {
 
                       <span className="ml-2">{action.button.title.value}</span>
                     </div>
-                    <RenderActionTemplate
-                      data={action}
-                      template={action.template}
-                    />
+
+                    {action?.template ? (
+                      <RenderActionTemplate
+                        data={action}
+                        template={action.template}
+                      />
+                    ) : null}
                   </div>
                 ) : null
               )}

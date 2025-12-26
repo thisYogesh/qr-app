@@ -1,7 +1,7 @@
 import React from "react";
 import ControlRenderer from "./render";
 
-export default function TypeWrapper({ field }) {
+export default function TypeWrapper({ field, ...props }) {
   const { field: wrapper, fields } = field;
   const { "@title": title } = wrapper;
 
@@ -15,7 +15,7 @@ export default function TypeWrapper({ field }) {
     );
   };
   return (
-    <div className="flex flex-col gap-1">
+    <div {...props} className="flex flex-col gap-1">
       <h4 className="capitalize text-sm font-medium">{title}</h4>
       {fields?.length > 0 ? renderControls() : null}
     </div>
