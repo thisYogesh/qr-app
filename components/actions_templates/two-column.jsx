@@ -3,9 +3,11 @@ import { CONFIG_TYPE } from "../../src/enum";
 import Anchor from "../anchor";
 import CustomizeTrigger from "../customize-trigger";
 import Media from "../media";
+import useStoreConfig from "../../hooks/useStoreConfig";
 
 export default function TwoColumn({ data }) {
   const { items } = data;
+  const { current: storeConfig } = useStoreConfig();
 
   return (
     <div className="flex flex-col gap-2">
@@ -32,13 +34,17 @@ export default function TwoColumn({ data }) {
         </CustomizeTrigger>
       ))}
 
-      <div data-customize-trigger="actions.items.new">
-        <place-holder className="py-1 rounded-sm">
-          <span data-info className="z-10 px-1">
-            + Add Row
-          </span>
-        </place-holder>
-      </div>
+      <CustomizeTrigger isNew data={storeConfig?.["actions.items.new"]}>
+        {({ ref, events }) => (
+          <div ref={ref} {...events}>
+            <place-holder className="py-1 rounded-sm">
+              <span data-info className="z-10 px-1">
+                + Add Row
+              </span>
+            </place-holder>
+          </div>
+        )}
+      </CustomizeTrigger>
     </div>
   );
 }

@@ -164,7 +164,7 @@ export default function SlideContainer({ storeConfig }) {
                         {...events}
                         data-customize-trigger="actions.new"
                       >
-                        <place-holder className="px-2 py-1 rounded-3xl">
+                        <place-holder className="h-10 flex justify-center items-center rounded-3xl">
                           <span data-info className="z-10 py-1 px-1">
                             + Add Button
                           </span>

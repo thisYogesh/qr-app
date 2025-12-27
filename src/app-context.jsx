@@ -11,11 +11,7 @@ export default function AppContextProvider({
   renderMode = RENDER_MODE.NORMAL
 }) {
   const [state, setState] = useState({
-    renderMode,
-
-    // props for custimizer
-    highlightedCustomizeId: "",
-    selectedCustomizeId: ""
+    renderMode
   });
 
   const setContext = props => {
