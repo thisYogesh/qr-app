@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { startCase } from "lodash";
 
 // All controls
@@ -33,7 +33,8 @@ export default function ControlRenderer({ field }) {
   return (
     <>
       {Control ? (
-        <Control data-control={control} field={field} key={Math.random()} />
+        // never add key={} here
+        <Control data-control={control} field={field} />
       ) : null}
     </>
   );

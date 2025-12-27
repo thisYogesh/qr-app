@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState, useId } from "react";
 import { AppContext, RENDER_MODE } from "../src/app-context";
 import { getSettings } from "../src/helpers";
 import { useDispatch } from "react-redux";
-import { setNewConfig, setSettings } from "../states/app";
+import { setNewConfig, setSettingPath, setSettings } from "../states/app";
 
 const $highlighters = [];
 let selectedConfigId = "";
@@ -101,10 +101,12 @@ export default function CustomizeTrigger({ data, isNew = false, children }) {
     if (!isNew) {
       const settings = getSettings([data]);
       dispatch(setSettings(settings?.[0]));
+      dispatch(setSettingPath(data.__path));
       dispatch(setNewConfig(null));
     } else {
       // Continue here
       dispatch(setSettings(null));
+      dispatch(setSettingPath(""));
       dispatch(setNewConfig(data));
 
       console.log(data);

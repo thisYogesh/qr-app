@@ -1,4 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
+import { addPaths, getDynamicState, updateAtPath } from "../src/utils";
+import { getSettings } from "../src/helpers";
 
 const getMatchedConfig = data => {
   const { items } = data;
@@ -32,6 +34,8 @@ const appReducer = createSlice({
 
     // settings to show in configuration panel
     currentSettings: null,
+    currentSettingPath: "",
+
     currentNewConfig: null
   },
   reducers: {
@@ -47,8 +51,32 @@ const appReducer = createSlice({
       state.currentSettings = settings.payload;
     },
 
+    setSettingPath: (state, settings) => {
+      state.currentSettingPath = settings.payload;
+    },
+
     setNewConfig: (state, settings) => {
       state.currentNewConfig = settings.payload;
+    },
+
+    updatePath: (state, data) => {
+      const currentState = current(state);
+      const { storeConfig, currentSettingPath } = currentState;
+      const cloneState = window.structuredClone(storeConfig);
+      const { __path, value } = data.payload;
+      const newConfig = updateAtPath(cloneState, __path, value);
+
+      state.storeConfig = {
+        ...state.storeConfig,
+        ...newConfig
+      };
+
+      const currentSettings = getDynamicState(cloneState, currentSettingPath);
+      const settings = getSettings([currentSettings]);
+      state.currentSettings = {
+        ...state.currentSettings,
+        ...settings?.[0]
+      };
     }
   },
 
@@ -56,7 +84,7 @@ const appReducer = createSlice({
     builder.addCase(fetchConfig.fulfilled, (state, action) => {
       if (action.payload) {
         const storeConfig = getMatchedConfig(action.payload);
-        state.storeConfig = storeConfig;
+        state.storeConfig = addPaths(storeConfig);
       }
       state.configInFetch = false;
     });
@@ -67,6 +95,8 @@ export const {
   setConfig,
   setConfigFetchStatus,
   setSettings,
-  setNewConfig
+  setNewConfig,
+  updatePath,
+  setSettingPath
 } = appReducer.actions;
 export default appReducer.reducer;

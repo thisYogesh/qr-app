@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../input";
+import { useDispatch } from "react-redux";
+import { updatePath } from "../../states/app";
 
 export default function TypeValue({ field, ...props }) {
+  const dispatch = useDispatch();
   const { field: _value } = field;
-  const { "@title": title, value: val } = _value;
+  const { "@title": title, value: val, __path } = _value;
   const [value, setValue] = useState(val);
+
+  useEffect(() => {
+    if (value !== val) {
+      console.log({ value, val });
+      const updateData = { __path, value: { ..._value, value: value } };
+      dispatch(updatePath(updateData));
+    }
+  }, [value]);
 
   return (
     <div {...props} className="flex flex-col gap-1">
