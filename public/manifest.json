@@ -6,12 +6,13 @@
       "logo": {
         "@title": "Logo",
         "@type": "image",
-        "src": "",
+        "src": "https://manyog.s3.ap-south-1.amazonaws.com/icon.svg",
         "svg_markup": "",
 
         "size": {
           "@title": "Size",
-          "@type": "size"
+          "@type": "size",
+          "width": "40"
         }
       },
       "metadata": {
@@ -40,12 +41,13 @@
         "bg_size": {
           "@title": "BG Size",
           "@type": "size",
-          "width": "200px"
+          "width": "200",
+          "height": "auto"
         },
         "opacity": {
           "@title": "Opacity",
           "@type": "opacity",
-          "value": 0.05
+          "value": "0.1"
         }
       },
       "action_background": {

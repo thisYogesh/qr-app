@@ -1,23 +1,30 @@
 import React from "react";
-import { IfElse } from "../helpers";
+import { handleUnit } from "../src/utils";
 
 export default function Media({ data }) {
   const { src, svg_markup, size = {} } = data;
-  const { height = "auto", width = "auto" } = size;
+  const { height, width } = size;
 
   return (
     <>
-      {IfElse(src, () => (
-        <img src={src} height={height} width={width} />
-      ))}
-      {IfElse(svg_markup, () => (
+      {src ? (
+        <img
+          src={src}
+          style={{
+            height: handleUnit(height),
+            width: handleUnit(width)
+          }}
+        />
+      ) : null}
+
+      {svg_markup ? (
         <span
           className="flex svg"
           dangerouslySetInnerHTML={{ __html: svg_markup }}
         ></span>
-      ))}
-      {IfElse(
-        !src && !svg_markup,
+      ) : null}
+
+      {!src && !svg_markup ? (
         <div className="flex min-w-40 min-h-16">
           <place-holder>
             <span data-info className="z-10 py-1.5">
@@ -25,7 +32,7 @@ export default function Media({ data }) {
             </span>
           </place-holder>
         </div>
-      )}
+      ) : null}
     </>
   );
 }

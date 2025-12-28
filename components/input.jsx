@@ -11,7 +11,16 @@ export default function Input({ id, label, type = "text", ...props }) {
           {label}
         </label>
       ) : null}
-      <input id={id} className="text-sm h-8" type={type} {...props} />
+      <div className="relative flex">
+        <input id={id} className="text-sm w-full" type={type} {...props} />
+        {props?.postfix ? (
+          <div className="flex absolute right-0 top-0 h-full p-1">
+            <span className="flex justify-center items-center bg-gray-200 px-2 rounded-md text-xs">
+              {props.postfix}
+            </span>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

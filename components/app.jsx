@@ -75,7 +75,7 @@ export default () => {
                     <p
                       ref={ref}
                       {...events}
-                      className="text-center text-gray-600"
+                      className="text-sm text-center text-gray-600"
                     >
                       {storeConfig?.Copyright?.value}
                     </p>
@@ -85,7 +85,7 @@ export default () => {
                   {({ ref, events }) => (
                     <div ref={ref} {...events}>
                       <place-holder>
-                        <span data-info className="z-10 py-1 px-1">
+                        <span data-info className="text-sm z-10 py-1 px-1">
                           Add Text
                         </span>
                       </place-holder>

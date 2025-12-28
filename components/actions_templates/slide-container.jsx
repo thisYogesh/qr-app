@@ -133,9 +133,9 @@ export default function SlideContainer({ storeConfig }) {
                         target={action.button.href ? "_blank" : undefined}
                         style={{
                           "--bg-color":
-                            action.button.background_color.bg_color || "#000",
-                          "--text-color":
-                            action.button.background_color.text_color || "#fff"
+                            action.button.background_color?.bg_color?.value ||
+                            "#000",
+                          "--text-color": "#fff"
                         }}
                         className="relative app-button w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105"
                       >

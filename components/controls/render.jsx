@@ -34,7 +34,11 @@ export default function ControlRenderer({ field }) {
     <>
       {Control ? (
         // never add key={} here
-        <Control data-control={control} field={field} />
+        <Control
+          data-control={control}
+          key={currentField.__path}
+          field={field}
+        />
       ) : null}
     </>
   );

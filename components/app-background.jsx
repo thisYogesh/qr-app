@@ -1,8 +1,9 @@
 import React from "react";
+import { handleUnit } from "../src/utils";
 
 export default function AppBg({ data }) {
   const { bg_size, image, opacity } = data;
-  const { height = "auto", width = "auto" } = bg_size;
+  const { height, width } = bg_size;
 
   return (
     <div
@@ -10,7 +11,7 @@ export default function AppBg({ data }) {
       style={{
         "--bg-image": `url(${image.src})`,
         "--bg-opacity": opacity.value,
-        "--bg-size": `${height} ${width}`
+        "--bg-size": `${handleUnit(height)} ${handleUnit(width)}`
       }}
     ></div>
   );

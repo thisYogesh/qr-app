@@ -10,11 +10,8 @@ export default function TypeValue({ field, ...props }) {
   const [value, setValue] = useState(val);
 
   useEffect(() => {
-    if (value !== val) {
-      console.log({ value, val });
-      const updateData = { __path, value: { ..._value, value: value } };
-      dispatch(updatePath(updateData));
-    }
+    const updateData = { __path, value: { ..._value, value: value } };
+    dispatch(updatePath(updateData));
   }, [value]);
 
   return (

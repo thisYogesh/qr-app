@@ -55,3 +55,8 @@ const getStateValue = path =>
 export const getDynamicState = (state, path) => {
   return getStateValue(path.replace("root.", ""))(state);
 };
+
+export const handleUnit = value => {
+  if (isNaN(value)) return value;
+  return `${value}px`;
+};
