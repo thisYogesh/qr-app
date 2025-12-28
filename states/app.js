@@ -40,11 +40,11 @@ const appReducer = createSlice({
   },
   reducers: {
     setConfig: (state, config) => {
-      state.storeConfig = config;
+      state.storeConfig = config.payload;
     },
 
     setConfigFetchStatus: (state, configInFetch) => {
-      state.configInFetch = configInFetch;
+      state.configInFetch = configInFetch.payload;
     },
 
     setSettings: (state, settings) => {
@@ -59,7 +59,7 @@ const appReducer = createSlice({
       state.currentNewConfig = settings.payload;
     },
 
-    updatePath: (state, data) => {
+    updateStoreConfig: (state, data) => {
       const currentState = current(state);
       const { storeConfig, currentSettingPath } = currentState;
       const cloneState = window.structuredClone(storeConfig);
@@ -77,6 +77,13 @@ const appReducer = createSlice({
         ...state.currentSettings,
         ...settings?.[0]
       };
+    },
+
+    addNewConfig: (state, action) => {
+      const { newConfig, basePath } = action.payload;
+      const config = addPaths(newConfig, basePath);
+
+      state.storeConfig.actions.push(config);
     }
   },
 
@@ -96,7 +103,8 @@ export const {
   setConfigFetchStatus,
   setSettings,
   setNewConfig,
-  updatePath,
-  setSettingPath
+  updateStoreConfig,
+  setSettingPath,
+  addNewConfig
 } = appReducer.actions;
 export default appReducer.reducer;

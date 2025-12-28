@@ -133,8 +133,7 @@ export default function SlideContainer({ storeConfig }) {
                         target={action.button.href ? "_blank" : undefined}
                         style={{
                           "--bg-color":
-                            action.button.background_color?.bg_color?.value ||
-                            "#000",
+                            action.button.background_color?.value || "#000",
                           "--text-color": "#fff"
                         }}
                         className="relative app-button w-full py-3 px-4 rounded-full flex items-center justify-center gap-2 cursor-pointer transition-transform transform hover:scale-105"
@@ -157,7 +156,11 @@ export default function SlideContainer({ storeConfig }) {
 
               {IfElse(state?.renderMode !== RENDER_MODE.NORMAL, () => (
                 <li>
-                  <CustomizeTrigger isNew data={storeConfig?.["actions.new"]}>
+                  <CustomizeTrigger
+                    isNew
+                    basePath={`root.actions[${storeConfig?.actions.length}]`}
+                    data={storeConfig?.["actions.new"]}
+                  >
                     {({ ref, events }) => (
                       <div
                         ref={ref}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Input from "../input";
 import { useDispatch } from "react-redux";
-import { updatePath } from "../../states/app";
+import { updateStoreConfig } from "../../states/app";
 
 export default function TypeValue({ field, ...props }) {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ export default function TypeValue({ field, ...props }) {
 
   useEffect(() => {
     const updateData = { __path, value: { ..._value, value: value } };
-    dispatch(updatePath(updateData));
+    dispatch(updateStoreConfig(updateData));
   }, [value]);
 
   return (

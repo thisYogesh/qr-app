@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Input from "../input";
-import { updatePath } from "../../states/app";
+import { updateStoreConfig } from "../../states/app";
 import { useDispatch } from "react-redux";
 
 export default function TypeOpacity({ field, ...props }) {
@@ -11,7 +11,7 @@ export default function TypeOpacity({ field, ...props }) {
 
   useEffect(() => {
     const updateData = { __path, value: { ...opacity, value: value } };
-    dispatch(updatePath(updateData));
+    dispatch(updateStoreConfig(updateData));
   }, [value]);
 
   return (

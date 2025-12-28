@@ -29,7 +29,12 @@ const onLayoutReflow = () => {
   setTimeout(() => (layoutInReflow = false), 500);
 };
 
-export default function CustomizeTrigger({ data, isNew = false, children }) {
+export default function CustomizeTrigger({
+  data,
+  isNew = false,
+  basePath,
+  children
+}) {
   const dispatch = useDispatch();
   const { state } = useContext(AppContext);
   const $elRef = useRef(null);
@@ -107,9 +112,7 @@ export default function CustomizeTrigger({ data, isNew = false, children }) {
       // Continue here
       dispatch(setSettings(null));
       dispatch(setSettingPath(""));
-      dispatch(setNewConfig(data));
-
-      console.log(data);
+      dispatch(setNewConfig({ ...data, basePath }));
     }
 
     selectedConfigId = cid;

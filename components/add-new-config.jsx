@@ -1,7 +1,18 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addNewConfig } from "../states/app";
 
 export default function AddNewConfig({ config }) {
+  const dispatch = useDispatch();
+  const [selectedValue, setSelected] = useState();
+
+  const onChange = value => {
+    setSelected(value);
+    dispatch(
+      addNewConfig({ newConfig: config[value], basePath: config.basePath })
+    );
+  };
+
   return (
     <div>
       <h4 className="pb-2 text-sm font-medium">Select Type Of Button</h4>
@@ -11,8 +22,16 @@ export default function AddNewConfig({ config }) {
             key={index}
             className="flex items-center border border-gray-200 rounded-md px-2 py-3 gap-2"
           >
-            <input type="radio" value={option.value} name="option" />
-            <span className="text-sm text-gray-800">{option.title}</span>
+            <input
+              type="radio"
+              value={option.value}
+              name="option"
+              checked={selectedValue === option.value}
+              onChange={() => onChange(option.value)}
+            />
+            <span className="--title text-sm text-gray-800">
+              {option.title}
+            </span>
           </label>
         ))}
       </div>
