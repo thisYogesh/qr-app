@@ -32,7 +32,7 @@ const onLayoutReflow = () => {
 export default function CustomizeTrigger({
   data,
   isNew = false,
-  basePath,
+  newConfigMeta,
   children
 }) {
   const dispatch = useDispatch();
@@ -112,7 +112,7 @@ export default function CustomizeTrigger({
       // Continue here
       dispatch(setSettings(null));
       dispatch(setSettingPath(""));
-      dispatch(setNewConfig({ ...data, basePath }));
+      dispatch(setNewConfig({ ...data, newConfigMeta }));
     }
 
     selectedConfigId = cid;

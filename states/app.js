@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
-import { addPaths, getDynamicState, updateAtPath } from "../src/utils";
+import {
+  addPaths,
+  getDynamicState,
+  pushUpdateAtPath,
+  updateAtPath
+} from "../src/utils";
 import { getSettings } from "../src/helpers";
 
 const getMatchedConfig = data => {
@@ -59,6 +64,7 @@ const appReducer = createSlice({
       state.currentNewConfig = settings.payload;
     },
 
+    // TODO: see if there is any other way to update state
     updateStoreConfig: (state, data) => {
       const currentState = current(state);
       const { storeConfig, currentSettingPath } = currentState;
@@ -80,10 +86,13 @@ const appReducer = createSlice({
     },
 
     addNewConfig: (state, action) => {
-      const { newConfig, basePath } = action.payload;
-      const config = addPaths(newConfig, basePath);
+      const { newConfig, newConfigMeta } = action.payload;
+      const { initialPath, newPath } = newConfigMeta;
+      const config = addPaths(newConfig, newPath);
+      const { storeConfig } = state;
 
-      state.storeConfig.actions.push(config);
+      // update the state
+      pushUpdateAtPath(storeConfig, initialPath, config);
     }
   },
 

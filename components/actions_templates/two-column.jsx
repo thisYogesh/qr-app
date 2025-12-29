@@ -4,6 +4,7 @@ import Anchor from "../anchor";
 import CustomizeTrigger from "../customize-trigger";
 import Media from "../media";
 import useStoreConfig from "../../hooks/useStoreConfig";
+import { getAddNewBasePath } from "../../src/utils";
 
 export default function TwoColumn({ data }) {
   const { items } = data;
@@ -34,7 +35,11 @@ export default function TwoColumn({ data }) {
         </CustomizeTrigger>
       ))}
 
-      <CustomizeTrigger isNew data={storeConfig?.["actions.items.new"]}>
+      <CustomizeTrigger
+        isNew
+        newConfigMeta={getAddNewBasePath(data, "items")}
+        data={storeConfig?.["actions.items.new"]}
+      >
         {({ ref, events }) => (
           <div ref={ref} {...events}>
             <place-holder className="py-1 rounded-sm">

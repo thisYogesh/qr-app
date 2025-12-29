@@ -8,9 +8,9 @@ export default function AddNewConfig({ config }) {
 
   const onChange = value => {
     setSelected(value);
-    dispatch(
-      addNewConfig({ newConfig: config[value], basePath: config.basePath })
-    );
+
+    const { [value]: newConfig, newConfigMeta } = config;
+    dispatch(addNewConfig({ newConfig, newConfigMeta }));
   };
 
   return (

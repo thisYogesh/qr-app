@@ -4,26 +4,21 @@ import RenderActionTemplate from "./render";
 import { IfElse } from "../../helpers";
 import { AppContext, RENDER_MODE } from "../../src/app-context";
 import Media from "../media";
+import { getAddNewBasePath } from "../../src/utils";
 
 const layoutReflow = new Event("@layout-reflow");
 export default function SlideContainer({ storeConfig }) {
   const { state } = useContext(AppContext);
   const $contentContainer = useRef(null);
   const $slideContainer = useRef(null);
-  const $slideBack = useRef([]);
 
   useEffect(() => {
     const { current: $slideContainerEl } = $slideContainer;
+    const { style } = $slideContainerEl;
+    style.setProperty("--root-height", "auto");
     const { height } = $slideContainerEl.getBoundingClientRect();
-    $slideContainerEl.style.setProperty("--root-height", `${height}px`);
-  }, []);
-
-  useEffect(() => {
-    const $els = $slideBack?.current;
-    $els.forEach($el => $el?.addEventListener("click", goBack));
-
-    return () => $els.forEach($el => $el?.removeEventListener("click", goBack));
-  }, [$slideBack?.current]);
+    style.setProperty("--root-height", `${height}px`);
+  }, [storeConfig?.actions?.length]);
 
   const goBack = e => {
     e.stopPropagation();
@@ -158,7 +153,7 @@ export default function SlideContainer({ storeConfig }) {
                 <li>
                   <CustomizeTrigger
                     isNew
-                    basePath={`root.actions[${storeConfig?.actions.length}]`}
+                    newConfigMeta={getAddNewBasePath(storeConfig, "actions")}
                     data={storeConfig?.["actions.new"]}
                   >
                     {({ ref, events }) => (
@@ -193,8 +188,8 @@ export default function SlideContainer({ storeConfig }) {
                   >
                     <div className="flex items-center">
                       <button
-                        ref={$el => $slideBack.current.push($el)}
-                        className="flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
+                        onClick={goBack}
+                        className="js-back flex justify-center items-center w-8 h-8 rounded-full bg-blue-900 text-white"
                       >
                         <svg
                           viewBox="0 0 20 20"

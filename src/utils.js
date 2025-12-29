@@ -1,3 +1,4 @@
+const INITIAL_PATH_PROP = "__initial_path_";
 export const randomId = () => {
   const number = Math.random() * 100000;
   const [id] = number.toString().split(".");
@@ -18,6 +19,7 @@ export const getDataUrl = file => {
 };
 
 export const addPaths = (value, currentPath = "root") => {
+  // exclude new configs from path labeling
   if (currentPath.includes(".new")) return value;
 
   // If it's an array, map over items
@@ -32,6 +34,10 @@ export const addPaths = (value, currentPath = "root") => {
     const result = { __path: currentPath };
 
     for (const [key, val] of Object.entries(value)) {
+      if (Array.isArray(val)) {
+        result[`${INITIAL_PATH_PROP}${key}`] = `${currentPath}.${key}`;
+      }
+
       result[key] = addPaths(val, `${currentPath}.${key}`);
     }
 
@@ -49,6 +55,13 @@ export const updateAtPath = (state, path, value) => {
   return updater(path.replace("root.", ""))(state, value);
 };
 
+const pushUpdater = path =>
+  new Function("state", "value", `state.${path}.push(value); return state;`);
+
+export const pushUpdateAtPath = (state, path, value) => {
+  return pushUpdater(path.replace("root.", ""))(state, value);
+};
+
 const getStateValue = path =>
   new Function("state", "value", `return state.${path}`);
 
@@ -59,4 +72,13 @@ export const getDynamicState = (state, path) => {
 export const handleUnit = value => {
   if (isNaN(value)) return value;
   return `${value}px`;
+};
+
+export const getAddNewBasePath = (parentObject, key) => {
+  const {
+    [`${INITIAL_PATH_PROP}${key}`]: initialPath,
+    [key]: items
+  } = parentObject;
+
+  return { newPath: `${initialPath}[${items.length}]`, initialPath };
 };
