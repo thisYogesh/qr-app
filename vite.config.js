@@ -38,7 +38,6 @@ export default defineConfig({
       }
     }
   ],
-  assetsInclude: ["**/*.lottie"],
   server: {
     host: "app.local",
     port: 5000
