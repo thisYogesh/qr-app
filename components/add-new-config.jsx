@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addNewConfig } from "../states/app";
 
+const layoutReflow = new Event("@layout-reflow");
 export default function AddNewConfig({ config }) {
   const dispatch = useDispatch();
   const [selectedValue, setSelected] = useState();
@@ -11,6 +12,7 @@ export default function AddNewConfig({ config }) {
 
     const { [value]: newConfig, newConfigMeta } = config;
     dispatch(addNewConfig({ newConfig, newConfigMeta }));
+    window.dispatchEvent(layoutReflow);
   };
 
   return (
