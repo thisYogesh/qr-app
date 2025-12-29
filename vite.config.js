@@ -53,7 +53,8 @@ export default defineConfig({
     }
   },
   esbuild: {
-    include: /\.(js|jsx)$ /
+    include: /\.(js|jsx)$/,
+    loader: "jsx"
     // jsxInject: `import React from 'react'`
   }
 });

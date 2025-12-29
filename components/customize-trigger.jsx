@@ -3,6 +3,7 @@ import { AppContext, RENDER_MODE } from "../src/app-context";
 import { getSettings } from "../src/helpers";
 import { useDispatch } from "react-redux";
 import { setNewConfig, setSettingPath, setSettings } from "../states/app";
+import useResizeObserver from "../hooks/useResizeObserver";
 
 const $highlighters = [];
 let selectedConfigId = "";
@@ -35,6 +36,7 @@ export default function CustomizeTrigger({
   newConfigMeta,
   children
 }) {
+  const observe = useResizeObserver();
   const dispatch = useDispatch();
   const { state } = useContext(AppContext);
   const $elRef = useRef(null);
@@ -71,23 +73,33 @@ export default function CustomizeTrigger({
     };
   }, []);
 
+  useEffect(() => {
+    observe($elRef.current, () => resizeHighlighter());
+  }, [$elRef.current]);
+
+  const resizeHighlighter = () => {
+    const { current: $el } = $elRef;
+    const { height, width, left, top } = $el.getBoundingClientRect();
+    const { style } = $highlighterRef.current;
+    style.setProperty("height", height + "px");
+    style.setProperty("width", width + "px");
+    style.setProperty("left", left + "px");
+    style.setProperty("top", top + "px");
+  };
+
   const onMouseOver = e => {
     e.stopPropagation();
     if (layoutInReflow) return;
 
-    const { current: $el } = $elRef;
     const { current: $highlighter } = $highlighterRef;
-    const { style, classList } = $highlighter;
-    const { height, width, left, top } = $el.getBoundingClientRect();
+    const { classList } = $highlighter;
 
     $highlighters
       .filter($el => !$el.classList.contains("--selected"))
       .forEach($el => $el.classList.add("hidden"));
 
-    style.setProperty("height", height + "px");
-    style.setProperty("width", width + "px");
-    style.setProperty("left", left + "px");
-    style.setProperty("top", top + "px");
+    resizeHighlighter();
+
     classList.remove("hidden");
   };
 

@@ -5,12 +5,15 @@ import { IfElse } from "../../helpers";
 import { AppContext, RENDER_MODE } from "../../src/app-context";
 import Media from "../media";
 import { getAddNewBasePath } from "../../src/utils";
+import useResizeObserver from "../../hooks/useResizeObserver";
 
 const layoutReflow = new Event("@layout-reflow");
 export default function SlideContainer({ storeConfig }) {
+  const observe = useResizeObserver();
   const { state } = useContext(AppContext);
   const $contentContainer = useRef(null);
   const $slideContainer = useRef(null);
+  const hasSlided = useRef(false);
 
   useEffect(() => {
     const { current: $slideContainerEl } = $slideContainer;
@@ -20,12 +23,28 @@ export default function SlideContainer({ storeConfig }) {
     style.setProperty("--root-height", `${height}px`);
   }, [storeConfig?.actions?.length]);
 
+  useEffect(() => {
+    observe($contentContainer.current, () => {
+      if (hasSlided.current) {
+        const {
+          height: contentHeight
+        } = $contentContainer.current.getBoundingClientRect();
+        $slideContainer.current.style.setProperty(
+          "--dynamic-height",
+          `${contentHeight}px`
+        );
+      }
+    });
+  }, [$contentContainer.current]);
+
   const goBack = e => {
     e.stopPropagation();
 
     const { current: $slideContainerEl } = $slideContainer;
     $slideContainerEl.style.removeProperty("--dynamic-height");
     $slideContainerEl.classList.remove("-translate-x-full");
+
+    hasSlided.current = false;
 
     window.dispatchEvent(layoutReflow);
   };
@@ -52,6 +71,8 @@ export default function SlideContainer({ storeConfig }) {
       "--dynamic-height",
       `${contentHeight}px`
     );
+
+    hasSlided.current = true;
   };
 
   const slideToContent = (e, index) => {

@@ -1,5 +1,6 @@
 import React from "react";
 import { handleUnit } from "../src/utils";
+import domPurify from "../plugins/dompurify";
 
 export default function Media({ data }) {
   const { src, svg_markup, size = {} } = data;
@@ -20,7 +21,7 @@ export default function Media({ data }) {
       {svg_markup ? (
         <span
           className="flex svg"
-          dangerouslySetInnerHTML={{ __html: svg_markup }}
+          dangerouslySetInnerHTML={{ __html: domPurify.sanitize(svg_markup) }}
         ></span>
       ) : null}
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { MEDIA_TYPE } from "../../src/enum";
 import ControlRenderer from "./render";
+import domPurify from "../../plugins/dompurify";
 
 export default function TypeImage({ field, ...props }) {
   const { field: image, fields } = field;
@@ -38,7 +39,9 @@ export default function TypeImage({ field, ...props }) {
                 <img className="hidden media-control__preview-img w-32 h-32 object-contain image-bg" />
                 <div
                   className="media-control__preview-svg w-32 h-32 image-bg"
-                  dangerouslySetInnerHTML={{ __html: image.svg_markup }}
+                  dangerouslySetInnerHTML={{
+                    __html: domPurify.sanitize(image.svg_markup)
+                  }}
                 ></div>
                 <p className="media-control__preview-none hidden flex items-center h-32 text-sm text-gray-400">
                   No Image Selected
